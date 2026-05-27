@@ -184,7 +184,7 @@ function generateFallbackBannerAds(productName: string, productDescription: stri
 
   return {
     title: `${normName} - Fully SEO Optimized SaaS Solution`,
-    metaDescription: `${desc} Explore deep analysis, automated legal blueprinting, and standard responsive banner ad resources built by Shivam Chaturvedi.`,
+    metaDescription: `${desc} Explore deep analysis, automated legal blueprinting, and standard responsive banner ad resources built by Sanjeev Sinha.`,
     focusKeywords: seoKeywords,
     bannerAdCampaigns: genericBanners,
     score: 96,
@@ -218,7 +218,7 @@ function generateFallbackDueDiligence(companyName: string, queryText: string) {
     financialScore: 85,
     scalabilityScore: 90,
     wordSemanticAnalysis: [
-      { word: "autonomous scaling", sentiment: "positive", explanation: "Highlights low-intervention overhead framework.", credibility: 91, importance: 95 },
+      { word: "autonomous scaling", sentiment: "positive", explanation: "Highlights low-intervention overhead factor.", credibility: 91, importance: 95 },
       { word: "proprietary interface", sentiment: "positive", explanation: "Indicates defensive capital moat.", credibility: 88, importance: 90 },
       { word: "capital dependency", sentiment: "conservative", explanation: "Addresses potential burner risk factors.", credibility: 70, importance: 80 }
     ],
@@ -260,35 +260,35 @@ app.post("/api/generate", async (req, res) => {
 
   console.log(`Received ${type} request for: ${productName || req.body.companyName}`);
 
-  // Determine model details
-  // User provided openrouter configurations:
+  // Determine model details - USING ENVIRONMENT VARIABLES
+  // You need to set OPENROUTER_API_KEY in your .env file
   const openRouterModels = {
     owl: {
       id: "openrouter/owl-alpha",
-      key: "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"
+      key: process.env.OPENROUTER_API_KEY || ""
     },
     qwen: {
       id: "qwen/qwen-2.5-72b-instruct",
-      key: "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"
+      key: process.env.OPENROUTER_API_KEY || ""
     },
     openai: {
       id: "openai/gpt-4o-mini",
-      key: "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"
+      key: process.env.OPENROUTER_API_KEY || ""
     },
     gemini: {
       id: "google/gemini-2.5-flash",
-      key: "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"
+      key: process.env.OPENROUTER_API_KEY || ""
     },
     deepseek: {
       id: "deepseek/deepseek-chat",
-      key: "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"
+      key: process.env.OPENROUTER_API_KEY || ""
     }
   };
 
   const choice = (modelSelected as keyof typeof openRouterModels) || "qwen";
   const systemConfig = openRouterModels[choice] || openRouterModels.qwen;
 
-  // Use either the user's custom API key (from input), the preset API key, or fallback process environment GEMINI_API_KEY
+  // Use either the user's custom API key (from input), the preset API key, or fallback process environment
   let apiKeyToUse = apiKeyInput || systemConfig.key;
 
   try {
