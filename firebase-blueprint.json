@@ -1,0 +1,36 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account configurations, metrics and assigned business roles",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The firebase unique authentication identifier"
+        },
+        "email": {
+          "type": "string",
+          "description": "User electronic correspondence address"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["founder", "investor", "smb", "admin"],
+          "description": "User business portal view authorization level"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp indicating profile creation date"
+        }
+      },
+      "required": ["uid", "email", "role"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Secure storage for authenticated user profiles mapped to role views"
+    }
+  }
+}
