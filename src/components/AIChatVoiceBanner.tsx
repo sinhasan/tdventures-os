@@ -59,8 +59,8 @@ export function AIChatAssistantWidget({ addLog, triggerToast }: { addLog: Functi
   return (
     <div className="p-4 rounded-2xl border border-slate-800 bg-[#0F172A]/80 shadow-2xl space-y-3 font-sans">
       <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-        <div className="w-5 h-5 rounded-md bg-purple-500 flex items-center justify-center">
-          <Sparkles className="w-3 h-3 text-white animate-pulse" />
+        <div className="w-5 h-5 rounded-md bg-[#D4FF00] flex items-center justify-center">
+          <Sparkles className="w-3 h-3 text-black animate-pulse" />
         </div>
         <div>
           <h4 className="text-xs font-extrabold text-white uppercase tracking-wider">AGI Chat Assistant</h4>
@@ -163,22 +163,22 @@ export function AIVoiceCommandWidget({ addLog, triggerToast }: { addLog: Functio
     <div className="p-4 rounded-xl border border-slate-800 bg-[#0F172A]/80 space-y-4">
       <div className="flex items-center justify-between">
         <h4 className="text-xs font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
-          <Mic className="text-purple-400 w-4 h-4 animate-pulse" /> AI Voice Command Control
+          <Mic className="text-[#D4FF00] w-4 h-4" /> AI Voice Command Control
         </h4>
         <span className="text-[8px] bg-slate-900 px-2 py-0.5 rounded text-purple-400 font-mono">Neural Audio v5.0</span>
       </div>
 
       <div className="flex items-center gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
         <button 
-          onClick={startVoiceRecording}
-          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-            recording 
-              ? 'bg-rose-600 animate-ping shadow-lg shadow-rose-600/30 text-white' 
-              : 'bg-purple-600 hover:bg-purple-500 text-white active:scale-95'
-          }`}
-        >
-          <Mic className="w-5 h-5" />
-        </button>
+  onClick={startVoiceRecording}
+  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+    recording 
+      ? 'bg-rose-600 animate-ping shadow-lg shadow-rose-600/30 text-white' 
+      : 'bg-[#D4FF00] hover:bg-[#E6FF66] text-black active:scale-95'
+  }`}
+>
+  <Mic className="w-5 h-5 text-black" />
+</button>
 
         <div className="flex-1 min-w-0">
           <p className="text-[10px] text-slate-400 font-mono italic truncate">{caption}</p>
