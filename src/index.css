@@ -10,7 +10,12 @@
   --color-warning-orange: #F59E0B;
   --color-danger-red: #EF4444;
 
-  /* Core Tailwind color overrides to lock the entire system into the requested brand palette */
+  /* TD Ventures Lemon Green */
+  --color-td-green: #D4FF00;
+  --color-td-green-dark: #B8E600;
+  --color-td-green-light: #E6FF66;
+
+  /* Core Tailwind color overrides */
   --color-slate-900: #0F172A;
   --color-purple-600: #7C3AED;
   --color-purple-500: #9333EA;
@@ -23,6 +28,106 @@
   /* Custom glow indicators */
   --glow-electric: rgba(124, 58, 237, 0.4);
   --glow-neon: rgba(147, 51, 234, 0.4);
+}
+
+/* ============================================
+   TD VENTURES LEMON GREEN THEME
+   ============================================ */
+
+/* Apply TD Ventures Dark Background */
+body, .dark-theme {
+  background-color: #0A0A0A !important;
+}
+
+/* Lemon Green for Links and Highlights */
+a, .td-green-text {
+  color: var(--color-td-green) !important;
+}
+
+a:hover {
+  color: var(--color-td-green-light) !important;
+}
+
+/* Lemon Green Borders for Sidebar Active Items */
+aside .border-purple-500\/30,
+aside button[class*="bg-gradient-to-r"] {
+  border-left: 2px solid var(--color-td-green) !important;
+}
+
+/* Lemon Green Active Tab */
+aside button[class*="bg-gradient-to-r from-purple-900/20"] {
+  background: rgba(212, 255, 0, 0.1) !important;
+}
+
+/* Lemon Green Icons in Sidebar when active */
+aside button[class*="bg-gradient-to-r"] svg,
+aside button[class*="bg-gradient-to-r"] .text-purple-400 {
+  color: var(--color-td-green) !important;
+}
+
+/* Lemon Green for all accent elements */
+.text-purple-400,
+.text-purple-500,
+.text-indigo-400,
+[class*="text-purple"]:not(button *) {
+  color: var(--color-td-green) !important;
+}
+
+/* Lemon Green Buttons */
+.bg-gradient-to-r.from-purple-600,
+.bg-gradient-to-r.from-purple-600.to-indigo-600,
+.bg-gradient-to-r.from-indigo-600.to-purple-600 {
+  background: linear-gradient(135deg, var(--color-td-green) 0%, var(--color-td-green-light) 100%) !important;
+  color: #0A0A0A !important;
+}
+
+.bg-gradient-to-r.from-purple-600:hover {
+  background: linear-gradient(135deg, var(--color-td-green-light) 0%, var(--color-td-green) 100%) !important;
+}
+
+/* Lemon Green Outline Buttons */
+.border-purple-500\/20,
+.border-purple-500\/30 {
+  border-color: rgba(212, 255, 0, 0.3) !important;
+}
+
+/* Keep Pitch Analyzer Section Readable - FIX THE DARK ISSUE */
+#pitch_analyzer_tab,
+[class*="pitch_analyzer"],
+.pitch-analyzer-container {
+  background-color: #0F172A !important;
+  color: #E2E8F0 !important;
+}
+
+/* Pitch Analyzer Cards - Light/Dark readable */
+.pitch-analyzer-container .bg-slate-950,
+.pitch-analyzer-container .bg-\[#0c1222\],
+.pitch-analyzer-container .bg-\[#080d1a\] {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* Ensure text is readable in Pitch Analyzer */
+.pitch-analyzer-container .text-slate-300,
+.pitch-analyzer-container .text-slate-400,
+.pitch-analyzer-container .text-white {
+  color: #F1F5F9 !important;
+}
+
+/* Dashboard cards remain readable */
+.grid .p-5.rounded-xl {
+  background-color: #1A1A2E !important;
+}
+
+/* Lemon Green for status indicators */
+.bg-purple-600,
+.bg-purple-500 {
+  background-color: var(--color-td-green) !important;
+}
+
+/* Gold gradient for special elements - replaced with Lemon Green */
+.hero-gradient {
+  background: linear-gradient(135deg, var(--color-td-green) 0%, var(--color-td-green-light) 100%);
 }
 
 /* LIGHT THEME OVERRIDES SYSTEM */
@@ -164,3 +269,185 @@ select {
   background-image: url("data:image/svg+xml;utf8,<svg fill='%230F172A' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") !important;
 }
 
+/* Pitch Analyzer Specific Fix - Keep it readable */
+.space-y-6.animate-fade-in {
+  background-color: transparent !important;
+}
+
+.rounded-2xl.border.border-slate-800.bg-\[\#0F172A\]\/70 {
+  background-color: #0F172A !important;
+  border-color: #1E293B !important;
+}
+
+/* Fix the dark cards inside Pitch Analyzer */
+[class*="bg-slate-950"],
+[class*="bg-\[\#0c1222\]"],
+[class*="bg-\[\#080d1a\]"] {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* Ensure text is white/light for readability */
+[class*="text-slate-300"],
+[class*="text-slate-400"],
+[class*="text-white"] {
+  color: #F1F5F9 !important;
+}
+/* ============================================
+   SIDEBAR MENU LINK COLORS
+   ============================================ */
+
+/* Default state - off-white/slightly gray */
+aside nav button span,
+aside nav button .text-sm {
+  color: #A0AEC0 !important;
+}
+
+/* Hover state - pure white */
+aside nav button:hover span,
+aside nav button:hover .text-sm {
+  color: #FFFFFF !important;
+}
+
+/* Active tab - lemon green (as before) */
+aside nav button[class*="bg-gradient-to-r"] span,
+aside nav button[class*="bg-gradient-to-r"] .text-sm {
+  color: var(--color-td-green) !important;
+}
+
+/* Icon colors matching */
+aside nav button svg {
+  color: #A0AEC0 !important;
+}
+
+aside nav button:hover svg {
+  color: #FFFFFF !important;
+}
+
+aside nav button[class*="bg-gradient-to-r"] svg {
+  color: var(--color-td-green) !important;
+}
+/* ============================================
+   DARK THEME FOR DROPDOWNS & SELECTS
+   ============================================ */
+
+/* Dark theme selects */
+select,
+.dropdown-select {
+  background-color: #1E293B !important;
+  color: #E2E8F0 !important;
+  border-color: #334155 !important;
+  border-radius: 0.75rem !important;
+  padding: 0.5rem 2rem 0.5rem 1rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  appearance: none !important;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23D4FF00' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  background-size: 1rem !important;
+}
+
+/* Dropdown options dark */
+select option {
+  background-color: #0F172A !important;
+  color: #E2E8F0 !important;
+}
+
+/* Select on hover */
+select:hover {
+  background-color: #334155 !important;
+  border-color: var(--color-td-green) !important;
+}
+
+/* Select on focus */
+select:focus {
+  outline: none !important;
+  border-color: var(--color-td-green) !important;
+  box-shadow: 0 0 0 2px rgba(212, 255, 0, 0.2) !important;
+}
+
+/* For the Gateway selector specifically */
+.flex.items-center.gap-1\.5.px-2.py-1.rounded-lg select {
+  background-color: #1E293B !important;
+  color: var(--color-td-green) !important;
+  font-weight: bold !important;
+}
+
+/* Dark theme for all dropdowns in header */
+header select,
+header .bg-slate-900 select {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+}
+/* Fix Investor Matchmaking Cards - Force White Text */
+.bg-slate-950\/60,
+.bg-\[#0c1222\]\/70,
+.border-slate-800 {
+  color: #FFFFFF !important;
+}
+
+/* Card content text */
+.p-5.rounded-xl.border span,
+.p-5.rounded-xl.border p,
+.p-5.rounded-xl.border div {
+  color: #FFFFFF !important;
+}
+
+/* Match percentage text */
+.text-2xl.font-black {
+  color: var(--color-td-green) !important;
+}
+
+/* Investor names and details */
+.flex.items-center.justify-between span,
+.flex.items-center.justify-between p {
+  color: #FFFFFF !important;
+}
+
+/* Status indicators */
+.text-emerald-400,
+.text-amber-400,
+.text-blue-400 {
+  color: var(--color-td-green) !important;
+}
+
+/* Zero-Knowledge and Forward Pitch buttons */
+.bg-slate-900,
+.border-purple-500\/20 {
+  color: #FFFFFF !important;
+  border-color: var(--color-td-green) !important;
+}
+/* Fix SAFE Builder & Fundraising Section */
+.bg-slate-950,
+.border-slate-800,
+.rounded-xl.border {
+  color: #FFFFFF !important;
+}
+
+/* Input fields - keep readable */
+input, textarea, select {
+  background-color: #1E293B !important;
+  color: #FFFFFF !important;
+  border-color: #334155 !important;
+}
+
+/* Labels and descriptions */
+.text-slate-400,
+.text-slate-500,
+.text-xs,
+.text-sm {
+  color: #A0AEC0 !important;
+}
+
+/* Compile SAFE button */
+.bg-gradient-to-r.from-purple-600.to-indigo-600 {
+  background: linear-gradient(135deg, var(--color-td-green), var(--color-td-green-light)) !important;
+  color: #0A0A0A !important;
+}
+
+/* Valuation CAP value */
+.text-2xl.font-black {
+  color: var(--color-td-green) !important;
+}

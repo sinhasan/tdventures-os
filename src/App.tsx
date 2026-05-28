@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Activity, 
   BarChart3, 
-  BrainCircuit, 
   ChevronRight, 
   Globe2, 
   Layers, 
@@ -169,7 +168,7 @@ export default function App() {
 
   // Core systemic telemetry logs
   const [telemetryLogs, setTelemetryLogs] = useState<Array<{ id: string; time: string; source: string; text: string }>>([
-    { id: '1', time: '09:33:47', source: 'Orchestrator', text: 'VentureAI Pro sandbox engine ready. Auth synced with Shivam Chaturvedi.' },
+    { id: '1', time: '09:33:47', source: 'Orchestrator', text: 'TD Ventures OS sandbox engine ready. Auth synced with TD Ventures.' },
     { id: '2', time: '09:34:02', source: 'Self-Healing', text: 'Restored zero-knowledge SSL gateway channels.' }
   ]);
 
@@ -178,8 +177,8 @@ export default function App() {
   const [customApiKey, setCustomApiKey] = useState<string>('');
 
   // Ad SEO state
-  const [productName, setProductName] = useState<string>('VentureAI Pro');
-  const [productDesc, setProductDesc] = useState<string>('AGI-Powered Venture Intelligence Platform optimizing startup sourcing, spatial due diligence tracking, and high-impact automated ad positioning.');
+  const [productName, setProductName] = useState<string>('TD Ventures OS');
+  const [productDesc, setProductDesc] = useState<string>('TD Ventures OS -Powered Venture Intelligence Platform optimizing startup sourcing, spatial due diligence tracking, and high-impact automated ad positioning.');
   const [productUrl, setProductUrl] = useState<string>('https://ventureaipro.co');
   const [selectedTheme, setSelectedTheme] = useState<string>('enterprise-blue');
   const [targetAudienceInput, setTargetAudienceInput] = useState<string>('Venture Capitalists, Angel Investors, and Tech Founders');
@@ -187,8 +186,8 @@ export default function App() {
   const [zoomScale, setZoomScale] = useState<number>(0.85);
 
   const [adSuite, setAdSuite] = useState<SEOOptimizedSuite>({
-    title: "VentureAI Pro - Where Trust Meets Speed",
-    metaDescription: "The definitive AGI Venture Sourcing engine designed for seed funds and growth networks. Automate visual multi-channel positioning and predictive cap auditing instantly.",
+    title: "TD Ventures OS - Where Trust Meets Speed",
+    metaDescription: "The definitive TD Ventures OS Sourcing engine designed for seed funds and growth networks. Automate visual multi-channel positioning and predictive cap auditing instantly.",
     focusKeywords: ["venture ai", "due diligence automation", "venture capital intelligence", "startup score prediction"],
     score: 95,
     recommendations: [
@@ -197,8 +196,8 @@ export default function App() {
     ],
     bannerAdCampaigns: {
       medium_rectangle: { id: "banner-mr", size: "Medium Rectangle", width: 300, height: 250, headline: "Where Trust Meets Speed", subheadline: "Perform due diligence in 15 minutes, not six weeks.", ctaText: "Analyze Pitch Deck", bgColor: "#0F172A", textColor: "#FFFFFF", accentColor: "#7C3AED", gradientStart: "#1E1B4B", gradientEnd: "#090514", patternType: "particles", targetAudience: "Venture Capitalists & Angel Investors", seoKeywords: ["due diligence pipeline"] },
-      leaderboard: { id: "banner-lb", size: "Leaderboard", width: 728, height: 90, headline: "VentureAI Pro — Autonomous Venture Intelligence Sourcing Portfolio", subheadline: "Auto-pilot analytics verifying maritime logs, legalSAFE sheets, and cashflows.", ctaText: "Start Campaign", bgColor: "#03080A", textColor: "#4ED0F5", accentColor: "#06B6D4", gradientStart: "#082F49", gradientEnd: "#020617", patternType: "circuit", targetAudience: "Fund managers & Serial Allocators", seoKeywords: ["predictive exit statistics"] },
-      wide_skyscraper: { id: "banner-ws", size: "Wide Skyscraper", width: 160, height: 600, headline: "AGI Sourcing Deployed", subheadline: "Real-time vessel supply-chain tracking & cap table audits.", ctaText: "Deploy Now", bgColor: "#0A0502", textColor: "#ffffff", accentColor: "#22C55E", gradientStart: "#064E3B", gradientEnd: "#020804", patternType: "grid", targetAudience: "SME Businesses & CFOs", seoKeywords: ["self healing code debuggers"] }
+      leaderboard: { id: "banner-lb", size: "Leaderboard", width: 728, height: 90, headline: "TD Ventures OS — Autonomous Venture Intelligence Sourcing Portfolio", subheadline: "Auto-pilot analytics verifying maritime logs, legalSAFE sheets, and cashflows.", ctaText: "Start Campaign", bgColor: "#03080A", textColor: "#4ED0F5", accentColor: "#06B6D4", gradientStart: "#082F49", gradientEnd: "#020617", patternType: "circuit", targetAudience: "Fund managers & Serial Allocators", seoKeywords: ["predictive exit statistics"] },
+      wide_skyscraper: { id: "banner-ws", size: "Wide Skyscraper", width: 160, height: 600, headline: "TD Ventures OS Sourcing Deployed", subheadline: "Real-time vessel supply-chain tracking & cap table audits.", ctaText: "Deploy Now", bgColor: "#0A0502", textColor: "#ffffff", accentColor: "#22C55E", gradientStart: "#064E3B", gradientEnd: "#020804", patternType: "grid", targetAudience: "SME Businesses & CFOs", seoKeywords: ["self healing code debuggers"] }
     }
   });
 
@@ -216,7 +215,7 @@ export default function App() {
     }
   }, [selectedAdSizeName, adSuite]);
 
-  // Document ingestion and animated AGI processing state
+  // Document ingestion and animated OS processing state
   const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string; type: string } | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -252,7 +251,7 @@ export default function App() {
     ],
     investmentThesis: "High strategic conviction buy driven by real-world spatial demand, custom low-power silicon, and verified customer trials.",
     riskFactors: ["Dependency on satellite launch slots"],
-    recommendedSteps: ["Activate the AGI Supply-Chain tracker module", "Initiate SAFE note builds"]
+    recommendedSteps: ["Activate the TD Ventures OS Supply-Chain tracker module", "Initiate SAFE note builds"]
   });
 
   // Deal Flow
@@ -298,7 +297,7 @@ export default function App() {
   const ROLE_TABS = {
     founder: [
       { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, desc: 'Investor readiness & KPIs' },
-      { id: 'pitch_analyzer', name: 'AGI Pitch Analyzer', icon: BrainCircuit, desc: 'OCR upload and deep story check' },
+      { id: 'pitch_analyzer', name: 'TD Ventures OS Pitch Analyzer', icon: TrendingUp, desc: 'OCR upload and deep story check' },
       { id: 'gdocs_hub', name: 'Google Docs Workspace', icon: FileText, desc: 'Draft briefs and read documents' },
       { id: 'gslides_hub', name: 'Google Slides Workspace', icon: Presentation, desc: 'Draft and compile pitch decks' },
       { id: 'linkedin_intel', name: 'LinkedIn Company Intel', icon: Linkedin, desc: 'Headcounts & sourcing signals' },
@@ -315,9 +314,9 @@ export default function App() {
       { id: 'gslides_hub', name: 'Google Slides Workspace', icon: Presentation, desc: 'Draft and compile pitch decks' },
       { id: 'linkedin_intel', name: 'LinkedIn Company Intel', icon: Linkedin, desc: 'Headcounts & sourcing signals' },
       { id: 'due_diligence', name: 'Due Diligence Center', icon: ShieldAlert, desc: 'OCR due diligence reporter' },
-      { id: 'pitch_analyzer', name: 'AGI Pitch Analyzer', icon: BrainCircuit, desc: 'OCR upload and deep story check' },
+      { id: 'pitch_analyzer', name: 'TD Ventures OS Pitch Analyzer', icon: TrendingUp, desc: 'OCR upload and deep story check' },
       { id: 'forensic_ai', name: 'Forensic AI', icon: Search, desc: 'Fake data meters & anomalies scan' },
-      { id: 'prescriptive_ai', name: 'Prescriptive AI', icon: Flame, desc: 'AGI smart recommendation lists' },
+      { id: 'prescriptive_ai', name: 'Prescriptive AI', icon: Flame, desc: 'TD Ventures OS smart recommendation lists' },
       { id: 'maritime_intel', name: 'Maritime Intelligence', icon: Anchor, desc: 'MarineTraffic API vessel tracks' }
     ],
     smb: [
@@ -488,7 +487,7 @@ export default function App() {
     setIsAnalyzingPitch(true);
     setAnalysisStep(0);
     setPitchResults(null);
-    addLog('Orchestrator', `Querying AGI models to analyze unstructured data: ${uploadedFile.name}`);
+    addLog('Orchestrator', `Querying TD Ventures OS models to analyze unstructured data: ${uploadedFile.name}`);
 
     const interval = setInterval(() => {
       setAnalysisStep(prev => {
@@ -513,7 +512,7 @@ export default function App() {
       type: 'PDF'
     });
     setPitchResults(null);
-    triggerToast(`Selected ${dossier.name} preloaded file! Click Start Deep AGI Analysis.`, 'info');
+    triggerToast(`Selected ${dossier.name} preloaded file! Click Start Deep TD Ventures OS Analysis.`, 'info');
   };
 
   const activeThemeObj = PREMIUM_THEMES.find(t => t.id === selectedTheme) || PREMIUM_THEMES[0];
@@ -552,28 +551,28 @@ export default function App() {
             <div className="h-20 flex items-center px-6 border-b border-slate-800/50 justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-600 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
-                  <BrainCircuit className="w-6 h-6 text-white" />
+                  <span className="text-[#D4AF37] text-xl">🎯</span>
                   <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22C55E] rounded-full border border-black animate-pulse" />
                 </div>
                 <div>
                   <span className="font-extrabold text-lg tracking-tight text-white block">
-                    VentureAI Pro
+                    TD Ventures OS
                   </span>
                   <span className="text-[10px] text-slate-500 block">
-                    AGI-Powered Platform
+                    TD Ventures OS-Powered Platform
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* User credentials panel (Alex Johnson, matching first image) */}
+            {/* User credentials panel (CEO TD Ventures, matching first image) */}
             <div className="p-4 mx-4 mt-4 rounded-2xl bg-[#090e1a]/80 border border-slate-800/60 flex items-center gap-3">
               <div className="relative w-10 h-10 rounded-full overflow-hidden border border-slate-700 bg-slate-800 flex items-center justify-center font-bold text-white uppercase text-xs">
-                AJ
+                TD
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#F8FAFC] block">Alex Johnson</span>
+                  <span className="text-xs font-bold text-[#F8FAFC] block">CEO TD Ventures</span>
                 </div>
                 <span className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded-full mt-1 ${
                   role === 'founder' ? 'bg-purple-500/10 text-purple-300 border border-purple-500/20' :
@@ -663,7 +662,7 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <span className="inline-block w-2 h-2 bg-[#22C55E] rounded-full animate-ping" />
                 <h2 className="font-extrabold text-[11px] text-[#F8FAFC] uppercase tracking-widest font-mono">
-                  AGI MATRIX LIVE
+                  LEADING INDICATORS
                 </h2>
               </div>
               <span className="text-[10px] text-slate-500 font-mono hidden sm:inline">
@@ -751,8 +750,8 @@ export default function App() {
 
               {/* Account Profile header indicator */}
               <div className="text-right hidden sm:block">
-                <span className="text-xs block text-[#F8FAFC] font-extrabold leading-tight">shivam179</span>
-                <span className="text-[9px] block text-purple-400 font-mono">Venture Architect</span>
+                <span className="text-xs block text-[#F8FAFC] font-extrabold leading-tight">TD Ventures</span>
+                <span className="text-[9px] block text-purple-400 font-mono">The OS Builders</span>
               </div>
             </div>
           </header>
@@ -770,10 +769,10 @@ export default function App() {
                   
                   <div className="relative z-10 space-y-4 max-w-2xl">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/40 border border-purple-500/20 text-purple-300 text-[10px] font-mono leading-none">
-                      <Sparkles className="w-3 h-3 animate-pulse" /> AGI VentureSourcing Live Portal Protocol
+                      <Sparkles className="w-3 h-3 animate-pulse" /> TD Ventures OS Sourcing Live Portal Protocol
                     </div>
                     <h1 className="text-2xl md:text-4xl font-extrabold text-[#F8FAFC] tracking-tight leading-tight">
-                      VentureAI Pro — Where Trust <br />
+                      TD Ventures OS — Where Trust <br />
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
                         Meets Speed.
                       </span>
@@ -829,7 +828,7 @@ export default function App() {
                       {[
                         { title: 'Active Investment Deals', val: '18 Active Sourcing', text: '3 Seed Buy pipelines', color: 'text-purple-400' },
                         { title: 'Portfolio Value', val: '$245.8M Cap', text: 'Pristine assets verified', color: 'text-[#22C55E]' },
-                        { title: 'Average AGI Score', val: '91.5/100', text: 'Top quartile targets', color: 'text-cyan-400' },
+                        { title: 'Average OS Score', val: '91.5/100', text: 'Top quartile targets', color: 'text-cyan-400' },
                         { title: 'Due Diligence Queue', val: '4 Pipelines', text: 'Awaiting OCR text load', color: 'text-[#F59E0B]' }
                       ].map((item, idx) => (
                         <div key={idx} className="p-5 rounded-xl border border-slate-800 bg-[#0c1222]/70 space-y-1 hover:border-slate-700 transition-colors">
@@ -879,7 +878,7 @@ export default function App() {
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
                       <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                        <BrainCircuit className="text-purple-400 w-5 h-5" /> AGI Pitch Deck Analyzer Center
+                       <span className="text-[#D4AF37] text-base">🎯</span> OS Pitch Deck Analyzer Center
                       </h3>
                       <p className="text-xs text-slate-400">Upload slides (PDF, DOCX, PPTX, TXT, or Image OCR) to evaluate PMF metrics and risk anomalies.</p>
                     </div>
@@ -970,7 +969,7 @@ export default function App() {
                         disabled={isAnalyzingPitch}
                         className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md flex items-center gap-1.5 mx-auto disabled:opacity-50"
                       >
-                        <Play className="w-3.5 h-3.5" /> Start Deep AGI Analysis
+                        <Play className="w-3.5 h-3.5" /> Start Deep OS Analysis
                       </button>
                     )}
                   </div>
@@ -1024,7 +1023,7 @@ export default function App() {
                       <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500" />
                       <span className="text-[10px] font-mono tracking-widest uppercase text-blue-400 block font-black">Executive Summary</span>
                       <p className="text-xs md:text-sm text-slate-300 leading-relaxed font-sans font-medium">
-                        This pitch deck presents a compelling HealthTech startup with strong market positioning and experienced team. The AGI analysis reveals solid fundamentals with some areas requiring attention for optimal investor appeal.
+                        This pitch deck presents a compelling HealthTech startup with strong market positioning and experienced team. The OS analysis reveals solid fundamentals with some areas requiring attention for optimal investor appeal.
                       </p>
                     </div>
 
@@ -1438,7 +1437,7 @@ export default function App() {
 
                       <button 
                         onClick={() => {
-                          addLog('Orchestrator', 'Opened AGI-matching time slot selection matrix.');
+                          addLog('Orchestrator', 'Opened OS-matching time slot selection matrix.');
                           setActivePitchModal('schedule');
                           triggerToast('Fetching available investor calendars...', 'info');
                         }}
@@ -1449,13 +1448,13 @@ export default function App() {
 
                       <button 
                         onClick={() => {
-                          addLog('Qwen-Reasoning', 'Compiling AGI cognitive suggestions index...');
+                          addLog('Qwen-Reasoning', 'Compiling OS cognitive suggestions index...');
                           setActivePitchModal('plan');
                           triggerToast('Evaluating structural optimizations...', 'success');
                         }}
                         className="py-3 px-4 rounded-xl bg-[#F59E0B] hover:bg-[#D97706] text-white font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-[#F59E0B]/10"
                       >
-                        <Layers className="w-4 h-4 text-slate-200" /> Get AGI Optimization Plan
+                        <Layers className="w-4 h-4 text-slate-200" /> Get OS Optimization Plan
                       </button>
                     </div>
 
@@ -1576,7 +1575,7 @@ export default function App() {
             <div className="p-4 rounded-xl border border-slate-800/80 bg-black/80 font-mono text-[10px] space-y-2 select-all">
               <div className="flex items-center justify-between border-b border-slate-900 pb-2">
                 <span className="text-slate-400 flex items-center gap-1.5"><Cpu className="text-purple-400 w-3.5 h-3.5" /> SYSTEM WATCHDOG TELEMETRY logs</span>
-                <span className="text-[10px] text-purple-400">Operator: chaturvedishivam179@gmail.com</span>
+                <span className="text-[10px] text-purple-400">Operator: support@tdventures.in</span>
               </div>
               <div className="space-y-1.5 max-h-36 overflow-y-auto">
                 {telemetryLogs.map(log => (
@@ -1592,8 +1591,8 @@ export default function App() {
           </div>
 
           <footer className="h-14 border-t border-slate-800/60 bg-[#020205] flex items-center justify-between px-6 text-[11px] text-slate-500 relative z-20">
-            <span>Built For Shivam Chaturvedi Law-Builder Ecosystem v5.0</span>
-            <span className="font-bold">VentureAI Pro • Where Trust Meets Speed</span>
+            <span>Built For TD Ventures Law-Builder Ecosystem v5.0</span>
+            <span className="font-bold">TD Ventures OS • Where Trust Meets Speed</span>
           </footer>
 
         </main>
@@ -1612,7 +1611,7 @@ export default function App() {
           onClick={() => { setActiveTab('pitch_analyzer'); triggerToast('Switched to OCR Analyzer', 'info'); }}
           className={`flex flex-col items-center gap-1 text-[10px] ${activeTab === 'pitch_analyzer' ? 'text-purple-400' : 'text-slate-400'}`}
         >
-          <BrainCircuit className="w-4.5 h-4.5" />
+         <span className="text-[#D4AF37] text-xl">🎯</span>
           <span>OCR analyzer</span>
         </button>
         <select 
@@ -1690,10 +1689,10 @@ export default function App() {
                   <p className="text-[11px] text-slate-400 leading-relaxed">Structured custom schemas, private cloud storage nodes, and fully private SOC2 network monitoring channels.</p>
                 </div>
                 <button 
-                  onClick={() => { triggerToast("Contact metrics forwarded to Shivam Chaturvedi successfully!", "success"); setShowPricingModal(false); }}
+                  onClick={() => { triggerToast("Contact metrics forwarded to TD Ventures successfully!", "success"); setShowPricingModal(false); }}
                   className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-lg"
                 >
-                  Contact Shivam
+                  Contact TD Ventures
                 </button>
               </div>
 
@@ -1756,7 +1755,7 @@ function DownloadReportModal({ addLog, triggerToast, onClose }: { addLog: Functi
     <div className="space-y-4 text-left">
       <div className="space-y-1">
         <h3 className="text-base font-bold text-white uppercase tracking-wider">Download Analytical Report</h3>
-        <p className="text-xs text-slate-400">AGI compliance export builder compiling target metadata.</p>
+        <p className="text-xs text-slate-400">OS compliance export builder compiling target metadata.</p>
       </div>
 
       <div className="space-y-2">

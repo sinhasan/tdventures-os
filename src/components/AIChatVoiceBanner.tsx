@@ -23,7 +23,7 @@ import { SEOOptimizedSuite } from '../types';
 // 1. AI CHAT ASSISTANT WIDGET
 export function AIChatAssistantWidget({ addLog, triggerToast }: { addLog: Function, triggerToast: Function }) {
   const [messages, setMessages] = useState<Array<{ sender: 'AI' | 'User'; text: string }>>([
-    { sender: 'AI', text: 'VentureAI Pro sandbox ready. Ask on startup valuation, risk anomaly triggers, or vessel cargo delays.' }
+    { sender: 'AI', text: 'TD Venture OS sandbox ready. Ask on startup valuation, risk anomaly triggers, or vessel cargo delays.' }
   ]);
   const [chatInput, setChatInput] = useState<string>('');
 
@@ -48,7 +48,7 @@ export function AIChatAssistantWidget({ addLog, triggerToast }: { addLog: Functi
       } else if (t.includes('valuation')) {
         aiText = 'FORECASTED SCALE: Exponential scalability hologram calculates Year 5 cumulative revenue target at $12.5M USD, driven by standard 0.4% transaction take rates on shipments and multi-channel SEO indexing.';
       } else {
-        aiText = `Shivam AGI Engine confirms check logic completed. Verified zero-knowledge file hashes for target query parameters: "${text}". Recommend running Forensic Auditor check on AgTech spreadsheets.`;
+        aiText = `TD Ventures AGI Engine confirms check logic completed. Verified zero-knowledge file hashes for target query parameters: "${text}". Recommend running Forensic Auditor check on AgTech spreadsheets.`;
       }
 
       setMessages(prev => [...prev, { sender: 'AI' as const, text: aiText }]);
@@ -73,7 +73,7 @@ export function AIChatAssistantWidget({ addLog, triggerToast }: { addLog: Functi
         {messages.map((m, idx) => (
           <div key={idx} className={`space-y-1 ${m.sender === 'User' ? 'text-right' : 'text-left'}`}>
             <span className="text-[8px] uppercase tracking-wider font-mono text-slate-500 block leading-none">
-              {m.sender === 'User' ? 'You' : 'VentureAI Pro AGI'}
+              {m.sender === 'User' ? 'You' : 'TD Ventures OS AI'}
             </span>
             <p className={`inline-block p-2.5 rounded-xl text-xs max-w-[85%] leading-relaxed ${
               m.sender === 'User' 
@@ -417,7 +417,7 @@ export function AdSeoCreatorPanel({
                 <div className="space-y-4 relative z-10">
                   <div className="flex items-center gap-1.5">
                     <Globe2 className="w-4 h-4 text-purple-400" />
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block font-bold">VentureAI Pro</span>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block font-bold">TD Ventures OS</span>
                   </div>
 
                   <h3 className="text-base font-extrabold text-white tracking-tight leading-snug">{activeAd.headline}</h3>

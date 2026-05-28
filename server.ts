@@ -59,7 +59,7 @@ function isDummyKey(key: string): boolean {
 
 // Fallback high-quality design pattern generators in case LLM is offline or keys rate-limit
 function generateFallbackBannerAds(productName: string, productDescription: string, urlStr: string) {
-  const normName = productName || "VentureAI Pro";
+  const normName = productName || "TD Ventures OS";
   const desc = productDescription || "AGI-Powered Venture Intelligence and automated investment tracking.";
   const queryUrl = urlStr || "https://ventureaipro.co";
 
@@ -293,7 +293,7 @@ app.post("/api/generate", async (req, res) => {
 
   try {
     if (type === "banner-ad" || type === "seo-optimize") {
-      const systemInstruction = `You are VentureAI Pro's Multi-Model Ad & SEO Engine. Your goal is to synthesize the product description and URL into an awesome, fully SEO-optimized ad suite with meta titles, descriptions, focus keywords, recommendations, and standard banner ad templates.
+      const systemInstruction = `You are TD Ventures OS's Multi-Model Ad & SEO Engine. Your goal is to synthesize the product description and URL into an awesome, fully SEO-optimized ad suite with meta titles, descriptions, focus keywords, recommendations, and standard banner ad templates.
 Generate standard responsive banner coordinates and copy configurations matching:
 1. Medium Rectangle (300 x 250)
 2. Leaderboard (728 x 90)
@@ -321,7 +321,7 @@ Return ONLY a valid JSON object matching this structure (no conversational text 
 }`;
 
       const userText = `Please generate high-quality optimized ads for:
-Product Name: "${productName || "VentureAI Pro"}"
+Product Name: "${productName || "TD Ventures OS"}"
 Description: "${productDescription || "No description provided."}"
 URL: "${url || "https://ventureaipro.co"}"
 Theme style: "${themeStyle || "modern dark electric"}"
@@ -334,7 +334,7 @@ Target audience: "${targetAudience || "Tech founders and global VC teams"}"`;
           "Authorization": `Bearer ${apiKeyToUse}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "https://ai.studio/build",
-          "X-OpenRouter-Title": "VentureAI Pro Builder"
+          "X-OpenRouter-Title": "TD Ventures OS Builder"
         },
         body: JSON.stringify({
           model: systemConfig.id,
@@ -361,7 +361,7 @@ Target audience: "${targetAudience || "Tech founders and global VC teams"}"`;
       const pitchText = req.body.pitchText || "E-commerce supply chain logistics analytics platform.";
       const linkUrl = req.body.url || "https://alphaflow.io";
 
-      const systemInstruction = `You are VentureAI Pro's Autonomous Due Diligence & Multi-Chain Logic Auditor. Evaluate the target startup business profile, cap factors, and market collision risk.
+      const systemInstruction = `You are TD Ventures OS's Autonomous Due Diligence & Multi-Chain Logic Auditor. Evaluate the target startup business profile, cap factors, and market collision risk.
 Your evaluation must return deep analytics: overall scores, valuation range, tam estimate, competitor risks, and semantic keyword analysis.
 Return ONLY a valid JSON object matching this schema:
 {
@@ -394,7 +394,7 @@ URL: "${linkUrl}"`;
           "Authorization": `Bearer ${apiKeyToUse}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "https://ai.studio/build",
-          "X-OpenRouter-Title": "VentureAI Pro Builder"
+          "X-OpenRouter-Title": "TD Ventures OS Builder"
         },
         body: JSON.stringify({
           model: systemConfig.id,
@@ -682,7 +682,7 @@ app.get("/api/linkedin/company-by-domain", async (req, res) => {
 
     const data = await response.json();
     
-    // Parse output into structured clean fields suited for VentureAI Pro
+    // Parse output into structured clean fields suited for TD Ventures OS
     const formattedResponse = {
       domain: domain,
       source: "LinkedIn Data API Live Service Gateway",
@@ -768,7 +768,7 @@ async function serveApp() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`VentureAI Pro core node listener deployed on http://0.0.0.0:${PORT}`);
+    console.log(`TD Ventures OS core node listener deployed on http://0.0.0.0:${PORT}`);
   });
 }
 

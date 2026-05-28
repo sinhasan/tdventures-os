@@ -18,9 +18,9 @@ import { ROLE_PERMISSIONS_TABLE, SOC2_RULES } from '../data';
 // 1. USER SEATS MANAGEMENT
 export function UserManagementTab({ triggerToast, addLog }: { triggerToast: Function, addLog: Function }) {
   const [operators, setOperators] = useState([
-    { id: '1', email: 'chaturvedishivam179@gmail.com', name: 'Shivam Chaturvedi', access: 'Super-User', seats: 'Root Workspace Owner', state: 'Active' },
-    { id: '2', email: 'alex.j@ventureai.co', name: 'Alex Johnson', access: 'Read/Write', seats: 'Startup Allocator Seat', state: 'Active' },
-    { id: '3', email: 'scout99@ventureai.co', name: 'Venture Scout B', access: 'Read Only', seats: 'Scout Workspace Seat', state: 'Active' }
+    { id: '1', email: 'support@tdventures.in', name: 'Support TD Ventures', access: 'Super-User', seats: 'Root Owner', state: 'Active' },
+    { id: '2', email: 'invest@tdventures.in', name: 'Investor TD Ventures', access: 'Read/Write', seats: 'Invest TD Ventures Seat', state: 'Active' },
+    { id: '3', email: 'pitch@tdventures.in', name: 'Pitch TD Ventures', access: 'Read Only', seats: 'Pitch TD Ventures Seat', state: 'Active' }
   ]);
   const [newEmail, setNewEmail] = useState('');
   const [newName, setNewName] = useState('');
@@ -217,7 +217,7 @@ export function SecurityCenterTab() {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div className="md:col-span-2 p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 space-y-4">
         <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Enterprise SOC2 Rules Audit</h3>
-        <p className="text-xs text-slate-400">VentureAI Pro sandbox complies with standardized SaaS end-to-end continuous monitoring rules audits.</p>
+        <p className="text-xs text-slate-400">TD Ventures OS sandbox complies with standardized SaaS end-to-end continuous monitoring rules audits.</p>
 
         <div className="space-y-3 mt-4">
           {SOC2_RULES.map(ruleObj => (
@@ -268,7 +268,7 @@ export function SecurityCenterTab() {
 
         <div className="pt-4 border-t border-slate-850 space-y-2">
           <span className="text-[9px] font-mono text-slate-500 block uppercase font-bold text-slate-500">Security Watchdog Directive:</span>
-          <p className="text-xs text-slate-300 italic">“Secure zero-knowledge token synchronization confirmed. All audit log files are locked and verified by Shivam Chaturvedi.”</p>
+          <p className="text-xs text-slate-300 italic">“Secure zero-knowledge token synchronization confirmed. All audit log files are locked and verified by TD Ventures.”</p>
         </div>
       </div>
     </div>

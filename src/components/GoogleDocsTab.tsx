@@ -44,7 +44,7 @@ export function GoogleDocsTab({
   const [fetchedDocContent, setFetchedDocContent] = useState("");
 
   // Write/Draft state
-  const [draftTitle, setDraftTitle] = useState("VentureAI Pro - Strategic Investment Memo");
+  const [draftTitle, setDraftTitle] = useState("TD Ventures OS - Strategic Investment Memo");
   const [startupName, setStartupName] = useState("Aether Drone Robotics");
   const [startupSegment, setStartupSegment] = useState("Aviation & Defence Tech");
   const [fundingGoal, setFundingGoal] = useState("$2,500,000 (Series Seed)");
@@ -246,7 +246,7 @@ export function GoogleDocsTab({
 
       const writeText = 
 `==================================================
-        VENTUREAI PRO • AGI PORTAL DOSSIER
+        TD Ventures OS • AI PORTAL DOSSIER
 ==================================================
 Date Generated : ${timeStr}
 Prepared For   : Investment Syndicate Audit Gate
@@ -382,7 +382,7 @@ End of Document Brief. Mapped securely via cryptographic VentureAI Cloud.
               Secure Google Workspace Verification Needed
             </h3>
             <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
-              VentureAI Pro integrates direct client-side calls to the official Google Docs API. This protects your enterprise data by never exposing tokens to unauthorized remote server channels.
+              TD Ventures OS integrates direct client-side calls to the official Google Docs API. This protects your enterprise data by never exposing tokens to unauthorized remote server channels.
             </p>
           </div>
 

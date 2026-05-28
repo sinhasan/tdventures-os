@@ -6,8 +6,7 @@ import {
   Coins, 
   Target, 
   Activity, 
-  Layers, 
-  BrainCircuit, 
+  Layers,  
   ShieldAlert, 
   Anchor, 
   Cpu, 
@@ -35,7 +34,7 @@ export const INITIAL_ALERTS = [
 ];
 
 export const INITIAL_CHAT_MSGS = [
-  { sender: 'AI', text: 'Greetings, Venture Architect. I have initialized the multi-model intelligence sandbox configured by Shivam Chaturvedi. Select standard queries below or ask any question on startup risk, valuation trends, or maritime delays.' }
+  { sender: 'AI', text: 'Greetings, Venture Architect. I have initialized the multi-model intelligence sandbox configured by TD Ventures. Select standard queries below or ask any question on startup risk, valuation trends, or maritime delays.' }
 ];
 
 export const SAMPLE_INVESTORS = [

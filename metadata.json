@@ -1,6 +1,6 @@
 {
-  "name": "VentureAI Pro",
-  "description": "AGI-powered Venture Intelligence Platform with a Cinematic Dashboard, Automated Due Diligence, and AI Banner Ad & SEO Generation Suite.",
+  "name": "TD Ventures OS",
+  "description": "TD Ventures OS-powered Venture Intelligence Platform with a Cinematic Dashboard, Automated Due Diligence, and AI Banner Ad & SEO Generation Suite.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

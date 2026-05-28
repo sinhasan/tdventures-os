@@ -29,7 +29,7 @@ export function FundraisingIntelTab({ addLog, triggerToast }: { addLog: Function
     addLog('Orchestrator', 'Assembling deterministic legal safe paper nodes...');
     const text = `SIMPLE AGREEMENT FOR FUTURE EQUITY (SAFE)
 ----------------------------------------
-ISSUER: VentureAI Pro Sandbox Candidate
+ISSUER: TD Ventures OS 
 VALUATION CAP: $${Number(capVal).toLocaleString()} USD
 DISCOUNT RATE: ${100 - Number(discountVal)}% (Conversion discount of ${discountVal}%)
 PRO-RATA RIGHT: ${hasProRata ? 'ENABLED' : 'DISABLED'}
@@ -38,7 +38,7 @@ COMPLIANCE LAYER: JWT / SOC2 Cryptographic Lock Active
 This Agreement certifies that in exchange for payment by the Investor of the Purchase Amount, the Issuer will issue block options. If there is an Equity Financing before the expiration or termination of this Safe, the Issuer will automatically issue to the Investor a number of shares of SAFE Preferred Stock equal to the Purchase Amount divided by the Conversion Price.
 
 Symmetric AES Hash: SHA-256 e84cd1235bd28ceea99407106
-Compiled securely via Shivam Chaturvedi Law-Builder v5.0.`;
+Compiled securely via TD Ventures Law-Builder v5.0.`;
     setCompiledSafeText(text);
     triggerToast('Perfect! SAFE template generated successfully!', 'success');
   };
