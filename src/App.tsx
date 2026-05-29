@@ -1593,9 +1593,16 @@ export default function App() {
           </div>
 
           <footer className="h-14 border-t border-slate-800/60 bg-[#020205] flex items-center justify-between px-6 text-[11px] text-slate-500 relative z-20">
-            <span>Built For TD Ventures Law-Builder Ecosystem v5.0</span>
-            <span className="font-bold">TD Ventures OS • Where Trust Meets Speed</span>
-          </footer>
+           <span>Built For TD Ventures Law-Builder Ecosystem v5.0</span>
+            <a
+             href="https://tdventures.in/contribute.html"
+             target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold text-[#D4FF00] hover:text-[#E6FF66] transition-colors"
+           >
+            💚 Contribute
+          </a>
+        </footer>
 
         </main>
       </div>
