@@ -644,12 +644,14 @@ export default function App() {
 
           {/* Sourcing footer widget */}
           <div className="p-4 border-t border-slate-800/60 bg-slate-950/40">
-            <button 
-              onClick={() => setShowPricingModal(true)}
-              className="w-full text-center py-2 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-[11px] font-bold text-white shadow-lg shadow-purple-500/10"
+            <a
+            href="https://tdventures.in/pricing.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full text-center py-2 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500          text-[11px] font-bold text-white shadow-lg shadow-purple-500/10 block"
             >
-              Configure Enterprise Plan
-            </button>
+            View Pricing Plans
+           </a>
           </div>
         </aside>
 
