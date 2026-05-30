@@ -790,12 +790,14 @@ export default function App() {
                       >
                         Launch Pitch Decryptor OCR
                       </button>
-                      <button 
-                        onClick={() => setShowPricingModal(true)}
-                        className="px-4 py-2 border border-slate-750 bg-slate-900/60 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl"
-                      >
-                        Upgrade License Space
-                      </button>
+                      <a
+                        href="https://tdventures.in/pricing.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 border border-slate-750 bg-slate-900/60 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl inline-block"
+                       >
+                       Upgrade License Space
+                      </a>
                     </div>
                   </div>
                 </div>
