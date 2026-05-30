@@ -81,10 +81,11 @@ export function UserManagementTab({ triggerToast, addLog }: { triggerToast: Func
             className="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-purple-500"
           />
           <button 
-            type="submit"
-            className="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-500 transition-colors flex items-center gap-1.5"
+           type="submit"
+           style={{ backgroundColor: '#D4FF00', color: '#000000', fontWeight: 'bold' }}
+           className="px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5 hover:opacity-80"
           >
-            <Plus className="w-3.5 h-3.5" /> Invite Analyst
+           <Plus className="w-3.5 h-3.5" /> Invite Analyst
           </button>
         </form>
       </div>
