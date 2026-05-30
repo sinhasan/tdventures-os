@@ -18,7 +18,7 @@ import { ROLE_PERMISSIONS_TABLE, SOC2_RULES } from '../data';
 // 1. USER SEATS MANAGEMENT
 export function UserManagementTab({ triggerToast, addLog }: { triggerToast: Function, addLog: Function }) {
   const [operators, setOperators] = useState([
-    { id: '1', email: 'support@tdventures.in', name: 'Support TD Ventures', access: 'Super-User', seats: 'Root Owner', state: 'Active' },
+    { id: '1', email: 'os@tdventures.in', name: 'Support TD Ventures', access: 'Super-User', seats: 'Root Owner', state: 'Active' },
     { id: '2', email: 'invest@tdventures.in', name: 'Investor TD Ventures', access: 'Read/Write', seats: 'Invest TD Ventures Seat', state: 'Active' },
     { id: '3', email: 'pitch@tdventures.in', name: 'Pitch TD Ventures', access: 'Read Only', seats: 'Pitch TD Ventures Seat', state: 'Active' }
   ]);
