@@ -94,6 +94,39 @@ import {
   STATIC_PITCH_DOSSIERS 
 } from './data';
 
+// Email capture banner component (inline for simplicity)
+const EmailCaptureBanner = () => {
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('emailBannerDismissed');
+    if (saved) setDismissed(true);
+  }, []);
+
+  const handleDismiss = () => {
+    localStorage.setItem('emailBannerDismissed', 'true');
+    setDismissed(true);
+  };
+
+  if (dismissed) return null;
+
+  return (
+    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:bottom-4 md:max-w-sm z-50 bg-[#1A1A2E] border border-[#D4FF00] rounded-xl shadow-2xl p-4">
+      <button onClick={handleDismiss} className="absolute top-2 right-2 text-gray-400 hover:text-white">✕</button>
+      <p className="text-white text-sm font-medium">📊 Get your detailed investor report</p>
+      <p className="text-gray-300 text-xs mt-1">Enter your email to receive a full breakdown of your pitch deck score and investor match suggestions.</p>
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSfWdpDDyRP1F66yrDOppZR-Z4QfJehq64mEtQkgtYm2d3Z06w/viewform"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 inline-block w-full text-center bg-[#D4FF00] text-black font-bold py-2 rounded-lg text-sm hover:bg-[#E6FF66] transition"
+      >
+        Claim my report →
+      </a>
+    </div>
+  );
+};
+
 const PREMIUM_THEMES = [
   { id: 'enterprise-blue', name: 'Deep Enterprise Blue', bg: '#0F172A', gradientStart: '#0F172A', gradientEnd: '#090D1A', accent: '#7C3AED', glowColor: 'rgba(124, 58, 237, 0.4)' },
   { id: 'electric-purple', name: 'Electric Purple Pulse', bg: '#0F172A', gradientStart: '#1E1B4B', gradientEnd: '#090514', accent: '#7C3AED', glowColor: 'rgba(124, 58, 237, 0.4)' },
@@ -162,11 +195,9 @@ export default function App() {
     }
   }, [activeTab]);
 
-  // Floating smart alerts logs
   const [activeAlerts, setActiveAlerts] = useState(INITIAL_ALERTS);
   const [showAlertsDropdown, setShowAlertsDropdown] = useState<boolean>(false);
 
-  // Core systemic telemetry logs
   const [telemetryLogs, setTelemetryLogs] = useState<Array<{ id: string; time: string; source: string; text: string }>>([
     { id: '1', time: '09:33:47', source: 'Orchestrator', text: 'TD Ventures OS sandbox engine ready. Auth synced with TD Ventures.' },
     { id: '2', time: '09:34:02', source: 'Self-Healing', text: 'Restored zero-knowledge SSL gateway channels.' }
@@ -176,7 +207,6 @@ export default function App() {
   const [selectedModel, setSelectedModel] = useState<'owl' | 'qwen' | 'openai' | 'gemini' | 'deepseek'>('owl');
   const [customApiKey, setCustomApiKey] = useState<string>('');
 
-  // Ad SEO state
   const [productName, setProductName] = useState<string>('TD Ventures OS');
   const [productDesc, setProductDesc] = useState<string>('TD Ventures OS -Powered Venture Intelligence Platform optimizing startup sourcing, spatial due diligence tracking, and high-impact automated ad positioning.');
   const [productUrl, setProductUrl] = useState<string>('https://ventureaipro.co');
@@ -215,7 +245,6 @@ export default function App() {
     }
   }, [selectedAdSizeName, adSuite]);
 
-  // Document ingestion and animated OS processing state
   const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string; type: string } | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -223,7 +252,6 @@ export default function App() {
   const [analysisStep, setAnalysisStep] = useState<number>(0);
   const [pitchResults, setPitchResults] = useState<any>(null);
 
-  // Due diligence Center generator state
   const [ddCompanyName, setDdCompanyName] = useState<string>('Enigma Spatial logistics');
   const [ddPitchText, setDdPitchText] = useState<string>('We build micro-sensors tracking marine containers and autonomous inland drone supply fleets.');
   const [ddUrl, setDdUrl] = useState<string>('https://enigmaspatial.io');
@@ -254,10 +282,8 @@ export default function App() {
     recommendedSteps: ["Activate the TD Ventures OS Supply-Chain tracker module", "Initiate SAFE note builds"]
   });
 
-  // Deal Flow
   const [dealFlow, setDealFlow] = useState<DealFlowItem[]>(INITIAL_DEAL_FLOW);
 
-  // Helper utilities
   const addLog = (source: string, text: string) => {
     const now = new Date();
     const timeStr = now.toTimeString().split(' ')[0];
@@ -274,7 +300,6 @@ export default function App() {
     }, 4000);
   };
 
-  // Role Switching configuration
   const handleRoleChange = (selectedVal: string) => {
     let mappedRole: 'founder' | 'investor' | 'smb' | 'admin' = 'founder';
     if (selectedVal === 'Startup Founder') mappedRole = 'founder';
@@ -293,7 +318,6 @@ export default function App() {
     triggerToast(`Switched workspace configuration to ${selectedVal}`, 'info');
   };
 
-  // Role specific Tab listings
   const ROLE_TABS = {
     founder: [
       { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, desc: 'Investor readiness & KPIs' },
@@ -338,7 +362,6 @@ export default function App() {
     ]
   };
 
-  // Generate Ad Campaign via Server API request
   const handleGenerateAds = async (e: React.FormEvent) => {
     e.preventDefault();
     setGeneratingAds(true);
@@ -397,7 +420,6 @@ export default function App() {
     });
   };
 
-  // Run due diligence Center REST generator
   const handleAnalyzeDD = async (e: React.FormEvent) => {
     e.preventDefault();
     setAnalyzingDD(true);
@@ -436,7 +458,6 @@ export default function App() {
     }
   };
 
-  // Mock upload selector triggers
   const handleFileUploadSim = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileObj = e.target.files?.[0];
     if (fileObj) {
@@ -1460,6 +1481,32 @@ export default function App() {
                       >
                         <Layers className="w-4 h-4 text-slate-200" /> Get OS Optimization Plan
                       </button>
+
+                      {/* Twitter & LinkedIn share buttons added here */}
+                      <div className="flex gap-2 mt-2 justify-end col-span-2 md:col-span-1">
+                        <button
+                          onClick={() => {
+                            const text = `My startup scored ${pitchResults?.score || 87} on TD Ventures OS due diligence. How does yours compare?`;
+                            const url = "https://tdventures-os.vercel.app";
+                            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
+                          }}
+                          className="p-2 rounded-full bg-black hover:bg-gray-900 text-white transition"
+                          title="Share on X (Twitter)"
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </button>
+                        <button
+                          onClick={() => {
+                            const text = `My startup scored ${pitchResults?.score || 87} on TD Ventures OS due diligence. How does yours compare?`;
+                            const url = "https://tdventures-os.vercel.app";
+                            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`, "_blank");
+                          }}
+                          className="p-2 rounded-full bg-blue-700 hover:bg-blue-600 text-white transition"
+                          title="Share on LinkedIn"
+                        >
+                          <Linkedin className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
 
                   </div>
@@ -1731,12 +1778,15 @@ export default function App() {
         </div>
       )}
 
+      {/* Email capture banner */}
+      <EmailCaptureBanner />
+
     </div>
   );
 }
 
 // ==========================================
-// SUB-COMPONENTS FOR PITCH ANALYZER MODALS
+// SUB-COMPONENTS FOR PITCH ANALYZER MODALS (unchanged)
 // ==========================================
 
 function DownloadReportModal({ addLog, triggerToast, onClose }: { addLog: Function, triggerToast: Function, onClose: () => void }) {
