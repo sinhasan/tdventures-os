@@ -199,7 +199,7 @@ export default function App() {
   const [showAlertsDropdown, setShowAlertsDropdown] = useState<boolean>(false);
 
   const [telemetryLogs, setTelemetryLogs] = useState<Array<{ id: string; time: string; source: string; text: string }>>([
-    { id: '1', time: '09:33:47', source: 'Orchestrator', text: 'TD Ventures OS sandbox engine ready. Auth synced with TD Ventures.' },
+    { id: '1', time: '09:33:47', source: 'Orchestrator', text: 'TD Venture X sandbox engine ready. Auth synced with TD Ventures.' },
     { id: '2', time: '09:34:02', source: 'Self-Healing', text: 'Restored zero-knowledge SSL gateway channels.' }
   ]);
 
@@ -207,8 +207,8 @@ export default function App() {
   const [selectedModel, setSelectedModel] = useState<'owl' | 'qwen' | 'openai' | 'gemini' | 'deepseek'>('owl');
   const [customApiKey, setCustomApiKey] = useState<string>('');
 
-  const [productName, setProductName] = useState<string>('TD Ventures OS');
-  const [productDesc, setProductDesc] = useState<string>('TD Ventures OS -Powered Venture Intelligence Platform optimizing startup sourcing, spatial due diligence tracking, and high-impact automated ad positioning.');
+  const [productName, setProductName] = useState<string>('TD Venture X');
+  const [productDesc, setProductDesc] = useState<string>('TD Venture X -Powered Venture Intelligence Platform optimizing startup sourcing, spatial due diligence tracking, and high-impact automated ad positioning.');
   const [productUrl, setProductUrl] = useState<string>('https://ventureaipro.co');
   const [selectedTheme, setSelectedTheme] = useState<string>('enterprise-blue');
   const [targetAudienceInput, setTargetAudienceInput] = useState<string>('Venture Capitalists, Angel Investors, and Tech Founders');
@@ -216,8 +216,8 @@ export default function App() {
   const [zoomScale, setZoomScale] = useState<number>(0.85);
 
   const [adSuite, setAdSuite] = useState<SEOOptimizedSuite>({
-    title: "TD Ventures OS - Where Trust Meets Speed",
-    metaDescription: "The definitive TD Ventures OS Sourcing engine designed for seed funds and growth networks. Automate visual multi-channel positioning and predictive cap auditing instantly.",
+    title: "TD Venture X - Where Trust Meets Speed",
+    metaDescription: "The definitive TD Venture X Sourcing engine designed for seed funds and growth networks. Automate visual multi-channel positioning and predictive cap auditing instantly.",
     focusKeywords: ["venture ai", "due diligence automation", "venture capital intelligence", "startup score prediction"],
     score: 95,
     recommendations: [
@@ -226,8 +226,8 @@ export default function App() {
     ],
     bannerAdCampaigns: {
       medium_rectangle: { id: "banner-mr", size: "Medium Rectangle", width: 300, height: 250, headline: "Where Trust Meets Speed", subheadline: "Perform due diligence in 15 minutes, not six weeks.", ctaText: "Analyze Pitch Deck", bgColor: "#0F172A", textColor: "#FFFFFF", accentColor: "#7C3AED", gradientStart: "#1E1B4B", gradientEnd: "#090514", patternType: "particles", targetAudience: "Venture Capitalists & Angel Investors", seoKeywords: ["due diligence pipeline"] },
-      leaderboard: { id: "banner-lb", size: "Leaderboard", width: 728, height: 90, headline: "TD Ventures OS — Autonomous Venture Intelligence Sourcing Portfolio", subheadline: "Auto-pilot analytics verifying maritime logs, legalSAFE sheets, and cashflows.", ctaText: "Start Campaign", bgColor: "#03080A", textColor: "#4ED0F5", accentColor: "#06B6D4", gradientStart: "#082F49", gradientEnd: "#020617", patternType: "circuit", targetAudience: "Fund managers & Serial Allocators", seoKeywords: ["predictive exit statistics"] },
-      wide_skyscraper: { id: "banner-ws", size: "Wide Skyscraper", width: 160, height: 600, headline: "TD Ventures OS Sourcing Deployed", subheadline: "Real-time vessel supply-chain tracking & cap table audits.", ctaText: "Deploy Now", bgColor: "#0A0502", textColor: "#ffffff", accentColor: "#22C55E", gradientStart: "#064E3B", gradientEnd: "#020804", patternType: "grid", targetAudience: "SME Businesses & CFOs", seoKeywords: ["self healing code debuggers"] }
+      leaderboard: { id: "banner-lb", size: "Leaderboard", width: 728, height: 90, headline: "TD Venture X — Autonomous Venture Intelligence Sourcing Portfolio", subheadline: "Auto-pilot analytics verifying maritime logs, legalSAFE sheets, and cashflows.", ctaText: "Start Campaign", bgColor: "#03080A", textColor: "#4ED0F5", accentColor: "#06B6D4", gradientStart: "#082F49", gradientEnd: "#020617", patternType: "circuit", targetAudience: "Fund managers & Serial Allocators", seoKeywords: ["predictive exit statistics"] },
+      wide_skyscraper: { id: "banner-ws", size: "Wide Skyscraper", width: 160, height: 600, headline: "TD Venture X Sourcing Deployed", subheadline: "Real-time vessel supply-chain tracking & cap table audits.", ctaText: "Deploy Now", bgColor: "#0A0502", textColor: "#ffffff", accentColor: "#22C55E", gradientStart: "#064E3B", gradientEnd: "#020804", patternType: "grid", targetAudience: "SME Businesses & CFOs", seoKeywords: ["self healing code debuggers"] }
     }
   });
 
@@ -279,7 +279,7 @@ export default function App() {
     ],
     investmentThesis: "High strategic conviction buy driven by real-world spatial demand, custom low-power silicon, and verified customer trials.",
     riskFactors: ["Dependency on satellite launch slots"],
-    recommendedSteps: ["Activate the TD Ventures OS Supply-Chain tracker module", "Initiate SAFE note builds"]
+    recommendedSteps: ["Activate the TD Venture X Supply-Chain tracker module", "Initiate SAFE note builds"]
   });
 
   const [dealFlow, setDealFlow] = useState<DealFlowItem[]>(INITIAL_DEAL_FLOW);
@@ -321,7 +321,7 @@ export default function App() {
   const ROLE_TABS = {
     founder: [
       { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, desc: 'Investor readiness & KPIs' },
-      { id: 'pitch_analyzer', name: 'TD Ventures OS Pitch Analyzer', icon: TrendingUp, desc: 'OCR upload and deep story check' },
+      { id: 'pitch_analyzer', name: 'TD Venture X Pitch Analyzer', icon: TrendingUp, desc: 'OCR upload and deep story check' },
       { id: 'gdocs_hub', name: 'Google Docs Workspace', icon: FileText, desc: 'Draft briefs and read documents' },
       { id: 'gslides_hub', name: 'Google Slides Workspace', icon: Presentation, desc: 'Draft and compile pitch decks' },
       { id: 'linkedin_intel', name: 'LinkedIn Company Intel', icon: Linkedin, desc: 'Headcounts & sourcing signals' },
@@ -338,9 +338,9 @@ export default function App() {
       { id: 'gslides_hub', name: 'Google Slides Workspace', icon: Presentation, desc: 'Draft and compile pitch decks' },
       { id: 'linkedin_intel', name: 'LinkedIn Company Intel', icon: Linkedin, desc: 'Headcounts & sourcing signals' },
       { id: 'due_diligence', name: 'Due Diligence Center', icon: ShieldAlert, desc: 'OCR due diligence reporter' },
-      { id: 'pitch_analyzer', name: 'TD Ventures OS Pitch Analyzer', icon: TrendingUp, desc: 'OCR upload and deep story check' },
+      { id: 'pitch_analyzer', name: 'TD Venture X Pitch Analyzer', icon: TrendingUp, desc: 'OCR upload and deep story check' },
       { id: 'forensic_ai', name: 'Forensic AI', icon: Search, desc: 'Fake data meters & anomalies scan' },
-      { id: 'prescriptive_ai', name: 'Prescriptive AI', icon: Flame, desc: 'TD Ventures OS smart recommendation lists' },
+      { id: 'prescriptive_ai', name: 'Prescriptive AI', icon: Flame, desc: 'TD Venture X smart recommendation lists' },
       { id: 'maritime_intel', name: 'Maritime Intelligence', icon: Anchor, desc: 'MarineTraffic API vessel tracks' }
     ],
     smb: [
@@ -508,7 +508,7 @@ export default function App() {
     setIsAnalyzingPitch(true);
     setAnalysisStep(0);
     setPitchResults(null);
-    addLog('Orchestrator', `Querying TD Ventures OS models to analyze unstructured data: ${uploadedFile.name}`);
+    addLog('Orchestrator', `Querying TD Venture X models to analyze unstructured data: ${uploadedFile.name}`);
 
     const interval = setInterval(() => {
       setAnalysisStep(prev => {
@@ -533,7 +533,7 @@ export default function App() {
       type: 'PDF'
     });
     setPitchResults(null);
-    triggerToast(`Selected ${dossier.name} preloaded file! Click Start Deep TD Ventures OS Analysis.`, 'info');
+    triggerToast(`Selected ${dossier.name} preloaded file! Click Start Deep TD Venture X Analysis.`, 'info');
   };
 
   const activeThemeObj = PREMIUM_THEMES.find(t => t.id === selectedTheme) || PREMIUM_THEMES[0];
@@ -577,10 +577,10 @@ export default function App() {
                 </div>
                 <div>
                   <span className="font-extrabold text-lg tracking-tight text-white block">
-                    TD Ventures OS
+                    TD Venture X
                   </span>
                   <span className="text-[10px] text-slate-500 block">
-                    TD Ventures OS-Powered Platform
+                    TD Venture X-Powered Platform
                   </span>
                 </div>
               </div>
@@ -792,10 +792,10 @@ export default function App() {
                   
                   <div className="relative z-10 space-y-4 max-w-2xl">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/40 border border-purple-500/20 text-purple-300 text-[10px] font-mono leading-none">
-                      <Sparkles className="w-3 h-3 animate-pulse" /> TD Ventures OS Sourcing Live Portal Protocol
+                      <Sparkles className="w-3 h-3 animate-pulse" /> TD Venture X Sourcing Live Portal Protocol
                     </div>
                     <h1 className="text-2xl md:text-4xl font-extrabold text-[#F8FAFC] tracking-tight leading-tight">
-                      TD Ventures OS — Where Trust <br />
+                      TD Venture X — Where Trust <br />
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
                         Meets Speed.
                       </span>
@@ -1486,7 +1486,7 @@ export default function App() {
                       <div className="flex gap-2 mt-2 justify-end col-span-2 md:col-span-1">
                         <button
                           onClick={() => {
-                            const text = `My startup scored ${pitchResults?.score || 87} on TD Ventures OS due diligence. How does yours compare?`;
+                            const text = `My startup scored ${pitchResults?.score || 87} on TD Venture X due diligence. How does yours compare?`;
                             const url = "https://tdventures-os.vercel.app";
                             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
                           }}
@@ -1497,7 +1497,7 @@ export default function App() {
                         </button>
                         <button
                           onClick={() => {
-                            const text = `My startup scored ${pitchResults?.score || 87} on TD Ventures OS due diligence. How does yours compare?`;
+                            const text = `My startup scored ${pitchResults?.score || 87} on TD Venture X due diligence. How does yours compare?`;
                             const url = "https://tdventures-os.vercel.app";
                             window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`, "_blank");
                           }}
