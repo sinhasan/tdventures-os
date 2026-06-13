@@ -1626,7 +1626,7 @@ export default function App() {
             <div className="p-4 rounded-xl border border-slate-800/80 bg-black/80 font-mono text-[10px] space-y-2 select-all">
               <div className="flex items-center justify-between border-b border-slate-900 pb-2">
                 <span className="text-slate-400 flex items-center gap-1.5"><Cpu className="text-purple-400 w-3.5 h-3.5" /> SYSTEM WATCHDOG TELEMETRY logs</span>
-                <span className="text-[10px] text-purple-400">Operator: os@tdventures.in</span>
+                <span className="text-[10px] text-purple-400">Operator: vx@tdventures.in</span>
               </div>
               <div className="space-y-1.5 max-h-36 overflow-y-auto">
                 {telemetryLogs.map(log => (
