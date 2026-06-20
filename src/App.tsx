@@ -666,7 +666,7 @@ export default function App() {
           {/* Sourcing footer widget */}
           <div className="p-4 border-t border-slate-800/60 bg-slate-950/40">
             <a
-            href="https://tdventures.in/pricing.html"
+            href="https://tdventure.vc/pricing.html"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full text-center py-2 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500          text-[11px] font-bold text-white shadow-lg shadow-purple-500/10 block"
@@ -812,7 +812,7 @@ export default function App() {
                         Launch Pitch Decryptor OCR
                       </button>
                       <a
-                        href="https://tdventures.in/pricing.html"
+                        href="https://tdventure.vc/pricing.html"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-4 py-2 border border-slate-750 bg-slate-900/60 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl inline-block"
@@ -1644,7 +1644,7 @@ export default function App() {
           <footer className="h-14 border-t border-slate-800/60 bg-[#020205] flex items-center justify-between px-6 text-[11px] text-slate-500 relative z-20">
            <span>Built For TD Ventures Law-Builder Ecosystem v5.0</span>
             <a
-             href="https://tdventures.in/contribute.html"
+             href="https://tdventure.vc/contribute.html"
              target="_blank"
             rel="noopener noreferrer"
             className="font-bold text-[#D4FF00] hover:text-[#E6FF66] transition-colors"
