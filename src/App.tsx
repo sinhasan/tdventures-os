@@ -215,6 +215,62 @@ export default function App() {
   };
 
 
+  type ConversionReviewResult = {
+    pitchDeckQuality: number;
+    fundraiseReadiness: number;
+    narrativeClarity: number;
+    investorFit: number;
+    riskLevel: 'Low' | 'Moderate' | 'High';
+    riskFlags: string[];
+    nextBestAction: string;
+    crmSummary: string;
+    generatedAt: string;
+  };
+
+  const [conversionReview, setConversionReview] = useState<ConversionReviewResult | null>(null);
+
+  const generateConversionReview = () => {
+    const p = conversionProfile;
+    const hasPitch = p.pitchSummary.trim().length > 60;
+    const hasTraction = p.tractionProof.trim().length > 40;
+    const hasRaise = p.raiseAmount.trim().length > 0;
+    const hasInvestor = p.targetInvestor.trim().length > 10;
+    const hasRisk = p.riskNotes.trim().length > 20;
+
+    const pitchDeckQuality = Math.min(94, 48 + (hasPitch ? 24 : 8) + (hasTraction ? 10 : 0) + (hasRaise ? 6 : 0));
+    const fundraiseReadiness = Math.min(92, 42 + (hasRaise ? 18 : 0) + (hasTraction ? 18 : 4) + (hasInvestor ? 10 : 0));
+    const narrativeClarity = Math.min(95, 45 + (hasPitch ? 28 : 10) + (p.sector ? 8 : 0) + (p.stage ? 6 : 0));
+    const investorFit = Math.min(93, 44 + (hasInvestor ? 24 : 8) + (p.sector ? 10 : 0) + (hasTraction ? 8 : 0));
+
+    const riskFlags = [
+      !hasTraction ? 'Traction proof needs stronger evidence' : '',
+      !hasRaise ? 'Raise amount is not clearly stated' : '',
+      !hasInvestor ? 'Target investor profile is too broad' : '',
+      hasRisk ? 'Founder has disclosed risks that need cleanup before investor handoff' : ''
+    ].filter(Boolean) as string[];
+
+    const riskLevel: 'Low' | 'Moderate' | 'High' = riskFlags.length >= 3 ? 'High' : riskFlags.length >= 1 ? 'Moderate' : 'Low';
+    const startup = p.startupName.trim() || 'This founder';
+    const nextBestAction = riskLevel === 'High'
+      ? 'Tighten proof, raise logic and investor targeting before Deal Desk handoff.'
+      : riskLevel === 'Moderate'
+        ? 'Clean evidence gaps and prepare a focused founder brief for investor outreach.'
+        : 'Move to Deal Desk with CRM-ready summary and investor shortlist.';
+
+    setConversionReview({
+      pitchDeckQuality,
+      fundraiseReadiness,
+      narrativeClarity,
+      investorFit,
+      riskLevel,
+      riskFlags: riskFlags.length ? riskFlags : ['No major frontend risk flag detected from current inputs'],
+      nextBestAction,
+      crmSummary: startup + ' is a ' + (p.stage || 'stage-not-set') + ' company in ' + (p.sector || 'sector-not-set') + '. Raise ask: ' + (p.raiseAmount || 'not stated') + '. Target investor: ' + (p.targetInvestor || 'not stated') + '. Recommended action: ' + nextBestAction,
+      generatedAt: new Date().toLocaleString()
+    });
+  };
+
+
   const [activeAlerts, setActiveAlerts] = useState(INITIAL_ALERTS);
   const [showAlertsDropdown, setShowAlertsDropdown] = useState<boolean>(false);
 
@@ -1033,6 +1089,50 @@ export default function App() {
                 {pitchResults && !isAnalyzingPitch && (
                   <div className="space-y-6 animate-fade-in w-full text-left" id="deep_analysis_dashboard_root">
                     
+                    {conversionReview && (
+                      <div className='mb-6 p-6 rounded-3xl border border-[#D4FF00]/30 bg-[#0c1222]/90 shadow-2xl'>
+                        <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5'>
+                          <div>
+                            <span className='text-[10px] font-mono uppercase tracking-[0.28em] text-[#D4FF00] font-bold'>Generated Founder Vault Review</span>
+                            <h2 className='text-2xl font-black text-white mt-2'>{conversionProfile.startupName || 'Founder'} Conversion Readiness</h2>
+                            <p className='text-xs text-slate-400 mt-1'>Generated locally from Founder Vault inputs. Backend/OpenAI integration comes later.</p>
+                          </div>
+                          <div className='px-4 py-3 rounded-2xl border border-slate-800 bg-slate-950/70'>
+                            <div className='text-[10px] uppercase tracking-wider text-slate-500 font-bold'>Risk Level</div>
+                            <div className={conversionReview.riskLevel === 'High' ? 'text-red-400 font-black' : conversionReview.riskLevel === 'Moderate' ? 'text-yellow-300 font-black' : 'text-[#D4FF00] font-black'}>{conversionReview.riskLevel}</div>
+                          </div>
+                        </div>
+                        <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5'>
+                          {[
+                            ['Pitch Deck Quality', conversionReview.pitchDeckQuality],
+                            ['Fundraise Readiness', conversionReview.fundraiseReadiness],
+                            ['Narrative Clarity', conversionReview.narrativeClarity],
+                            ['Investor Fit', conversionReview.investorFit]
+                          ].map(([label, score]) => (
+                            <div key={label as string} className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
+                              <div className='text-[10px] uppercase tracking-wider text-slate-500 font-bold'>{label}</div>
+                              <div className='text-2xl font-black text-white mt-1'>{score}<span className='text-xs text-slate-500'>/100</span></div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+                          <div className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
+                            <div className='text-[10px] uppercase tracking-wider text-[#D4FF00] font-bold mb-2'>Next Best Action</div>
+                            <p className='text-sm text-slate-200 leading-relaxed'>{conversionReview.nextBestAction}</p>
+                          </div>
+                          <div className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
+                            <div className='text-[10px] uppercase tracking-wider text-[#D4FF00] font-bold mb-2'>Risk Flags</div>
+                            <ul className='space-y-1 text-sm text-slate-300'>{conversionReview.riskFlags.map((flag) => <li key={flag}>- {flag}</li>)}</ul>
+                          </div>
+                        </div>
+                        <div className='mt-4 p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
+                          <div className='text-[10px] uppercase tracking-wider text-[#D4FF00] font-bold mb-2'>CRM-ready Summary</div>
+                          <p className='text-sm text-slate-200 leading-relaxed'>{conversionReview.crmSummary}</p>
+                          <div className='text-[10px] text-slate-500 mt-3'>Generated: {conversionReview.generatedAt}</div>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Header: Conversion Readiness Report Title & BUY indicator */}
                     <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
                       <div>
@@ -1567,7 +1667,7 @@ export default function App() {
                       ['Raise', conversionProfile.raiseAmount || 'Not set'],
                       ['Investor', conversionProfile.targetInvestor || 'Not set']
                     ].map(([label, value]) => (<div key={label} className='p-3 rounded-xl border border-slate-800 bg-slate-950/70'><div className='text-[10px] uppercase text-slate-500 font-bold'>{label}</div><div className='text-sm text-white font-semibold mt-1'>{value}</div></div>))}
-                    <button onClick={() => { setActiveTab('pitch_analyzer'); triggerToast('Founder vault ready for Conversion Review.', 'success'); }} className='w-full px-4 py-3 rounded-xl bg-[#D4FF00] text-slate-950 text-sm font-black hover:scale-[1.01] transition-transform'>Run Conversion Review</button>
+                    <button onClick={() => { generateConversionReview(); setActiveTab('pitch_analyzer'); triggerToast('Conversion Review generated from Founder Vault.', 'success'); }} className='w-full px-4 py-3 rounded-xl bg-[#D4FF00] text-slate-950 text-sm font-black hover:scale-[1.01] transition-transform'>Run Conversion Review</button>
                     <button onClick={() => setActiveTab('dashboard')} className='w-full px-4 py-3 rounded-xl border border-slate-800 text-slate-300 text-sm font-bold hover:bg-slate-900'>Back to Dashboard</button>
                   </div>
                 </div>
