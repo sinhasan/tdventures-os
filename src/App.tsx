@@ -199,7 +199,7 @@ export default function App() {
   const [showAlertsDropdown, setShowAlertsDropdown] = useState<boolean>(false);
 
   const [telemetryLogs, setTelemetryLogs] = useState<Array<{ id: string; time: string; source: string; text: string }>>([
-    { id: '1', time: '09:33:47', source: 'Orchestrator', text: 'TD Venture X sandbox engine ready. Auth synced with TD Ventures.' },
+    { id: '1', time: '09:33:47', source: 'Orchestrator', text: 'Conversion workspace ready. Visibility and CRM handoff stays isolated.' },
     { id: '2', time: '09:34:02', source: 'Self-Healing', text: 'Restored zero-knowledge SSL gateway channels.' }
   ]);
 
@@ -208,7 +208,7 @@ export default function App() {
   const [customApiKey, setCustomApiKey] = useState<string>('');
 
   const [productName, setProductName] = useState<string>('TD Venture X');
-  const [productDesc, setProductDesc] = useState<string>('TD Venture X -Powered Venture Intelligence Platform optimizing startup sourcing, spatial due diligence tracking, and high-impact automated ad positioning.');
+  const [productDesc, setProductDesc] = useState<string>('TD Ventures Conversion OS - pitch deck quality, fundraise readiness, investor fit, risk signals, and CRM-ready conversion summaries.');
   const [productUrl, setProductUrl] = useState<string>('https://ventureaipro.co');
   const [selectedTheme, setSelectedTheme] = useState<string>('enterprise-blue');
   const [targetAudienceInput, setTargetAudienceInput] = useState<string>('Venture Capitalists, Angel Investors, and Tech Founders');
@@ -216,7 +216,7 @@ export default function App() {
   const [zoomScale, setZoomScale] = useState<number>(0.85);
 
   const [adSuite, setAdSuite] = useState<SEOOptimizedSuite>({
-    title: "TD Venture X - Where Trust Meets Speed",
+    title: "TD Ventures Conversion OS - From interest to investor-ready action",
     metaDescription: "The definitive TD Venture X Sourcing engine designed for seed funds and growth networks. Automate visual multi-channel positioning and predictive cap auditing instantly.",
     focusKeywords: ["venture ai", "due diligence automation", "venture capital intelligence", "startup score prediction"],
     score: 95,
@@ -260,7 +260,7 @@ export default function App() {
     companyName: "Enigma Spatial Logistics",
     overallScore: 89,
     confidenceLevel: 94,
-    valuationRange: "$12.5M - $16.0M Valuation Range",
+    valuationRange: "$12.5M - $16.0M Suggested Raise Band",
     fundingRecommendation: "Seed Stage Buy",
     executiveSummary: "Enigma Spatial Logistics represents a high-potential hardware-to-cloud integrator. Their core competitive moat centers on their custom low-power satellite network telemetry chips, bypassing legacy localized RF dependencies. Automated financial audits reveal solid early customer pilot metrics.",
     marketAnalysis: {
@@ -320,15 +320,15 @@ export default function App() {
 
   const ROLE_TABS = {
     founder: [
-      { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, desc: 'Investor readiness & KPIs' },
-      { id: 'pitch_analyzer', name: 'TD Venture X Pitch Analyzer', icon: TrendingUp, desc: 'OCR upload and deep story check' },
+      { id: 'dashboard', name: 'Conversion Dashboard', icon: LayoutDashboard, desc: 'Pitch quality and investor fit' },
+      { id: 'pitch_analyzer', name: 'Pitch Deck Quality', icon: TrendingUp, desc: 'Deck score to investor-ready action' },
       { id: 'gdocs_hub', name: 'Google Docs Workspace', icon: FileText, desc: 'Draft briefs and read documents' },
       { id: 'gslides_hub', name: 'Google Slides Workspace', icon: Presentation, desc: 'Draft and compile pitch decks' },
       { id: 'linkedin_intel', name: 'LinkedIn Company Intel', icon: Linkedin, desc: 'Headcounts & sourcing signals' },
-      { id: 'fundraising_intel', name: 'Fundraising Intelligence', icon: Coins, desc: 'Strategic seed pools builder' },
-      { id: 'validation', name: 'Startup Validation', icon: CheckCircle2, desc: 'Niche PMF milestones scores' },
-      { id: 'matchmaking', name: 'Investor Matchmaking', icon: Target, desc: 'Automated investor introductions' },
-      { id: 'docs_hub', name: 'Documents Hub', icon: FileText, desc: 'Symmetric encryptions safe folder' },
+      { id: 'fundraising_intel', name: 'Fundraise Readiness', icon: Coins, desc: 'Round readiness and ask logic' },
+      { id: 'validation', name: 'Narrative Clarity', icon: CheckCircle2, desc: 'Problem, market and proof strength' },
+      { id: 'matchmaking', name: 'Investor Fit', icon: Target, desc: 'Right investor, right stage' },
+      { id: 'docs_hub', name: 'Startup Vault', icon: FileText, desc: 'Deck, memo and evidence room' },
       { id: 'forecasting', name: 'Financial Forecasting', icon: BarChart3, desc: 'Revenues scalability hologram' }
     ],
     investor: [
@@ -338,7 +338,7 @@ export default function App() {
       { id: 'gslides_hub', name: 'Google Slides Workspace', icon: Presentation, desc: 'Draft and compile pitch decks' },
       { id: 'linkedin_intel', name: 'LinkedIn Company Intel', icon: Linkedin, desc: 'Headcounts & sourcing signals' },
       { id: 'due_diligence', name: 'Due Diligence Center', icon: ShieldAlert, desc: 'OCR due diligence reporter' },
-      { id: 'pitch_analyzer', name: 'TD Venture X Pitch Analyzer', icon: TrendingUp, desc: 'OCR upload and deep story check' },
+      { id: 'pitch_analyzer', name: 'Pitch Deck Quality', icon: TrendingUp, desc: 'Deck score to investor-ready action' },
       { id: 'forensic_ai', name: 'Forensic AI', icon: Search, desc: 'Fake data meters & anomalies scan' },
       { id: 'prescriptive_ai', name: 'Prescriptive AI', icon: Flame, desc: 'TD Venture X smart recommendation lists' },
       { id: 'maritime_intel', name: 'Maritime Intelligence', icon: Anchor, desc: 'MarineTraffic API vessel tracks' }
@@ -580,7 +580,7 @@ export default function App() {
                     TD Venture X
                   </span>
                   <span className="text-[10px] text-slate-500 block">
-                    TD Venture X-Powered Platform
+                    Conversion Workspace
                   </span>
                 </div>
               </div>
@@ -801,7 +801,7 @@ export default function App() {
                       </span>
                     </h1>
                     <p className="text-sm text-[#CBD5E1] leading-relaxed">
-                      Ecosystem combines Venture intelligence, startup valuation filters, due diligence OCR, MarineTraffic asset trackers, and forensic cashbook audits on a zero-knowledge sandboxed workspace.
+                      Conversion turns a founder's pitch, proof, traction and raise narrative into investor-ready signals, next best actions, and CRM-ready summaries for the TD Ventures Deal Desk.
                     </p>
 
                     <div className="pt-2 flex flex-wrap gap-3">
@@ -809,7 +809,7 @@ export default function App() {
                         onClick={() => setActiveTab('pitch_analyzer')}
                         className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-[0.98]"
                       >
-                        Launch Pitch Decryptor OCR
+                        Analyze Conversion Readiness
                       </button>
                       <a
                         href="https://tdventure.vc/pricing.html"
@@ -817,7 +817,7 @@ export default function App() {
                         rel="noopener noreferrer"
                         className="px-4 py-2 border border-slate-750 bg-slate-900/60 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl inline-block"
                        >
-                       Upgrade License Space
+                       Open Visibility Marketplace
                       </a>
                     </div>
                   </div>
@@ -829,12 +829,12 @@ export default function App() {
                     <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider font-bold block">Ecosystem Metric Indices</span>
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                       {[
-                        { title: 'Investor Readiness', val: '92/100', text: 'Top 5% of Logistics Class', color: 'text-purple-400' },
-                        { title: 'Pitch Deck Score', val: '88/100', text: 'Problem validated properly', color: 'text-indigo-400' },
-                        { title: 'Telemetry Risk Score', val: '14%', text: 'Minimal supply dependencies', color: 'text-[#22C55E]' },
-                        { title: 'Startup growth Scale', val: '$12.5M', text: 'Year 5 predicted target', color: 'text-cyan-400' },
-                        { title: 'Burn Rate quotient', val: '$120k/mo', text: '24-Month cash runway', color: 'text-amber-500' },
-                        { title: 'Market Opportunity', val: '89/100', text: 'SaaS take rates synchronized', color: 'text-[#F59E0B]' }
+                        { title: 'Pitch Deck Quality', val: '78/100', text: 'Story clear; proof gaps remain', color: 'text-purple-400' },
+                        { title: 'Narrative Clarity', val: '84/100', text: 'Problem and ICP are sharp', color: 'text-indigo-400' },
+                        { title: 'Risk Signals', val: 'Moderate', text: 'Traction proof needs backup', color: 'text-[#22C55E]' },
+                        { title: 'Investor Fit', val: '72/100', text: 'Seed SaaS funds preferred', color: 'text-cyan-400' },
+                        { title: 'Fundraise Readiness', val: '69/100', text: 'Ask logic needs tightening', color: 'text-amber-500' },
+                        { title: 'CRM Summary', val: 'Ready', text: 'Can move to Deal Desk', color: 'text-[#F59E0B]' }
                       ].map((item, idx) => (
                         <div key={idx} className="p-4 rounded-xl border border-slate-800 bg-[#0c1222]/70 space-y-1.5 hover:border-slate-700 transition-colors">
                           <span className="text-[9px] text-slate-400 block font-bold leading-none">{item.title}</span>
@@ -903,9 +903,9 @@ export default function App() {
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
                       <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                       <span className="text-[#D4AF37] text-base">🎯</span> OS Pitch Deck Analyzer Center
+                       <span className="text-[#D4AF37] text-base">🎯</span> Conversion Pitch Deck Quality Center
                       </h3>
-                      <p className="text-xs text-slate-400">Upload slides (PDF, DOCX, PPTX, TXT, or Image OCR) to evaluate PMF metrics and risk anomalies.</p>
+                      <p className="text-xs text-slate-400">Upload a deck or brief to score pitch quality, fundraise readiness, narrative clarity, investor fit, risk signals and next best action.</p>
                     </div>
 
                     <div className="flex gap-2 text-xs">
@@ -921,7 +921,7 @@ export default function App() {
 
                   {/* Preloaded Targets selector for Demo */}
                   <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
-                    <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest block font-bold">Fast-Forward Demo Dossier Dataset:</span>
+                    <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest block font-bold">Demo Startup Dataset:</span>
                     <div className="flex gap-2 flex-wrap">
                       {STATIC_PITCH_DOSSIERS.map(doss => (
                         <button 
@@ -994,7 +994,7 @@ export default function App() {
                         disabled={isAnalyzingPitch}
                         className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md flex items-center gap-1.5 mx-auto disabled:opacity-50"
                       >
-                        <Play className="w-3.5 h-3.5" /> Start Deep OS Analysis
+                        <Play className="w-3.5 h-3.5" /> Run Conversion Analysis
                       </button>
                     )}
                   </div>
@@ -1006,11 +1006,11 @@ export default function App() {
                     <div className="w-10 h-10 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto" />
                     
                     <div className="max-w-md mx-auto space-y-2">
-                      <span className="text-xs text-purple-400 font-mono font-bold block uppercase tracking-widest">Running neural ocr parser scans:</span>
+                      <span className="text-xs text-purple-400 font-mono font-bold block uppercase tracking-widest">Running conversion analysis:</span>
                       <p className="text-[11px] text-slate-400 italic">
-                        {analysisStep === 0 && "Reading slide deck metadata and raw character arrays..."}
-                        {analysisStep === 1 && "Cross-referencing cap tables, team listings, and risk anomalies..."}
-                        {analysisStep === 2 && "Synthesizing ultimate exit probability index and ad campaigns overlays..."}
+                        {analysisStep === 0 && "Reading pitch deck structure, story flow and proof points..."}
+                        {analysisStep === 1 && "Checking fundraise readiness, investor fit and risk signals..."}
+                        {analysisStep === 2 && "Preparing next best action and CRM-ready founder summary..."}
                       </p>
                     </div>
                   </div>
@@ -1019,11 +1019,11 @@ export default function App() {
                 {pitchResults && !isAnalyzingPitch && (
                   <div className="space-y-6 animate-fade-in w-full text-left" id="deep_analysis_dashboard_root">
                     
-                    {/* Header: Deep Analysis Report Title & BUY indicator */}
+                    {/* Header: Conversion Readiness Report Title & BUY indicator */}
                     <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
                       <div>
                         <h3 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
-                          <Sparkles className="text-purple-400 w-5 h-5 animate-spin" style={{ animationDuration: '3s' }} /> Deep Analysis Report
+                          <Sparkles className="text-purple-400 w-5 h-5 animate-spin" style={{ animationDuration: '3s' }} /> Conversion Readiness Report
                         </h3>
                         <p className="text-xs text-slate-400 font-mono mt-1">
                           Neural OCR Audit • Ingestion hash synced • File: {uploadedFile?.name || 'AI Augmented Venture Capital.pdf'}
@@ -1035,10 +1035,10 @@ export default function App() {
                         <div className="px-5 py-1.5 rounded-full border-2 border-blue-500/80 bg-blue-500/10 text-blue-400 text-xs font-black tracking-widest uppercase hover:bg-blue-500/20 cursor-help transition-all" title="Investment Decision Recommendation: STRONG BUY">
                           BUY
                         </div>
-                        {/* Overall Score */}
+                        {/* Conversion Score */}
                         <div className="text-right">
                           <span className="text-2xl font-black text-[#22C55E] block leading-none">87%</span>
-                          <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider mt-0.5">Overall Score</span>
+                          <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider mt-0.5">Conversion Score</span>
                         </div>
                       </div>
                     </div>
@@ -1058,69 +1058,69 @@ export default function App() {
                       {/* Confidence score */}
                       <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80 text-center space-y-1 hover:border-purple-500/30 transition-all cursor-pointer group">
                         <span className="text-2xl font-black text-purple-400 block group-hover:scale-105 transition-transform">92%</span>
-                        <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Confidence Level</span>
+                        <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Investor Confidence</span>
                       </div>
 
                       {/* Valuation range */}
                       <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80 text-center space-y-1 hover:border-[#22C55E]/30 transition-all cursor-pointer group">
                         <span className="text-2xl font-black text-[#22C55E] block group-hover:scale-105 transition-transform">$15M - $25M</span>
-                        <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Valuation Range</span>
+                        <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Suggested Raise Band</span>
                       </div>
 
-                      {/* Funding Recommendation */}
+                      {/* Next Best Action */}
                       <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80 text-center space-y-1 hover:border-blue-500/30 transition-all cursor-pointer group">
                         <span className="text-2xl font-black text-blue-400 block group-hover:scale-105 transition-transform">$3M - $5M Series A</span>
-                        <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Funding Recommendation</span>
+                        <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Next Best Action</span>
                       </div>
 
                     </div>
 
-                    {/* Key Metrics Analysis section */}
+                    {/* Conversion Signal Analysis section */}
                     <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 space-y-6">
                       
                       <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                         <BarChart3 className="w-5 h-5 text-blue-400" />
-                        <h4 className="text-sm font-black text-white uppercase tracking-wider">Key Metrics Analysis</h4>
+                        <h4 className="text-sm font-black text-white uppercase tracking-wider">Conversion Signal Analysis</h4>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         
-                        {/* Team Strength item card */}
+                        {/* Founder-Market Fit item card */}
                         <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 flex items-center justify-between gap-3 hover:border-slate-700 transition-colors cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                               <Globe2 className="w-4 h-4 text-emerald-400" />
                             </div>
                             <div>
-                              <h5 className="text-xs font-bold text-white leading-tight">Team Strength</h5>
+                              <h5 className="text-xs font-bold text-white leading-tight">Founder-Market Fit</h5>
                               <span className="text-[9px] text-slate-500 leading-none">Leadership & execution capability</span>
                             </div>
                           </div>
                           <span className="text-sm font-black text-emerald-400">92%</span>
                         </div>
 
-                        {/* Financial Health card */}
+                        {/* Fundraise Readiness card */}
                         <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 flex items-center justify-between gap-3 hover:border-slate-700 transition-colors cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
                               <Coins className="w-4 h-4 text-blue-400" />
                             </div>
                             <div>
-                              <h5 className="text-xs font-bold text-white leading-tight">Financial Health</h5>
+                              <h5 className="text-xs font-bold text-white leading-tight">Fundraise Readiness</h5>
                               <span className="text-[9px] text-slate-500 leading-none">Revenue model & sustainability</span>
                             </div>
                           </div>
                           <span className="text-sm font-black text-blue-400">78%</span>
                         </div>
 
-                        {/* Scalability card */}
+                        {/* Investor Fit card */}
                         <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 flex items-center justify-between gap-3 hover:border-slate-700 transition-colors cursor-pointer">
                           <div className="flex items-center gap-3">
                             <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
                               <TrendingUp className="w-4 h-4 text-purple-400" />
                             </div>
                             <div>
-                              <h5 className="text-xs font-bold text-white leading-tight">Scalability</h5>
+                              <h5 className="text-xs font-bold text-white leading-tight">Investor Fit</h5>
                               <span className="text-[9px] text-slate-500 leading-none">Growth potential & market reach</span>
                             </div>
                           </div>
@@ -1132,7 +1132,7 @@ export default function App() {
                       {/* Side inline rows below key metrics */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-slate-800/60 text-xs">
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-350 block uppercase tracking-wider">Market Analysis</span>
+                          <span className="text-[10px] font-bold text-slate-350 block uppercase tracking-wider">Narrative Clarity</span>
                           <p className="text-xs text-slate-400 font-medium">
                             $50B TAM, $12B SAM
                           </p>
@@ -1140,7 +1140,7 @@ export default function App() {
                         </div>
 
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-350 block uppercase tracking-wider">Revenue Model</span>
+                          <span className="text-[10px] font-bold text-slate-350 block uppercase tracking-wider">CRM Summary</span>
                           <p className="text-xs text-slate-400 font-medium">
                             SaaS + Transaction fees
                           </p>
@@ -1446,7 +1446,7 @@ export default function App() {
                         }}
                         className="py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-blue-500/10"
                       >
-                        <Download className="w-4 h-4 text-slate-200" /> Download Full Report
+                        <Download className="w-4 h-4 text-slate-200" /> Download Conversion Report
                       </button>
 
                       <button 
@@ -1457,7 +1457,7 @@ export default function App() {
                         }}
                         className="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-emerald-500/10"
                       >
-                        <Share2 className="w-4 h-4 text-slate-200" /> Share Analysis
+                        <Share2 className="w-4 h-4 text-slate-200" /> Share Founder Brief
                       </button>
 
                       <button 
@@ -1468,7 +1468,7 @@ export default function App() {
                         }}
                         className="py-3 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-purple-500/10"
                       >
-                        <Users className="w-4 h-4 text-slate-200" /> Schedule Investor Meeting
+                        <Users className="w-4 h-4 text-slate-200" /> Send To Deal Desk
                       </button>
 
                       <button 
@@ -1479,7 +1479,7 @@ export default function App() {
                         }}
                         className="py-3 px-4 rounded-xl bg-[#F59E0B] hover:bg-[#D97706] text-white font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-[#F59E0B]/10"
                       >
-                        <Layers className="w-4 h-4 text-slate-200" /> Get OS Optimization Plan
+                        <Layers className="w-4 h-4 text-slate-200" /> Get Next Best Action
                       </button>
 
                       {/* Twitter & LinkedIn share buttons added here */}
@@ -1564,7 +1564,7 @@ export default function App() {
                   <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                     <h4 className="text-xs font-extrabold text-purple-400 uppercase tracking-widest">{ddReport.companyName} Executive Summary</h4>
                     <p className="text-xs text-slate-350 leading-relaxed font-sans">{ddReport.executiveSummary}</p>
-                    <p className="text-[11px] text-slate-500 font-mono pt-2">Overall Score: <strong className="text-white font-sans">{ddReport.overallScore}/100</strong> • Funding recommendation: <strong className="text-green-400 font-sans">{ddReport.fundingRecommendation}</strong></p>
+                    <p className="text-[11px] text-slate-500 font-mono pt-2">Conversion Score: <strong className="text-white font-sans">{ddReport.overallScore}/100</strong> • Funding recommendation: <strong className="text-green-400 font-sans">{ddReport.fundingRecommendation}</strong></p>
                   </div>
                 )}
               </div>
