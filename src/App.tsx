@@ -188,6 +188,33 @@ export default function App() {
     }
   }, [activeTab]);
 
+  type ConversionProfile = {
+    startupName: string;
+    sector: string;
+    stage: string;
+    raiseAmount: string;
+    pitchSummary: string;
+    tractionProof: string;
+    riskNotes: string;
+    targetInvestor: string;
+  };
+
+  const [conversionProfile, setConversionProfile] = useState<ConversionProfile>({
+    startupName: '',
+    sector: '',
+    stage: 'Seed',
+    raiseAmount: '',
+    pitchSummary: '',
+    tractionProof: '',
+    riskNotes: '',
+    targetInvestor: 'Sector-focused seed funds'
+  });
+
+  const updateConversionProfile = (field: keyof ConversionProfile, value: string) => {
+    setConversionProfile(prev => ({ ...prev, [field]: value }));
+  };
+
+
   const [activeAlerts, setActiveAlerts] = useState(INITIAL_ALERTS);
   const [showAlertsDropdown, setShowAlertsDropdown] = useState<boolean>(false);
 
@@ -315,21 +342,21 @@ export default function App() {
     founder: [
       { id: 'dashboard', name: 'Conversion Dashboard', icon: LayoutDashboard, desc: 'Pitch quality and investor fit' },
       { id: 'pitch_analyzer', name: 'Pitch Deck Quality', icon: TrendingUp, desc: 'Deck score to investor-ready action' },
-      { id: 'gdocs_hub', name: 'Google Docs Workspace', icon: FileText, desc: 'Draft briefs and read documents' },
-      { id: 'gslides_hub', name: 'Google Slides Workspace', icon: Presentation, desc: 'Draft and compile pitch decks' },
-      { id: 'linkedin_intel', name: 'LinkedIn Company Intel', icon: Linkedin, desc: 'Headcounts & sourcing signals' },
+      { id: 'gdocs_hub', name: 'Founder Briefs', icon: FileText, desc: 'Founder notes and CRM handoff' },
+      { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof room' },
+      { id: 'linkedin_intel', name: 'Investor Signal Research', icon: Linkedin, desc: 'Market and investor context' },
       { id: 'fundraising_intel', name: 'Fundraise Readiness', icon: Coins, desc: 'Round readiness and ask logic' },
       { id: 'validation', name: 'Narrative Clarity', icon: CheckCircle2, desc: 'Problem, market and proof strength' },
       { id: 'matchmaking', name: 'Investor Fit', icon: Target, desc: 'Right investor, right stage' },
-      { id: 'docs_hub', name: 'Startup Vault', icon: FileText, desc: 'Deck, memo and evidence room' },
+      { id: 'docs_hub', name: 'Founder Vault', icon: FileText, desc: 'Deck, proof and investor handoff' },
       { id: 'forecasting', name: 'Financial Forecasting', icon: BarChart3, desc: 'Revenues scalability hologram' }
     ],
     investor: [
       { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, desc: 'Active deal queue & ROI counters' },
       { id: 'deal_flow', name: 'Deal Flow Intelligence', icon: Workflow, desc: 'Pipelines Kanban deal matrix' },
-      { id: 'gdocs_hub', name: 'Google Docs Workspace', icon: FileText, desc: 'Draft briefs and read documents' },
-      { id: 'gslides_hub', name: 'Google Slides Workspace', icon: Presentation, desc: 'Draft and compile pitch decks' },
-      { id: 'linkedin_intel', name: 'LinkedIn Company Intel', icon: Linkedin, desc: 'Headcounts & sourcing signals' },
+      { id: 'gdocs_hub', name: 'Founder Briefs', icon: FileText, desc: 'Founder notes and CRM handoff' },
+      { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof room' },
+      { id: 'linkedin_intel', name: 'Investor Signal Research', icon: Linkedin, desc: 'Market and investor context' },
       { id: 'due_diligence', name: 'Due Diligence Center', icon: ShieldAlert, desc: 'OCR due diligence reporter' },
       { id: 'pitch_analyzer', name: 'Pitch Deck Quality', icon: TrendingUp, desc: 'Deck score to investor-ready action' },
       { id: 'forensic_ai', name: 'Forensic AI', icon: Search, desc: 'Fake data meters & anomalies scan' },
@@ -339,9 +366,9 @@ export default function App() {
     smb: [
       { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, desc: 'Supply logistics health & alert cues' },
       { id: 'automation', name: 'Business Automation', icon: Cpu, desc: 'Invoice scans & vendor scorecards' },
-      { id: 'gdocs_hub', name: 'Google Docs Workspace', icon: FileText, desc: 'Draft briefs and read documents' },
-      { id: 'gslides_hub', name: 'Google Slides Workspace', icon: Presentation, desc: 'Draft and compile pitch decks' },
-      { id: 'linkedin_intel', name: 'LinkedIn Company Intel', icon: Linkedin, desc: 'Headcounts & sourcing signals' },
+      { id: 'gdocs_hub', name: 'Founder Briefs', icon: FileText, desc: 'Founder notes and CRM handoff' },
+      { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof room' },
+      { id: 'linkedin_intel', name: 'Investor Signal Research', icon: Linkedin, desc: 'Market and investor context' },
       { id: 'supply_chain', name: 'Supply Chain Intelligence', icon: Globe2, desc: 'Shipment latencies and port logs' },
       { id: 'maritime_intel', name: 'Maritime Intelligence', icon: Anchor, desc: 'Real-time cargo vessel metrics' },
       { id: 'forecasting', name: 'Forecasting', icon: BarChart3, desc: 'Demand curves & shipment metrics' },
@@ -1508,7 +1535,44 @@ export default function App() {
             {activeTab === 'fundraising_intel' && <FundraisingIntelTab addLog={addLog} triggerToast={triggerToast} />}
             {activeTab === 'validation' && <StartupValidationTab addLog={addLog} triggerToast={triggerToast} />}
             {activeTab === 'matchmaking' && <InvestorMatchmakingTab triggerToast={triggerToast} addLog={addLog} />}
-            {activeTab === 'docs_hub' && <DocumentsHubTab addLog={addLog} triggerToast={triggerToast} />}
+            {activeTab === 'docs_hub' && (
+              <div className='space-y-6 animate-in fade-in duration-500'>
+                <div className='p-6 rounded-3xl border border-slate-800 bg-[#0c1222]/90 shadow-2xl'>
+                  <span className='text-[10px] font-mono uppercase tracking-[0.28em] text-[#D4FF00] font-bold'>Founder Vault</span>
+                  <h2 className='text-2xl md:text-3xl font-black text-white mt-2'>Founder Conversion Input</h2>
+                  <p className='text-sm text-slate-400 mt-2 max-w-3xl'>Capture the core founder material before running Conversion Review: deck story, traction proof, raise ask, risk notes and ideal investor type.</p>
+                </div>
+
+                <div className='grid grid-cols-1 xl:grid-cols-3 gap-6'>
+                  <div className='xl:col-span-2 p-6 rounded-3xl border border-slate-800 bg-slate-950/60 space-y-5'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                      <label className='space-y-2'><span className='text-xs font-bold text-slate-300 uppercase'>Startup name</span><input className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.startupName} onChange={(e) => updateConversionProfile('startupName', e.target.value)} placeholder='Example: InspectZero' /></label>
+                      <label className='space-y-2'><span className='text-xs font-bold text-slate-300 uppercase'>Sector</span><input className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.sector} onChange={(e) => updateConversionProfile('sector', e.target.value)} placeholder='AI, SaaS, Climate, Fintech...' /></label>
+                      <label className='space-y-2'><span className='text-xs font-bold text-slate-300 uppercase'>Stage</span><select className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.stage} onChange={(e) => updateConversionProfile('stage', e.target.value)}><option>Idea</option><option>MVP</option><option>Pre-seed</option><option>Seed</option><option>Series A</option></select></label>
+                      <label className='space-y-2'><span className='text-xs font-bold text-slate-300 uppercase'>Raise amount</span><input className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.raiseAmount} onChange={(e) => updateConversionProfile('raiseAmount', e.target.value)} placeholder='INR 1 Cr / USD 250K / etc.' /></label>
+                    </div>
+
+                    <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Pitch summary</span><textarea className='w-full min-h-[110px] rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.pitchSummary} onChange={(e) => updateConversionProfile('pitchSummary', e.target.value)} placeholder='What does the startup do, for whom, and why now?' /></label>
+                    <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Traction proof</span><textarea className='w-full min-h-[90px] rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.tractionProof} onChange={(e) => updateConversionProfile('tractionProof', e.target.value)} placeholder='Revenue, pilots, users, LOIs, demos, partnerships, growth signals...' /></label>
+                    <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Risk notes</span><textarea className='w-full min-h-[90px] rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.riskNotes} onChange={(e) => updateConversionProfile('riskNotes', e.target.value)} placeholder='Missing proof, weak GTM, pricing risk, founder gaps, compliance, competition...' /></label>
+                    <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Target investor type</span><input className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.targetInvestor} onChange={(e) => updateConversionProfile('targetInvestor', e.target.value)} placeholder='Sector-focused seed funds, angels, family offices...' /></label>
+                  </div>
+
+                  <div className='p-6 rounded-3xl border border-slate-800 bg-[#080d1a] h-fit space-y-4'>
+                    <div><span className='text-[10px] font-mono uppercase tracking-[0.24em] text-[#D4FF00] font-bold'>Vault Snapshot</span><h3 className='text-xl font-black text-white mt-2'>Ready for review</h3></div>
+                    {[
+                      ['Startup', conversionProfile.startupName || 'Not set'],
+                      ['Sector', conversionProfile.sector || 'Not set'],
+                      ['Stage', conversionProfile.stage || 'Not set'],
+                      ['Raise', conversionProfile.raiseAmount || 'Not set'],
+                      ['Investor', conversionProfile.targetInvestor || 'Not set']
+                    ].map(([label, value]) => (<div key={label} className='p-3 rounded-xl border border-slate-800 bg-slate-950/70'><div className='text-[10px] uppercase text-slate-500 font-bold'>{label}</div><div className='text-sm text-white font-semibold mt-1'>{value}</div></div>))}
+                    <button onClick={() => { setActiveTab('pitch_analyzer'); triggerToast('Founder vault ready for Conversion Review.', 'success'); }} className='w-full px-4 py-3 rounded-xl bg-[#D4FF00] text-slate-950 text-sm font-black hover:scale-[1.01] transition-transform'>Run Conversion Review</button>
+                    <button onClick={() => setActiveTab('dashboard')} className='w-full px-4 py-3 rounded-xl border border-slate-800 text-slate-300 text-sm font-bold hover:bg-slate-900'>Back to Dashboard</button>
+                  </div>
+                </div>
+              </div>
+            )}
             {activeTab === 'forecasting' && <FinancialForecastingTab addLog={addLog} />}
             {activeTab === 'deal_flow' && <DealFlowTab dealFlow={dealFlow} setDealFlow={setDealFlow} addLog={addLog} triggerToast={triggerToast} />}
             {activeTab === 'automation' && <BusinessAutomationTab addLog={addLog} triggerToast={triggerToast} />}
