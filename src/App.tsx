@@ -141,14 +141,7 @@ const INITIAL_DEAL_FLOW: DealFlowItem[] = [
 ];
 
 export default function App() {
-  const [themeMode, setThemeMode] = useState<'light' | 'dark'>(() => {
-    try {
-      const saved = localStorage.getItem('venture_ai_theme');
-      return (saved === 'light' || saved === 'dark') ? saved : 'dark';
-    } catch {
-      return 'dark';
-    }
-  });
+  const [themeMode] = useState<'light' | 'dark'>('dark');
   const [role, setRole] = useState<'founder' | 'investor' | 'smb' | 'admin'>(() => {
     try {
       const saved = localStorage.getItem('venture_ai_role');
@@ -714,30 +707,11 @@ export default function App() {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* Theme toggle button */}
-              <button 
-                onClick={() => {
-                  const newTheme = themeMode === 'dark' ? 'light' : 'dark';
-                  setThemeMode(newTheme);
-                  addLog('Orchestrator', `Manually toggled display environment setting to: ${newTheme.toUpperCase()} MODE`);
-                  triggerToast(`Switched display matrix to ${newTheme === 'dark' ? 'Dark' : 'Light'} theme`, 'success');
-                }}
-                className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
-                title="Toggle Light / Dark theme"
-                id="theme_toggle_btn"
-              >
-                {themeMode === 'dark' ? (
-                  <>
-                    <Sun className="w-4 h-4 text-amber-500 animate-pulse" />
-                    <span className="text-[10px] font-bold hidden sm:inline">Light Mode</span>
-                  </>
-                ) : (
-                  <>
-                    <Moon className="w-4 h-4 text-indigo-400" />
-                    <span className="text-[10px] font-bold hidden sm:inline">Dark Mode</span>
-                  </>
-                )}
-              </button>
+              {/* Dark mode locked for Bloomberg-style Conversion workspace */}
+              <div className='p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 flex items-center gap-1.5 shadow-sm' title='Dark mode locked'>
+                <Moon className='w-4 h-4 text-[#D4FF00]' />
+                <span className='text-[10px] font-bold hidden sm:inline'>Dark Command Mode</span>
+              </div>
 
               {/* Notification smart dropdown */}
               <div className="relative">
