@@ -101,8 +101,8 @@ aside button[class*="bg-gradient-to-r"] .text-purple-400 {
 
 /* Pitch Analyzer Cards - Light/Dark readable */
 .pitch-analyzer-container .bg-slate-950,
-.pitch-analyzer-container .bg-\[#0c1222\],
-.pitch-analyzer-container .bg-\[#080d1a\] {
+ .pitch-analyzer-container [class*="bg-[#0c1222]"],
+ .pitch-analyzer-container [class*="bg-[#080d1a]"] {
   background-color: #1E293B !important;
   border-color: #334155 !important;
 }
@@ -130,144 +130,9 @@ aside button[class*="bg-gradient-to-r"] .text-purple-400 {
   background: linear-gradient(135deg, var(--color-td-green) 0%, var(--color-td-green-light) 100%);
 }
 
-/* LIGHT THEME OVERRIDES SYSTEM */
-.light-theme {
-  --color-slate-900: #F8FAFC;
-  --color-slate-950: #FFFFFF;
-  color-scheme: light;
-}
+/* Light theme removed: Conversion workspace is locked to Dark Command Mode. */
 
-.light-theme [class*="bg-[#0F172A]"],
-.light-theme [class*="bg-[#0c1222]"],
-.light-theme [class*="bg-[#090e1a]"],
-.light-theme [class*="bg-[#090f1a]"],
-.light-theme [class*="bg-[#080d1a]"],
-.light-theme [class*="bg-[#080d19]"],
-.light-theme [class*="bg-[#080c14]"],
-.light-theme [class*="bg-[#111122]"],
-.light-theme [class*="bg-slate-950"],
-.light-theme [class*="bg-slate-900"],
-.light-theme .bg-slate-950,
-.light-theme .bg-slate-900 {
-  background-color: #FFFFFF !important;
-  background-image: none !important;
-}
 
-/* Specific interactive alpha elements */
-.light-theme [class*="bg-[#0F172A]/70"],
-.light-theme [class*="bg-[#0F172A]/80"],
-.light-theme [class*="bg-[#0F172A]/90"],
-.light-theme [class*="bg-[#0c1222]/80"],
-.light-theme [class*="bg-slate-950/60"] {
-  background-color: #FFFFFF !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-}
-
-.light-theme [class*="bg-[#0F172A]/40"],
-.light-theme [class*="bg-[#0F172A]/30"],
-.light-theme [class*="bg-slate-950/40"] {
-  background-color: #F1F5F9 !important;
-}
-
-/* Light mode borders */
-.light-theme [class*="border-slate-800"],
-.light-theme [class*="border-slate-850"],
-.light-theme [class*="border-slate-700"],
-.light-theme [class*="border-slate-750"] {
-  border-color: #E2E8F0 !important;
-}
-
-/* Light mode text colors */
-.light-theme .text-white:not(button, button *, a, a *, [class*="bg-purple"], [class*="bg-blue"], [class*="bg-indigo"], [class*="bg-emerald"], [class*="bg-rose"], [class*="bg-red"], [class*="bg-emerald"], .bg-purple-600, .bg-blue-600, .bg-indigo-600, .bg-emerald-600, .bg-purple-500, .bg-blue-500, .bg-indigo-500, .bg-[#7C3AED], .bg-[#9333EA]),
-.light-theme [class*="text-white"]:not(button, button *, a, a *, [class*="bg-purple"], [class*="bg-blue"], [class*="bg-indigo"], [class*="bg-emerald"], [class*="bg-rose"], [class*="bg-red"], [class*="bg-emerald"], .bg-purple-600, .bg-blue-600, .bg-indigo-600, .bg-emerald-600, .bg-purple-500, .bg-blue-500, .bg-indigo-500, .bg-[#7C3AED], .bg-[#9333EA]),
-.light-theme [class*="text-[#F8FAFC]"]:not(button, button *, a, a *, [class*="bg-purple"], [class*="bg-blue"], [class*="bg-indigo"], [class*="bg-emerald"], [class*="bg-rose"], [class*="bg-red"], [class*="bg-emerald"], .bg-purple-600, .bg-blue-600, .bg-indigo-600, .bg-emerald-600, .bg-purple-500, .bg-blue-500, .bg-indigo-500, .bg-[#7C3AED], .bg-[#9333EA]),
-.light-theme h1,
-.light-theme h2,
-.light-theme h3,
-.light-theme h4,
-.light-theme h5,
-.light-theme h6 {
-  color: #0F172A !important;
-}
-
-/* Maintain crisp white text inside colored backgrounds and button controls even in Light Mode */
-.light-theme button,
-.light-theme button *,
-.light-theme a.text-white,
-.light-theme a [class*="text-white"],
-.light-theme [class*="bg-purple"] *,
-.light-theme [class*="bg-blue"] *,
-.light-theme [class*="bg-indigo"] *,
-.light-theme [class*="bg-emerald"] *,
-.light-theme [class*="bg-[#7C3AED]"] *,
-.light-theme [class*="bg-[#9333EA]"] * {
-  --color-slate-100: #FFFFFF;
-  --color-slate-200: #E2E8F0;
-}
-
-.light-theme .bg-purple-600,
-.light-theme .bg-purple-500,
-.light-theme .bg-blue-600,
-.light-theme .bg-[#7C3AED],
-.light-theme .bg-[#9333EA],
-.light-theme .bg-indigo-600,
-.light-theme .bg-emerald-600 {
-  color: #FFFFFF !important;
-}
-
-.light-theme .bg-purple-600 *,
-.light-theme .bg-purple-500 *,
-.light-theme .bg-blue-600 *,
-.light-theme .bg-[#7C3AED] *,
-.light-theme .bg-[#9333EA] *,
-.light-theme .bg-indigo-600 *,
-.light-theme .bg-emerald-600 * {
-  color: #FFFFFF !important;
-}
-
-.light-theme .text-slate-200,
-.light-theme .text-slate-300,
-.light-theme [class*="text-[#CBD5E1]"],
-.light-theme [class*="text-slate-200"],
-.light-theme [class*="text-slate-300"] {
-  color: #334155 !important;
-}
-
-.light-theme .text-slate-400,
-.light-theme [class*="text-slate-400"] {
-  color: #475569 !important;
-}
-
-.light-theme .text-slate-500,
-.light-theme [class*="text-slate-500"] {
-  color: #64748B !important;
-}
-
-/* Form selectors & Inputs */
-.light-theme select,
-.light-theme input,
-.light-theme textarea {
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
-  border-color: #E2E8F0 !important;
-}
-
-.light-theme select option {
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
-}
-
-select {
-  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") !important;
-  background-position: calc(100% - 10px) center !important;
-  background-size: 16px !important;
-  background-repeat: no-repeat !important;
-  padding-right: 32px !important;
-}
-
-.light-theme select {
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%230F172A' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") !important;
-}
 
 /* Pitch Analyzer Specific Fix - Keep it readable */
 .space-y-6.animate-fade-in {
@@ -383,7 +248,7 @@ header .bg-slate-900 select {
 }
 /* Fix Investor Matchmaking Cards - Force White Text */
 .bg-slate-950\/60,
-.bg-\[#0c1222\]\/70,
+[class*="bg-[#0c1222]/70"],
 .border-slate-800 {
   color: #FFFFFF !important;
 }
