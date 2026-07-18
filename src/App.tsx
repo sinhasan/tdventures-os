@@ -1582,7 +1582,7 @@ export default function App() {
                         }}
                         className="py-3 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-purple-500/10"
                       >
-                        <Users className="w-4 h-4 text-slate-200" /> Send to Execute Deal Desk
+                        <Users className="w-4 h-4 text-slate-950" /> Send to Execute Deal Desk
                       </button>
 
                       <button 
