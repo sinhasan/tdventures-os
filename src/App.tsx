@@ -200,8 +200,8 @@ export default function App() {
   const [selectedModel, setSelectedModel] = useState<'owl' | 'qwen' | 'openai' | 'gemini' | 'deepseek'>('owl');
   const [customApiKey, setCustomApiKey] = useState<string>('');
 
-  const [productName, setProductName] = useState<string>('TD Venture X');
-  const [productDesc, setProductDesc] = useState<string>('TD Ventures Conversion OS - pitch deck quality, fundraise readiness, investor fit, risk signals, and CRM-ready conversion summaries.');
+  const [productName, setProductName] = useState<string>('TD Conversion OS');
+  const [productDesc, setProductDesc] = useState<string>('TD Conversion OS Conversion OS - pitch deck quality, fundraise readiness, investor fit, risk signals, and CRM-ready conversion summaries.');
   const [productUrl, setProductUrl] = useState<string>('https://ventureaipro.co');
   const [selectedTheme, setSelectedTheme] = useState<string>('enterprise-blue');
   const [targetAudienceInput, setTargetAudienceInput] = useState<string>('Venture Capitalists, Angel Investors, and Tech Founders');
@@ -209,8 +209,8 @@ export default function App() {
   const [zoomScale, setZoomScale] = useState<number>(0.85);
 
   const [adSuite, setAdSuite] = useState<SEOOptimizedSuite>({
-    title: "TD Ventures Conversion OS - From interest to investor-ready action",
-    metaDescription: "The definitive TD Venture X Sourcing engine designed for seed funds and growth networks. Automate visual multi-channel positioning and predictive cap auditing instantly.",
+    title: "TD Conversion OS - From interest to investor-ready action",
+    metaDescription: "The definitive TD Conversion OS Sourcing engine designed for seed funds and growth networks. Automate visual multi-channel positioning and predictive cap auditing instantly.",
     focusKeywords: ["venture ai", "due diligence automation", "venture capital intelligence", "startup score prediction"],
     score: 95,
     recommendations: [
@@ -219,8 +219,8 @@ export default function App() {
     ],
     bannerAdCampaigns: {
       medium_rectangle: { id: "banner-mr", size: "Medium Rectangle", width: 300, height: 250, headline: "Where Trust Meets Speed", subheadline: "Perform due diligence in 15 minutes, not six weeks.", ctaText: "Analyze Pitch Deck", bgColor: "#0F172A", textColor: "#FFFFFF", accentColor: "#7C3AED", gradientStart: "#1E1B4B", gradientEnd: "#090514", patternType: "particles", targetAudience: "Venture Capitalists & Angel Investors", seoKeywords: ["due diligence pipeline"] },
-      leaderboard: { id: "banner-lb", size: "Leaderboard", width: 728, height: 90, headline: "TD Venture X — Autonomous Venture Intelligence Sourcing Portfolio", subheadline: "Auto-pilot analytics verifying maritime logs, legalSAFE sheets, and cashflows.", ctaText: "Start Campaign", bgColor: "#03080A", textColor: "#4ED0F5", accentColor: "#06B6D4", gradientStart: "#082F49", gradientEnd: "#020617", patternType: "circuit", targetAudience: "Fund managers & Serial Allocators", seoKeywords: ["predictive exit statistics"] },
-      wide_skyscraper: { id: "banner-ws", size: "Wide Skyscraper", width: 160, height: 600, headline: "TD Venture X Sourcing Deployed", subheadline: "Real-time vessel supply-chain tracking & cap table audits.", ctaText: "Deploy Now", bgColor: "#0A0502", textColor: "#ffffff", accentColor: "#22C55E", gradientStart: "#064E3B", gradientEnd: "#020804", patternType: "grid", targetAudience: "SME Businesses & CFOs", seoKeywords: ["self healing code debuggers"] }
+      leaderboard: { id: "banner-lb", size: "Leaderboard", width: 728, height: 90, headline: "TD Conversion OS — Autonomous Venture Intelligence Sourcing Portfolio", subheadline: "Auto-pilot analytics verifying maritime logs, legalSAFE sheets, and cashflows.", ctaText: "Start Campaign", bgColor: "#03080A", textColor: "#4ED0F5", accentColor: "#06B6D4", gradientStart: "#082F49", gradientEnd: "#020617", patternType: "circuit", targetAudience: "Fund managers & Serial Allocators", seoKeywords: ["predictive exit statistics"] },
+      wide_skyscraper: { id: "banner-ws", size: "Wide Skyscraper", width: 160, height: 600, headline: "TD Conversion OS Sourcing Deployed", subheadline: "Real-time vessel supply-chain tracking & cap table audits.", ctaText: "Deploy Now", bgColor: "#0A0502", textColor: "#ffffff", accentColor: "#22C55E", gradientStart: "#064E3B", gradientEnd: "#020804", patternType: "grid", targetAudience: "SME Businesses & CFOs", seoKeywords: ["self healing code debuggers"] }
     }
   });
 
@@ -272,7 +272,7 @@ export default function App() {
     ],
     investmentThesis: "High strategic conviction buy driven by real-world spatial demand, custom low-power silicon, and verified customer trials.",
     riskFactors: ["Dependency on satellite launch slots"],
-    recommendedSteps: ["Activate the TD Venture X Supply-Chain tracker module", "Initiate SAFE note builds"]
+    recommendedSteps: ["Activate the TD Conversion OS Supply-Chain tracker module", "Initiate SAFE note builds"]
   });
 
   const [dealFlow, setDealFlow] = useState<DealFlowItem[]>(INITIAL_DEAL_FLOW);
@@ -333,7 +333,7 @@ export default function App() {
       { id: 'due_diligence', name: 'Due Diligence Center', icon: ShieldAlert, desc: 'OCR due diligence reporter' },
       { id: 'pitch_analyzer', name: 'Pitch Deck Quality', icon: TrendingUp, desc: 'Deck score to investor-ready action' },
       { id: 'forensic_ai', name: 'Forensic AI', icon: Search, desc: 'Fake data meters & anomalies scan' },
-      { id: 'prescriptive_ai', name: 'Prescriptive AI', icon: Flame, desc: 'TD Venture X smart recommendation lists' },
+      { id: 'prescriptive_ai', name: 'Prescriptive AI', icon: Flame, desc: 'TD Conversion OS smart recommendation lists' },
       { id: 'maritime_intel', name: 'Maritime Intelligence', icon: Anchor, desc: 'MarineTraffic API vessel tracks' }
     ],
     smb: [
@@ -501,7 +501,7 @@ export default function App() {
     setIsAnalyzingPitch(true);
     setAnalysisStep(0);
     setPitchResults(null);
-    addLog('Orchestrator', `Querying TD Venture X models to analyze unstructured data: ${uploadedFile.name}`);
+    addLog('Orchestrator', `Querying TD Conversion OS models to analyze unstructured data: ${uploadedFile.name}`);
 
     const interval = setInterval(() => {
       setAnalysisStep(prev => {
@@ -526,7 +526,7 @@ export default function App() {
       type: 'PDF'
     });
     setPitchResults(null);
-    triggerToast(`Selected ${dossier.name} preloaded file! Click Start Deep TD Venture X Analysis.`, 'info');
+    triggerToast(`Selected ${dossier.name} preloaded file! Click Start Deep TD Conversion OS Analysis.`, 'info');
   };
 
   const activeThemeObj = PREMIUM_THEMES.find(t => t.id === selectedTheme) || PREMIUM_THEMES[0];
@@ -570,7 +570,7 @@ export default function App() {
                 </div>
                 <div>
                   <span className="font-extrabold text-lg tracking-tight text-white block">
-                    TD Venture X
+                    TD Conversion OS
                   </span>
                   <span className="text-[10px] text-slate-500 block">
                     Conversion Workspace
@@ -579,14 +579,14 @@ export default function App() {
               </div>
             </div>
 
-            {/* User credentials panel (CEO TD Ventures, matching first image) */}
+            {/* User credentials panel (Conversion Operator, matching first image) */}
             <div className="p-4 mx-4 mt-4 rounded-2xl bg-[#090e1a]/80 border border-slate-800/60 flex items-center gap-3">
               <div className="relative w-10 h-10 rounded-full overflow-hidden border border-slate-700 bg-slate-800 flex items-center justify-center font-bold text-white uppercase text-xs">
                 TD
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#F8FAFC] block">CEO TD Ventures</span>
+                  <span className="text-xs font-bold text-[#F8FAFC] block">Conversion Operator</span>
                 </div>
                 <span className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded-full mt-1 ${
                   role === 'founder' ? 'bg-purple-500/10 text-purple-300 border border-purple-500/20' :
@@ -678,11 +678,11 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <span className="inline-block w-2 h-2 bg-[#22C55E] rounded-full animate-ping" />
                 <h2 className="font-extrabold text-[11px] text-[#F8FAFC] uppercase tracking-widest font-mono">
-                  LEADING INDICATORS
+                  CONVERSION SIGNALS
                 </h2>
               </div>
               <span className="text-[10px] text-slate-500 font-mono hidden sm:inline">
-                | API latency: 18ms (Buffer OK)
+                | Visibility → Conversion → Execution
               </span>
 
               {/* Quick Model Orchestrator switch */}
@@ -747,8 +747,8 @@ export default function App() {
 
               {/* Account Profile header indicator */}
               <div className="text-right hidden sm:block">
-                <span className="text-xs block text-[#F8FAFC] font-extrabold leading-tight">TD Ventures</span>
-                <span className="text-[9px] block text-purple-400 font-mono">The OS Builders</span>
+                <span className="text-xs block text-[#F8FAFC] font-extrabold leading-tight">TD Conversion OS</span>
+                <span className="text-[9px] block text-purple-400 font-mono">Investor-ready founder signals</span>
               </div>
             </div>
           </header>
@@ -766,16 +766,16 @@ export default function App() {
                   
                   <div className="relative z-10 space-y-4 max-w-2xl">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/40 border border-purple-500/20 text-purple-300 text-[10px] font-mono leading-none">
-                      <Sparkles className="w-3 h-3 animate-pulse" /> TD Venture X Sourcing Live Portal Protocol
+                      <Sparkles className="w-3 h-3 animate-pulse" /> TD Conversion OS Sourcing Live Portal Protocol
                     </div>
                     <h1 className="text-2xl md:text-4xl font-extrabold text-[#F8FAFC] tracking-tight leading-tight">
-                      TD Venture X — Where Trust <br />
+                      TD Conversion OS — Where Trust <br />
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
-                        Meets Speed.
+                        Into Investor-Ready Action.
                       </span>
                     </h1>
                     <p className="text-sm text-[#CBD5E1] leading-relaxed">
-                      Conversion turns a founder's pitch, proof, traction and raise narrative into investor-ready signals, next best actions, and CRM-ready summaries for the TD Ventures Deal Desk.
+                      Conversion turns a founder's pitch, proof, traction and raise narrative into investor-ready signals, next best actions, and CRM-ready summaries for the TD Conversion OS Deal Desk.
                     </p>
 
                     <div className="pt-2 flex flex-wrap gap-3">
@@ -783,7 +783,7 @@ export default function App() {
                         onClick={() => setActiveTab('pitch_analyzer')}
                         className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-[0.98]"
                       >
-                        Analyze Conversion Readiness
+                        Run Conversion Review
                       </button>
                       <a
                         href="https://tdventure.vc/pricing.html"
@@ -791,7 +791,7 @@ export default function App() {
                         rel="noopener noreferrer"
                         className="px-4 py-2 border border-slate-750 bg-slate-900/60 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl inline-block"
                        >
-                       Open Visibility Marketplace
+                       Open Founder Vault
                       </a>
                     </div>
                   </div>
@@ -800,15 +800,15 @@ export default function App() {
                 {/* Dashboard KPIs based on selected role */}
                 {role === 'founder' && (
                   <div className="space-y-4">
-                    <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider font-bold block">Ecosystem Metric Indices</span>
+                    <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider font-bold block">Founder Conversion Signals</span>
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                       {[
                         { title: 'Pitch Deck Quality', val: '78/100', text: 'Story clear; proof gaps remain', color: 'text-purple-400' },
-                        { title: 'Narrative Clarity', val: '84/100', text: 'Problem and ICP are sharp', color: 'text-indigo-400' },
-                        { title: 'Risk Signals', val: 'Moderate', text: 'Traction proof needs backup', color: 'text-[#22C55E]' },
-                        { title: 'Investor Fit', val: '72/100', text: 'Seed SaaS funds preferred', color: 'text-cyan-400' },
-                        { title: 'Fundraise Readiness', val: '69/100', text: 'Ask logic needs tightening', color: 'text-amber-500' },
-                        { title: 'CRM Summary', val: 'Ready', text: 'Can move to Deal Desk', color: 'text-[#F59E0B]' }
+                        { title: 'Narrative Clarity', val: '84/100', text: 'Problem and ICP are clear', color: 'text-indigo-400' },
+                        { title: 'Risk Signals', val: 'Moderate', text: 'Needs evidence cleanup', color: 'text-[#22C55E]' },
+                        { title: 'Investor Fit', val: '72/100', text: 'Best for seed-stage funds', color: 'text-cyan-400' },
+                        { title: 'Fundraise Readiness', val: '69/100', text: 'Round ask needs tightening', color: 'text-amber-500' },
+                        { title: 'CRM Summary', val: 'Ready', text: 'Ready for CRM handoff', color: 'text-[#F59E0B]' }
                       ].map((item, idx) => (
                         <div key={idx} className="p-4 rounded-xl border border-slate-800 bg-[#0c1222]/70 space-y-1.5 hover:border-slate-700 transition-colors">
                           <span className="text-[9px] text-slate-400 block font-bold leading-none">{item.title}</span>
@@ -860,10 +860,23 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Grid of helper chat side widgets */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <AIChatAssistantWidget addLog={addLog} triggerToast={triggerToast} />
-                  <AIVoiceCommandWidget addLog={addLog} triggerToast={triggerToast} />
+                {/* Conversion handoff strip */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80">
+                    <span className="text-[10px] font-mono uppercase text-[#D4FF00] tracking-wider font-bold">Input</span>
+                    <h3 className="text-sm font-black text-white mt-2">Deck + founder proof</h3>
+                    <p className="text-xs text-slate-400 mt-1">Upload pitch, traction notes, raise ask and evidence.</p>
+                  </div>
+                  <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80">
+                    <span className="text-[10px] font-mono uppercase text-[#D4FF00] tracking-wider font-bold">Analysis</span>
+                    <h3 className="text-sm font-black text-white mt-2">Conversion score</h3>
+                    <p className="text-xs text-slate-400 mt-1">Quality, readiness, narrative, investor fit and risk signals.</p>
+                  </div>
+                  <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80">
+                    <span className="text-[10px] font-mono uppercase text-[#D4FF00] tracking-wider font-bold">Output</span>
+                    <h3 className="text-sm font-black text-white mt-2">CRM-ready summary</h3>
+                    <p className="text-xs text-slate-400 mt-1">Clear next action for founder follow-up or Deal Desk handoff.</p>
+                  </div>
                 </div>
               </div>
             )}
@@ -1460,7 +1473,7 @@ export default function App() {
                       <div className="flex gap-2 mt-2 justify-end col-span-2 md:col-span-1">
                         <button
                           onClick={() => {
-                            const text = `My startup scored ${pitchResults?.score || 87} on TD Venture X due diligence. How does yours compare?`;
+                            const text = `My startup scored ${pitchResults?.score || 87} on TD Conversion OS due diligence. How does yours compare?`;
                             const url = "https://tdventures-os.vercel.app";
                             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
                           }}
@@ -1471,7 +1484,7 @@ export default function App() {
                         </button>
                         <button
                           onClick={() => {
-                            const text = `My startup scored ${pitchResults?.score || 87} on TD Venture X due diligence. How does yours compare?`;
+                            const text = `My startup scored ${pitchResults?.score || 87} on TD Conversion OS due diligence. How does yours compare?`;
                             const url = "https://tdventures-os.vercel.app";
                             window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`, "_blank");
                           }}
@@ -1616,7 +1629,7 @@ export default function App() {
           </div>
 
           <footer className="h-14 border-t border-slate-800/60 bg-[#020205] flex items-center justify-between px-6 text-[11px] text-slate-500 relative z-20">
-           <span>Built For TD Ventures Law-Builder Ecosystem v5.0</span>
+           <span>Built For TD Conversion OS Law-Builder Ecosystem v5.0</span>
             <a
              href="https://tdventure.vc/contribute.html"
              target="_blank"
@@ -1721,10 +1734,10 @@ export default function App() {
                   <p className="text-[11px] text-slate-400 leading-relaxed">Structured custom schemas, private cloud storage nodes, and fully private SOC2 network monitoring channels.</p>
                 </div>
                 <button 
-                  onClick={() => { triggerToast("Contact metrics forwarded to TD Ventures successfully!", "success"); setShowPricingModal(false); }}
+                  onClick={() => { triggerToast("Contact metrics forwarded to TD Conversion OS successfully!", "success"); setShowPricingModal(false); }}
                   className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-lg"
                 >
-                  Contact TD Ventures
+                  Contact TD Conversion OS
                 </button>
               </div>
 
