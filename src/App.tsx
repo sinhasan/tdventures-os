@@ -1583,7 +1583,6 @@ export default function App() {
                         className="py-3 px-4 rounded-xl bg-[#D4FF00] hover:bg-[#B7EF09] text-slate-950 font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-[#D4FF00]/20"
                       >
                         <Users className="w-4 h-4 text-slate-950" /> Send to Execute Deal Desk
-                        style={{ color: "#020617" }}
                       </button>
 
                       <button 
