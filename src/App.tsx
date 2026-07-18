@@ -137,7 +137,7 @@ const INITIAL_DEAL_FLOW: DealFlowItem[] = [
   { id: 'df-1', companyName: 'AlphaFlow Logistics', stage: 'Series A', sector: 'AI & Logistics', valuation: '$14.2M', askAmount: '$2.5M', agiScore: 94, riskLevel: 'Low', status: 'Strong Buy', lastUpdated: '2 mins ago' },
   { id: 'df-2', companyName: 'OceanPulse Shipping', stage: 'Seed', sector: 'Maritime Tech', valuation: '$8.5M', askAmount: '$1.2M', agiScore: 89, riskLevel: 'Medium', status: 'Buy', lastUpdated: '1 hour ago' },
   { id: 'df-3', companyName: 'Agronomix spatial', stage: 'Pre-Seed', sector: 'AgTech', valuation: '$4.1M', askAmount: '$600K', agiScore: 78, riskLevel: 'High', status: 'Hold', lastUpdated: '4 hours ago' },
-  { id: 'df-4', companyName: 'QuantumSentry Networks', stage: 'Series B', sector: 'Cybersecurity', valuation: '$42.0M', askAmount: '$8.0M', agiScore: 91, riskLevel: 'Low', status: 'Strong Buy', lastUpdated: '1 day ago' }
+  { id: 'df-4', companyName: 'InspectZero Insurance QA', stage: 'Series B', sector: 'Cybersecurity', valuation: '$42.0M', askAmount: '$8.0M', agiScore: 91, riskLevel: 'Low', status: 'Strong Buy', lastUpdated: '1 day ago' }
 ];
 
 export default function App() {
@@ -397,7 +397,7 @@ export default function App() {
   const ROLE_TABS = {
     founder: [
       { id: 'dashboard', name: 'Conversion Dashboard', icon: LayoutDashboard, desc: 'Pitch quality and investor fit' },
-      { id: 'pitch_analyzer', name: 'Pitch Deck Quality', icon: TrendingUp, desc: 'Deck score to investor-ready action' },
+      { id: 'pitch_analyzer', name: 'Conversion Review', icon: TrendingUp, desc: 'Signal review to investor-ready action' },
       { id: 'gdocs_hub', name: 'Founder Briefs', icon: FileText, desc: 'Founder notes and CRM handoff' },
       { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof room' },
       { id: 'linkedin_intel', name: 'Investor Signal Research', icon: Linkedin, desc: 'Market and investor context' },
@@ -413,8 +413,8 @@ export default function App() {
       { id: 'gdocs_hub', name: 'Founder Briefs', icon: FileText, desc: 'Founder notes and CRM handoff' },
       { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof room' },
       { id: 'linkedin_intel', name: 'Investor Signal Research', icon: Linkedin, desc: 'Market and investor context' },
-      { id: 'due_diligence', name: 'Due Diligence Center', icon: ShieldAlert, desc: 'OCR due diligence reporter' },
-      { id: 'pitch_analyzer', name: 'Pitch Deck Quality', icon: TrendingUp, desc: 'Deck score to investor-ready action' },
+      { id: 'due_diligence', name: 'Due Diligence Center', icon: ShieldAlert, desc: 'Conversion signal reporter' },
+      { id: 'pitch_analyzer', name: 'Conversion Review', icon: TrendingUp, desc: 'Signal review to investor-ready action' },
       { id: 'forensic_ai', name: 'Forensic AI', icon: Search, desc: 'Fake data meters & anomalies scan' },
       { id: 'prescriptive_ai', name: 'Prescriptive AI', icon: Flame, desc: 'TD Conversion OS smart recommendation lists' },
       { id: 'maritime_intel', name: 'Maritime Intelligence', icon: Anchor, desc: 'MarineTraffic API vessel tracks' }
@@ -543,7 +543,7 @@ export default function App() {
         type: fileObj.name.split('.').pop()?.toUpperCase() || 'PDF'
       });
       addLog('Telemetry Sentinel', `Unstructured file loaded: ${fileObj.name}. Ingestion sandbox active.`);
-      triggerToast('File uploaded! Ready for deep OCR study', 'success');
+      triggerToast('File uploaded! Ready for conversion signal review', 'success');
     }
   };
 
@@ -568,7 +568,7 @@ export default function App() {
         type: fileObj.name.split('.').pop()?.toUpperCase() || 'PDF'
       });
       addLog('Telemetry Sentinel', `Unstructured file loaded via drag-and-drop: ${fileObj.name}. Ingestion sandbox active.`);
-      triggerToast('File uploaded! Ready for deep OCR study', 'success');
+      triggerToast('File uploaded! Ready for conversion signal review', 'success');
     }
   };
 
@@ -584,7 +584,7 @@ export default function App() {
     setIsAnalyzingPitch(true);
     setAnalysisStep(0);
     setPitchResults(null);
-    addLog('Orchestrator', `Querying TD Conversion OS models to analyze unstructured data: ${uploadedFile.name}`);
+    addLog('Orchestrator', `Querying TD Conversion OS signal engine to analyze founder material: ${uploadedFile.name}`);
 
     const interval = setInterval(() => {
       setAnalysisStep(prev => {
@@ -593,7 +593,7 @@ export default function App() {
           setIsAnalyzingPitch(false);
           const match = STATIC_PITCH_DOSSIERS.find(x => x.name.toLowerCase().includes(uploadedFile.name.split('.')[0].toLowerCase())) || STATIC_PITCH_DOSSIERS[0];
           setPitchResults(match);
-          addLog('Self-Healing', `Compiled OCR due diligence study indices for ${match.name}`);
+          addLog('Self-Healing', `Compiled conversion signal indices for ${match.name}`);
           triggerToast(`Analysis complete for ${match.name}!`, 'success');
           return 2;
         }
@@ -770,17 +770,17 @@ export default function App() {
 
               {/* Quick Model Orchestrator switch */}
               <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 hidden lg:flex">
-                <span className="text-[9px] font-mono text-slate-400 uppercase">Gateway:</span>
+                <span className="text-[9px] font-mono text-slate-400 uppercase">AI Engine:</span>
                 <select 
                   value={selectedModel}
                   onChange={(e) => {
                     setSelectedModel(e.target.value as any);
-                    addLog('Orchestrator', `Manually routed processing gateway matrix directly to OpenRouter:${e.target.value}`);
-                    triggerToast(`Gateway routed to ${e.target.value.toUpperCase()}`, 'info');
+                    addLog('Orchestrator', `Manually routed conversion signal engine to:${e.target.value}`);
+                    triggerToast(`AI Engine routed to ${e.target.value.toUpperCase()}`, 'info');
                   }}
                   className="bg-transparent border-none text-[10px] font-mono text-purple-400 font-bold focus:outline-none focus:ring-0 cursor-pointer"
                 >
-                  <option value="owl">Owl Alpha</option>
+                  <option value="owl">Local Preview</option>
                   <option value="qwen">Qwen 2.5</option>
                   <option value="openai">GPT-4o Mini</option>
                   <option value="gemini">Gemini Flash</option>
@@ -886,7 +886,7 @@ export default function App() {
                     <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider font-bold block">Founder Conversion Signals</span>
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                       {[
-                        { title: 'Pitch Deck Quality', val: '78/100', text: 'Story clear; proof gaps remain', color: 'text-purple-400' },
+                        { title: 'Conversion Review', val: '78/100', text: 'Story clear; proof gaps remain', color: 'text-purple-400' },
                         { title: 'Narrative Clarity', val: '84/100', text: 'Problem and ICP are clear', color: 'text-indigo-400' },
                         { title: 'Risk Signals', val: 'Moderate', text: 'Needs evidence cleanup', color: 'text-[#22C55E]' },
                         { title: 'Investor Fit', val: '72/100', text: 'Best for seed-stage funds', color: 'text-cyan-400' },
@@ -911,7 +911,7 @@ export default function App() {
                         { title: 'Active Investment Deals', val: '18 Active Sourcing', text: '3 Seed Buy pipelines', color: 'text-purple-400' },
                         { title: 'Portfolio Value', val: '$245.8M Cap', text: 'Pristine assets verified', color: 'text-[#22C55E]' },
                         { title: 'Average OS Score', val: '91.5/100', text: 'Top quartile targets', color: 'text-cyan-400' },
-                        { title: 'Due Diligence Queue', val: '4 Pipelines', text: 'Awaiting OCR text load', color: 'text-[#F59E0B]' }
+                        { title: 'Due Diligence Queue', val: '4 Pipelines', text: 'Awaiting founder proof review', color: 'text-[#F59E0B]' }
                       ].map((item, idx) => (
                         <div key={idx} className="p-5 rounded-xl border border-slate-800 bg-[#0c1222]/70 space-y-1 hover:border-slate-700 transition-colors">
                           <span className="text-[10px] text-slate-400 block font-bold leading-none">{item.title}</span>
@@ -973,9 +973,9 @@ export default function App() {
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
                       <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                       <span className="text-[#D4AF37] text-base">🎯</span> Conversion Pitch Deck Quality Center
+                       <span className="text-[#D4AF37] text-base">🎯</span> Conversion Signal Engine
                       </h3>
-                      <p className="text-xs text-slate-400">Upload a deck or brief to score pitch quality, fundraise readiness, narrative clarity, investor fit, risk signals and next best action.</p>
+                      <p className="text-xs text-slate-400">Upload a deck or founder brief to read conversion signals: proof strength, narrative clarity, fundraise readiness, investor fit, risk signals and next best action.</p>
                     </div>
 
                     <div className="flex gap-2 text-xs">
@@ -991,7 +991,7 @@ export default function App() {
 
                   {/* Preloaded Targets selector for Demo */}
                   <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
-                    <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest block font-bold">Demo Startup Dataset:</span>
+                    <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest block font-bold">InspectZero Demo Dataset:</span>
                     <div className="flex gap-2 flex-wrap">
                       {STATIC_PITCH_DOSSIERS.map(doss => (
                         <button 
@@ -1051,7 +1051,7 @@ export default function App() {
                         <p className="text-xs font-bold text-slate-300">
                           {isDragging ? 'Drop your pitch deck here now!' : 'Drag & drop pitch deck here, or click to upload'}
                         </p>
-                        <p className="text-[10px] text-slate-500 font-mono">Accepts PDF, DOCX, TXT, PPTX & Images (Optical Character Recognition OCR)</p>
+                        <p className="text-[10px] text-slate-500 font-mono">Accepts PDF, DOCX, TXT, PPTX & Images (deck, brief and image-based founder evidence)</p>
                       </div>
                     )}
 
@@ -1104,7 +1104,7 @@ export default function App() {
                         </div>
                         <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5'>
                           {[
-                            ['Pitch Deck Quality', conversionReview.pitchDeckQuality],
+                            ['Conversion Review', conversionReview.pitchDeckQuality],
                             ['Fundraise Readiness', conversionReview.fundraiseReadiness],
                             ['Narrative Clarity', conversionReview.narrativeClarity],
                             ['Investor Fit', conversionReview.investorFit]
@@ -1140,7 +1140,7 @@ export default function App() {
                           <Sparkles className="text-purple-400 w-5 h-5 animate-spin" style={{ animationDuration: '3s' }} /> Conversion Readiness Report
                         </h3>
                         <p className="text-xs text-slate-400 font-mono mt-1">
-                          Neural OCR Audit • Ingestion hash synced • File: {uploadedFile?.name || 'AI Augmented Venture Capital.pdf'}
+                          Founder Vault Analysis • Conversion signals synced • File: {uploadedFile?.name || 'InspectZero_Investor_Readiness_Report.pdf'}
                         </p>
                       </div>
 
@@ -1162,7 +1162,7 @@ export default function App() {
                       <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500" />
                       <span className="text-[10px] font-mono tracking-widest uppercase text-blue-400 block font-black">Executive Summary</span>
                       <p className="text-xs md:text-sm text-slate-300 leading-relaxed font-sans font-medium">
-                        This pitch deck presents a compelling HealthTech startup with strong market positioning and experienced team. The OS analysis reveals solid fundamentals with some areas requiring attention for optimal investor appeal.
+                        This pitch deck presents a compelling AI inspection startup with strong market positioning and experienced team. The OS analysis reveals solid fundamentals with some areas requiring attention for optimal investor appeal.
                       </p>
                     </div>
 
@@ -1177,13 +1177,13 @@ export default function App() {
 
                       {/* Valuation range */}
                       <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80 text-center space-y-1 hover:border-[#22C55E]/30 transition-all cursor-pointer group">
-                        <span className="text-2xl font-black text-[#22C55E] block group-hover:scale-105 transition-transform">$15M - $25M</span>
+                        <span className="text-2xl font-black text-[#22C55E] block group-hover:scale-105 transition-transform">INR 80L - INR 1.5Cr</span>
                         <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Suggested Raise Band</span>
                       </div>
 
                       {/* Next Best Action */}
                       <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80 text-center space-y-1 hover:border-blue-500/30 transition-all cursor-pointer group">
-                        <span className="text-2xl font-black text-blue-400 block group-hover:scale-105 transition-transform">$3M - $5M Series A</span>
+                        <span className="text-2xl font-black text-blue-400 block group-hover:scale-105 transition-transform">INR 1Cr seed extension</span>
                         <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Next Best Action</span>
                       </div>
 
@@ -1248,9 +1248,9 @@ export default function App() {
                         <div className="space-y-1">
                           <span className="text-[10px] font-bold text-slate-350 block uppercase tracking-wider">Narrative Clarity</span>
                           <p className="text-xs text-slate-400 font-medium">
-                            $50B TAM, $12B SAM
+                            Large real estate, construction and insurance inspection market
                           </p>
-                          <span className="text-[9px] font-mono text-slate-500 block leading-none">Proprietary AI algorithms • Clinical partnerships</span>
+                          <span className="text-[9px] font-mono text-slate-500 block leading-none">Proprietary AI algorithms • Real estate, insurance and construction workflow partnerships</span>
                         </div>
 
                         <div className="space-y-1">
@@ -1353,7 +1353,7 @@ export default function App() {
                       {/* Quoted source section exact matching */}
                       <div className="p-4 rounded-xl bg-slate-950 border border-slate-850 font-serif text-slate-300 text-xs italic leading-relaxed relative pl-8">
                         <span className="absolute left-3 top-2 text-2xl font-black text-purple-500 font-mono">“</span>
-                        "Our AI-powered healthcare platform addresses the $50B chronic care management gap..."
+                        "Our AI-powered AI-powered inspection platform addresses the $50B manual inspection and reporting gap..."
                       </div>
 
                       {/* Analysis indicators sliders underneath */}
@@ -1504,17 +1504,17 @@ export default function App() {
                         
                         {/* Amber layout advice sentence */}
                         <div className="p-4 rounded-xl border border-amber-400/30 bg-amber-500/5 font-sans text-amber-300 text-xs font-semibold leading-relaxed">
-                          Strong team with proven healthcare AI technology addressing large market opportunity. Clear path to profitability with defensible moat through clinical partnerships and proprietary data.
+                          Strong team with proven inspection AI technology addressing large market opportunity. Clear path to profitability with defensible moat through real estate, insurance and construction workflow partnerships and proprietary data.
                         </div>
 
                         <div className="space-y-2 pt-2 text-xs">
                           <span className="text-[10px] uppercase font-mono tracking-widest text-[#cbd5e1] block font-bold">Key Risk Factors Detected:</span>
                           <ul className="space-y-1.5 font-medium text-slate-300">
                             <li className="flex items-start gap-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
-                              <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> Regulatory approval timeline uncertainty
+                              <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> Inspection accuracy and liability confidence must be proven
                             </li>
                             <li className="flex items-start gap-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
-                              <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> High customer acquisition costs in healthcare
+                              <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> Long enterprise sales cycles in real estate, insurance and construction
                             </li>
                             <li className="flex items-start gap-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
                               <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> Competitive pressure from established players
@@ -1533,7 +1533,7 @@ export default function App() {
                         <div className="space-y-2 text-xs font-medium">
                           {[
                             "Schedule management presentation",
-                            "Review clinical trial data",
+                            "Review inspection report samples and pilot proof",
                             "Conduct customer reference calls",
                             "Analyze competitive landscape",
                             "Evaluate regulatory pathway"
@@ -1582,7 +1582,7 @@ export default function App() {
                         }}
                         className="py-3 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-purple-500/10"
                       >
-                        <Users className="w-4 h-4 text-slate-200" /> Send To Deal Desk
+                        <Users className="w-4 h-4 text-slate-200" /> Send to Execute Deal Desk
                       </button>
 
                       <button 
@@ -1817,11 +1817,11 @@ export default function App() {
           <span>Dashboard</span>
         </button>
         <button 
-          onClick={() => { setActiveTab('pitch_analyzer'); triggerToast('Switched to OCR Analyzer', 'info'); }}
+          onClick={() => { setActiveTab('pitch_analyzer'); triggerToast('Switched to Conversion Review', 'info'); }}
           className={`flex flex-col items-center gap-1 text-[10px] ${activeTab === 'pitch_analyzer' ? 'text-purple-400' : 'text-slate-400'}`}
         >
          <span className="text-[#D4AF37] text-xl">🎯</span>
-          <span>OCR analyzer</span>
+          <span>Conversion review</span>
         </button>
         <select 
           value={
@@ -1942,7 +1942,7 @@ export default function App() {
 
 function DownloadReportModal({ addLog, triggerToast, onClose }: { addLog: Function, triggerToast: Function, onClose: () => void }) {
   const [progress, setProgress] = useState(0);
-  const [statusText, setStatusText] = useState('Aggregating OCR audit logs...');
+  const [statusText, setStatusText] = useState('Aggregating conversion signal logs...');
 
   useEffect(() => {
     const list = [
