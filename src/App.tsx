@@ -859,6 +859,23 @@ export default function App() {
                     </h1>
                     <p className="text-sm text-[#CBD5E1] leading-relaxed">
                       Conversion turns a founder's pitch, proof, traction and raise narrative into investor-ready signals, next best actions, and CRM-ready summaries for the TD Conversion OS Deal Desk.
+
+                      <div className="mt-5 rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
+                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                          <div>
+                            <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4FF00] font-black">CDB Signal Layer</p>
+                            <h3 className="text-lg font-black text-white mt-2">Stores intelligence, not documents.</h3>
+                            <p className="text-sm text-slate-400 mt-2 max-w-3xl">Conversion OS is the common intelligence layer that turns application data, founder updates, AI assessment, Deal Desk action and investor feedback into a lightweight CDB asset.</p>
+                          </div>
+                          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-[10px] uppercase tracking-wider font-black text-center">
+                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Application</span>
+                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-3 py-2 text-[#D4FF00]">Signals</span>
+                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Deal Desk</span>
+                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">CRM</span>
+                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Feedback</span>
+                          </div>
+                        </div>
+                      </div>
                     </p>
 
                     <div className="pt-2 flex flex-wrap gap-3">
