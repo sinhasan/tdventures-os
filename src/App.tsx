@@ -858,25 +858,24 @@ export default function App() {
                       </span>
                     </h1>
                     <p className="text-sm text-[#CBD5E1] leading-relaxed">
-                      Conversion turns a founder's pitch, proof, traction and raise narrative into investor-ready signals, next best actions, and CRM-ready summaries for the TD Conversion OS Deal Desk.
+                      Conversion turns a founder\x27s pitch, proof, traction and raise narrative into investor-ready signals, next best actions, and CRM-ready summaries for the TD Conversion OS Deal Desk.
+                    </p>
 
-                      <div className="mt-5 rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                          <div>
-                            <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4FF00] font-black">CDB Signal Layer</p>
-                            <h3 className="text-lg font-black text-white mt-2">Stores intelligence, not documents.</h3>
-                            <p className="text-sm text-slate-400 mt-2 max-w-3xl">Conversion OS is the common intelligence layer that turns application data, founder updates, AI assessment, Deal Desk action and investor feedback into a lightweight CDB asset.</p>
-                          </div>
-                          <div className="flex flex-wrap lg:flex-nowrap justify-start lg:justify-end gap-2 text-[10px] uppercase tracking-wider font-black text-center">
-                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-4 py-2 min-w-[92px] whitespace-nowrap text-slate-300">Apply</span>
-                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-4 py-2 min-w-[92px] whitespace-nowrap text-[#D4FF00]">Signals</span>
-                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-4 py-2 min-w-[92px] whitespace-nowrap text-slate-300">Deal Desk</span>
-                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-4 py-2 min-w-[92px] whitespace-nowrap text-slate-300">CRM</span>
-                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-4 py-2 min-w-[92px] whitespace-nowrap text-slate-300">Feedback</span>
-                          </div>
+                    <div className="mt-5 rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                      <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+                        <div className="min-w-0">
+                          <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4FF00] font-black">CDB Signal Layer</p>
+                          <p className="text-sm text-slate-300 mt-2"><span className="font-black text-white">Stores intelligence, not documents.</span> Application data, AI signals, Deal Desk action and investor feedback become the Common Intelligence DB.</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-wider font-black">
+                          <span className="rounded-lg border border-slate-800 bg-[#080D1A] px-4 py-2 whitespace-nowrap text-slate-300">Apply</span>
+                          <span className="rounded-lg border border-slate-800 bg-[#080D1A] px-4 py-2 whitespace-nowrap text-[#D4FF00]">Signals</span>
+                          <span className="rounded-lg border border-slate-800 bg-[#080D1A] px-4 py-2 whitespace-nowrap text-slate-300">Deal Desk</span>
+                          <span className="rounded-lg border border-slate-800 bg-[#080D1A] px-4 py-2 whitespace-nowrap text-slate-300">CRM</span>
+                          <span className="rounded-lg border border-slate-800 bg-[#080D1A] px-4 py-2 whitespace-nowrap text-slate-300">Feedback</span>
                         </div>
                       </div>
-                    </p>
+                    </div>
 
                     <div className="pt-2 flex flex-wrap gap-3">
                       <button 
