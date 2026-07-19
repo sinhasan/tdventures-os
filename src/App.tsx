@@ -867,12 +867,12 @@ export default function App() {
                             <h3 className="text-lg font-black text-white mt-2">Stores intelligence, not documents.</h3>
                             <p className="text-sm text-slate-400 mt-2 max-w-3xl">Conversion OS is the common intelligence layer that turns application data, founder updates, AI assessment, Deal Desk action and investor feedback into a lightweight CDB asset.</p>
                           </div>
-                          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-[10px] uppercase tracking-wider font-black text-center">
-                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Application</span>
-                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-3 py-2 text-[#D4FF00]">Signals</span>
-                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Deal Desk</span>
-                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">CRM</span>
-                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Feedback</span>
+                          <div className="flex flex-wrap lg:flex-nowrap justify-start lg:justify-end gap-2 text-[10px] uppercase tracking-wider font-black text-center">
+                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-4 py-2 min-w-[92px] whitespace-nowrap text-slate-300">Apply</span>
+                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-4 py-2 min-w-[92px] whitespace-nowrap text-[#D4FF00]">Signals</span>
+                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-4 py-2 min-w-[92px] whitespace-nowrap text-slate-300">Deal Desk</span>
+                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-4 py-2 min-w-[92px] whitespace-nowrap text-slate-300">CRM</span>
+                            <span className="rounded-xl border border-slate-800 bg-[#080D1A] px-4 py-2 min-w-[92px] whitespace-nowrap text-slate-300">Feedback</span>
                           </div>
                         </div>
                       </div>
