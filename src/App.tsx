@@ -1576,9 +1576,9 @@ export default function App() {
 
                       <button 
                         onClick={() => {
-                          addLog('Orchestrator', 'Opened OS-matching time slot selection matrix.');
-                          setActivePitchModal('schedule');
-                          triggerToast('Fetching available investor calendars...', 'info');
+                          addLog('Deal Desk', 'Created CRM-ready Execute Deal Desk handoff package.');
+                          setActiveTab('deal_desk_handoff');
+                          triggerToast('Execute Deal Desk handoff prepared.', 'success');
                         }}
                         className="py-3 px-4 rounded-xl bg-[#D4FF00] hover:bg-[#B7EF09] text-slate-950 font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-[#D4FF00]/20"
                       >
@@ -1629,6 +1629,27 @@ export default function App() {
             )}
 
             {/* 3. CONDITIONAL TABS REDIRECT FOR OTHER PAGES */}
+            {activeTab === 'deal_desk_handoff' && (
+              <div className="space-y-6 animate-in fade-in duration-500">
+                <div className="rounded-3xl border border-slate-800 bg-[#0B1220] p-6 shadow-2xl">
+                  <p className="text-[10px] uppercase tracking-[0.35em] text-[#D4FF00] font-black">Execute Deal Desk</p>
+                  <h2 className="text-3xl font-black text-white mt-2">CRM-ready handoff from Conversion Signal Engine</h2>
+                  <p className="text-sm text-slate-400 mt-3 max-w-3xl">This converts the intelligence report into an execution package for founder follow-up, IC review and CRM action.</p>
+                </div>
+                <div className="grid md:grid-cols-4 gap-4">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Startup</p><p className="text-lg font-black text-white mt-2">{conversionProfile.startupName || 'InspectZero Demo'}</p><p className="text-xs text-slate-500 mt-1">{conversionProfile.sector || 'AI Inspections'} · {conversionProfile.stage || 'Seed'}</p></div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Conversion Score</p><p className="text-3xl font-black text-[#D4FF00] mt-2">{pitchResults?.score || conversionReview?.pitchDeckQuality || 87}/100</p><p className="text-xs text-slate-500 mt-1">Signal quality for investor action</p></div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Risk Level</p><p className="text-lg font-black text-orange-300 mt-2">{conversionReview?.riskLevel || 'Moderate'}</p><p className="text-xs text-slate-500 mt-1">Needs proof-backed follow-up</p></div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Deal Desk Status</p><p className="text-lg font-black text-emerald-300 mt-2">Ready for review</p><p className="text-xs text-slate-500 mt-1">Prepared for CRM workflow</p></div>
+                </div>
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <div className="rounded-3xl border border-slate-800 bg-[#080D1A] p-6"><p className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-black">Founder / Startup Brief</p><h3 className="text-xl font-black text-white mt-2">CRM-ready summary</h3><p className="text-sm text-slate-300 leading-relaxed mt-4">{conversionReview?.crmSummary || ((conversionProfile.startupName || 'The startup') + ' is ready for Deal Desk review based on the current Conversion Signal Report. The next step is to validate proof, sharpen investor targeting and prepare follow-up actions.')}</p></div>
+                  <div className="rounded-3xl border border-slate-800 bg-[#080D1A] p-6"><p className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-black">IC Note & Follow-up</p><h3 className="text-xl font-black text-white mt-2">Next best action</h3><p className="text-sm text-slate-300 leading-relaxed mt-4">{conversionReview?.nextBestAction || 'Move this opportunity into Deal Desk review, validate traction proof, prepare founder follow-up questions and create an investor shortlist.'}</p><div className="mt-5 rounded-xl border border-slate-800 bg-slate-950 p-4 text-xs text-slate-300"><span className="font-black text-white">CRM action:</span> Create opportunity, attach Conversion Report and mark status as Deal Desk Review.</div></div>
+                </div>
+                <button onClick={() => setActiveTab('pitch_analyzer')} className="px-4 py-3 rounded-xl border border-slate-700 text-slate-300 text-xs font-black uppercase tracking-wider hover:bg-slate-900 transition-all">Back to Conversion Review</button>
+              </div>
+            )}
+
             {activeTab === 'gdocs_hub' && <GoogleDocsTab addLog={addLog} triggerToast={triggerToast} />}
             {activeTab === 'gslides_hub' && <GoogleSlidesTab addLog={addLog} triggerToast={triggerToast} />}
             {activeTab === 'linkedin_intel' && <LinkedInIntelTab addLog={addLog} triggerToast={triggerToast} />}
