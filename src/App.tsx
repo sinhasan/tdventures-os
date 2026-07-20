@@ -931,11 +931,36 @@ export default function App() {
                     ].map((src) => (
                       <div key={src.label} className={`p-4 rounded-xl border ${src.active ? 'border-[#22C55E]/40 bg-[#22C55E]/5' : 'border-slate-800 bg-slate-950/60'}`}>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-white">{src.label}</span>
+                          <span className="flex items-center gap-1.5">
+                            <span className={`w-1.5 h-1.5 rounded-full ${src.active ? 'bg-[#22C55E] animate-pulse' : 'bg-slate-700'}`} />
+                            <span className="text-xs font-bold text-white">{src.label}</span>
+                          </span>
                           <span className={`text-[9px] font-mono uppercase font-black ${src.active ? 'text-[#22C55E]' : 'text-slate-500'}`}>{src.status}</span>
                         </div>
                         <p className="text-[10px] text-slate-500 mt-2 font-mono truncate">{src.detail}</p>
                       </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* CDB Signal Path - visual only, no live wiring yet */}
+                <div className="p-4 rounded-2xl border border-slate-800 bg-[#0c1222]/60">
+                  <span className="text-[9px] font-mono uppercase tracking-[0.28em] text-slate-500 font-bold block mb-3">CDB Signal Path</span>
+                  <div className="flex items-center flex-wrap gap-2">
+                    {[
+                      { label: 'Founder Vault', active: !!(conversionProfile.startupName && conversionProfile.pitchSummary.trim().length > 40) },
+                      { label: 'Application', active: false },
+                      { label: 'Deck Evidence', active: !!uploadedFile },
+                      { label: 'CDB Signal', active: false },
+                      { label: 'Deal Desk', active: false }
+                    ].map((step, i, arr) => (
+                      <React.Fragment key={step.label}>
+                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] font-mono uppercase font-bold tracking-wide ${step.active ? 'border-[#D4FF00]/40 bg-[#D4FF00]/10 text-[#D4FF00]' : 'border-slate-800 bg-slate-950/60 text-slate-500'}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${step.active ? 'bg-[#D4FF00] animate-pulse' : 'bg-slate-700'}`} />
+                          {step.label}
+                        </div>
+                        {i < arr.length - 1 && <span className="text-slate-700 text-xs">&rarr;</span>}
+                      </React.Fragment>
                     ))}
                   </div>
                 </div>
