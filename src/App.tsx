@@ -843,11 +843,11 @@ export default function App() {
             {activeTab === 'dashboard' && (
               <div className="space-y-6 animate-fade-in">
                 {/* Mega Banner Hero statements */}
-                <div className="p-8 rounded-3xl border border-indigo-900/30 bg-gradient-to-br from-[#0F172A] via-[#0A0A16] to-[#04040a] relative overflow-hidden group shadow-2xl">
+                <div className="p-6 rounded-3xl border border-indigo-900/30 bg-gradient-to-br from-[#0F172A] via-[#0A0A16] to-[#04040a] relative overflow-hidden group shadow-2xl">
                   <div className="absolute inset-0 bg-[linear-gradient(rgba(124,58,237,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(124,58,237,0.03)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
                   <div className="absolute -right-24 -top-24 w-80 h-80 bg-gradient-to-tr from-purple-600/10 to-indigo-600/20 rounded-full blur-[80px] pointer-events-none" />
                   
-                  <div className="relative z-10 space-y-4 max-w-2xl">
+                  <div className="relative z-10 space-y-3">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/40 border border-purple-500/20 text-purple-300 text-[10px] font-mono leading-none">
                       <Sparkles className="w-3 h-3 animate-pulse" /> TD Conversion OS Sourcing Live Portal Protocol
                     </div>
@@ -857,30 +857,30 @@ export default function App() {
                         Into Investor-Ready Action.
                       </span>
                     </h1>
-                    <p className="text-sm text-[#CBD5E1] leading-relaxed">
+                    <p className="text-sm text-[#CBD5E1] leading-relaxed max-w-3xl">
                       Conversion turns a founder\x27s pitch, proof, traction and raise narrative into investor-ready signals, next best actions, and CRM-ready summaries for the TD Conversion OS Deal Desk.
                     </p>
 
-                    <div className="mt-5 rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
-                      <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+                    <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                      <div className="flex flex-col gap-3">
                         <div className="min-w-0">
-                          <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4FF00] font-black">CDB Signal Layer</p>
-                          <p className="text-sm text-slate-300 mt-2"><span className="font-black text-white">Stores intelligence, not documents.</span> Application data, AI signals, Deal Desk action and investor feedback become the Common Intelligence DB.</p>
+                          <p className="text-xs uppercase tracking-[0.2em] text-[#D4FF00] font-extrabold">CDB Signal Layer</p>
+                          <p className="text-sm text-slate-300 mt-1.5"><span className="font-black text-white">Stores intelligence, not documents.</span> Application data, AI signals, Deal Desk action and investor feedback become the Common Intelligence DB.</p>
                         </div>
-                        <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-wider font-black">
-                          <span className="rounded-lg border border-slate-800 bg-[#080D1A] px-4 py-2 whitespace-nowrap text-slate-300">Apply</span>
-                          <span className="rounded-lg border border-slate-800 bg-[#080D1A] px-4 py-2 whitespace-nowrap text-[#D4FF00]">Signals</span>
-                          <span className="rounded-lg border border-slate-800 bg-[#080D1A] px-4 py-2 whitespace-nowrap text-slate-300">Deal Desk</span>
-                          <span className="rounded-lg border border-slate-800 bg-[#080D1A] px-4 py-2 whitespace-nowrap text-slate-300">CRM</span>
-                          <span className="rounded-lg border border-slate-800 bg-[#080D1A] px-4 py-2 whitespace-nowrap text-slate-300">Feedback</span>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-[10px] uppercase tracking-wider font-black">
+                          <span className="flex items-center justify-center text-center rounded-lg border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Apply</span>
+                          <span className="flex items-center justify-center text-center rounded-lg border border-[#D4FF00]/30 bg-[#080D1A] px-3 py-2 text-[#D4FF00]">Signals</span>
+                          <span className="flex items-center justify-center text-center rounded-lg border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Deal Desk</span>
+                          <span className="flex items-center justify-center text-center rounded-lg border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">CRM</span>
+                          <span className="flex items-center justify-center text-center rounded-lg border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Feedback</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-2 flex flex-wrap gap-3">
+                    <div className="pt-1 flex flex-wrap gap-3">
                       <button 
                         onClick={() => setActiveTab('pitch_analyzer')}
-                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-[0.98]"
+                        className="px-4 py-2 bg-[#D4FF00] hover:bg-[#c2ec00] text-slate-950 font-black text-xs rounded-xl shadow-md transition-all active:scale-[0.98]"
                       >
                         Run Conversion Review
                       </button>
