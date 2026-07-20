@@ -896,6 +896,50 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Input Source Matrix - triangulation overview */}
+                <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80 space-y-4">
+                  <div>
+                    <span className="text-[10px] font-mono uppercase tracking-[0.28em] text-[#D4FF00] font-bold block">Input Source Matrix</span>
+                    <p className="text-xs text-slate-400 mt-1">Conversion Signal Engine triangulates these sources before producing a signal.</p>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                      {
+                        label: 'Founder Vault',
+                        status: (conversionProfile.startupName && conversionProfile.pitchSummary.trim().length > 40) ? 'Captured' : 'Not started',
+                        detail: (conversionProfile.startupName && conversionProfile.pitchSummary.trim().length > 40) ? conversionProfile.startupName : 'Fill in Founder Vault to begin',
+                        active: !!(conversionProfile.startupName && conversionProfile.pitchSummary.trim().length > 40)
+                      },
+                      {
+                        label: 'Pitch Deck',
+                        status: uploadedFile ? 'Uploaded' : 'Not uploaded',
+                        detail: uploadedFile ? uploadedFile.name : 'Deck analysis preview only',
+                        active: !!uploadedFile
+                      },
+                      {
+                        label: 'Staging Application',
+                        status: 'Mock preview',
+                        detail: 'Live application snapshot connects later',
+                        active: false
+                      },
+                      {
+                        label: 'CRM Feedback',
+                        status: 'Coming soon',
+                        detail: 'Investor feedback loop not yet connected',
+                        active: false
+                      }
+                    ].map((src) => (
+                      <div key={src.label} className={`p-4 rounded-xl border ${src.active ? 'border-[#22C55E]/40 bg-[#22C55E]/5' : 'border-slate-800 bg-slate-950/60'}`}>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-white">{src.label}</span>
+                          <span className={`text-[9px] font-mono uppercase font-black ${src.active ? 'text-[#22C55E]' : 'text-slate-500'}`}>{src.status}</span>
+                        </div>
+                        <p className="text-[10px] text-slate-500 mt-2 font-mono truncate">{src.detail}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Dashboard KPIs based on selected role */}
                 {role === 'founder' && (
                   <div className="space-y-4">
