@@ -280,6 +280,28 @@ export default function App() {
   ]);
 
   const [showPricingModal, setShowPricingModal] = useState<boolean>(false);
+  const [paymentRedirecting, setPaymentRedirecting] = useState<boolean>(false);
+
+  const openFounderPassCheckout = async () => {
+    if (paymentRedirecting) {
+      return;
+    }
+
+    setPaymentRedirecting(true);
+
+    try {
+      const { startConversionFounderCheckout } = await import('./lib/conversionApi');
+      await startConversionFounderCheckout();
+    } catch (error) {
+      const message = error instanceof Error
+        ? error.message
+        : 'Could not open TD Venture secure checkout.';
+
+      triggerToast(message, 'error');
+      setPaymentRedirecting(false);
+    }
+  };
+
   const [selectedModel, setSelectedModel] = useState<'owl' | 'qwen' | 'openai' | 'gemini' | 'deepseek'>('owl');
   const [customApiKey, setCustomApiKey] = useState<string>('');
 
@@ -741,14 +763,14 @@ export default function App() {
 
           {/* Sourcing footer widget */}
           <div className="p-4 border-t border-slate-800/60 bg-slate-950/40">
-            <a
-            href="https://tdventure.vc/pricing.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full text-center py-2 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500          text-[11px] font-bold text-white shadow-lg shadow-purple-500/10 block"
+            <button
+              type="button"
+              onClick={openFounderPassCheckout}
+              disabled={paymentRedirecting}
+              className="w-full text-center py-2 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500          text-[11px] font-bold text-white shadow-lg shadow-purple-500/10 block disabled:cursor-wait disabled:opacity-60"
             >
-            View Pricing Plans
-           </a>
+              {paymentRedirecting ? 'Opening Secure Checkout…' : 'View Pricing Plans'}
+            </button>
           </div>
         </aside>
 
@@ -884,14 +906,14 @@ export default function App() {
                       >
                         Run Conversion Review
                       </button>
-                      <a
-                        href="https://tdventure.vc/pricing.html"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-2 border border-slate-750 bg-slate-900/60 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl inline-block"
-                       >
-                       Open Founder Vault
-                      </a>
+                      <button
+                        type="button"
+                        onClick={openFounderPassCheckout}
+                        disabled={paymentRedirecting}
+                        className="px-4 py-2 border border-slate-750 bg-slate-900/60 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl inline-block disabled:cursor-wait disabled:opacity-60"
+                      >
+                        {paymentRedirecting ? 'Opening Secure Checkout…' : 'Unlock Founder Pass'}
+                      </button>
                     </div>
                   </div>
                 </div>

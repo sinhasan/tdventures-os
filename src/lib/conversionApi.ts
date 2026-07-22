@@ -1,4 +1,24 @@
-export const CONVERSION_API_BASE = 'https://staging.tdventure.vc/api/conversion';
+const DEFAULT_TDVENTURE_API_BASE = 'https://staging.tdventure.vc/api';
+const DEFAULT_TDVENTURE_PAYMENT_BASE = 'https://staging.tdventure.vc/payment.html';
+const DEFAULT_TDVENTURE_WORKSPACE_URL = 'https://conversion.tdventure.vc/';
+
+function withoutTrailingSlash(value: string): string {
+  return value.trim().replace(/\/+$/, '');
+}
+
+export const TDVENTURE_API_BASE = withoutTrailingSlash(
+  String(import.meta.env.VITE_TDVENTURE_API_BASE || DEFAULT_TDVENTURE_API_BASE)
+);
+
+export const CONVERSION_API_BASE = `${TDVENTURE_API_BASE}/conversion`;
+
+export const TDVENTURE_PAYMENT_BASE = String(
+  import.meta.env.VITE_TDVENTURE_PAYMENT_BASE || DEFAULT_TDVENTURE_PAYMENT_BASE
+).trim();
+
+export const TDVENTURE_WORKSPACE_URL = String(
+  import.meta.env.VITE_TDVENTURE_WORKSPACE_URL || DEFAULT_TDVENTURE_WORKSPACE_URL
+).trim();
 
 export type ConversionHealth = {
   status: string;
@@ -33,6 +53,38 @@ export type ConversionHandoffResponse = {
   handoff_payload: unknown;
 };
 
+export type StartupIdentityResponse = {
+  id?: string;
+  startup_id?: string;
+  startup_name?: string;
+  email?: string;
+  [key: string]: unknown;
+};
+
+export type PaymentIntentCreateResponse = {
+  ok: boolean;
+  intent_token: string;
+  checkout_url: string;
+  intent: {
+    workspace: string;
+    plan_code: string;
+    display_name: string;
+    status: string;
+    provider: string;
+    commercial_amount: string | number;
+    amount_to_charge: string | number;
+    currency: string;
+    validity_days: number;
+    credits_total: number;
+    test_mode: boolean;
+    customer_email: string;
+    expires_at: string;
+    paid_at: string | null;
+    return_url: string;
+    provider_session_id: string | null;
+  };
+};
+
 export function getStoredTdventureToken(): string | null {
   if (typeof window === 'undefined') {
     return null;
@@ -49,6 +101,59 @@ export function getStoredTdventureToken(): string | null {
   }
 
   return window.localStorage.getItem('tdventure_token');
+}
+
+
+async function tdventureRequest<T>(
+  path: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const token = getStoredTdventureToken();
+
+  if (!token) {
+    throw new Error(
+      'Your TD Venture session was not found. Please open Conversion from your TD Venture workspace.'
+    );
+  }
+
+  const headers = new Headers(options.headers);
+  headers.set('Accept', 'application/json');
+  headers.set('Authorization', `Bearer ${token}`);
+
+  if (options.body !== undefined) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const response = await fetch(`${TDVENTURE_API_BASE}${normalizedPath}`, {
+    ...options,
+    credentials: 'include',
+    headers
+  });
+
+  if (!response.ok) {
+    const rawBody = await response.text();
+    let message = rawBody.trim();
+
+    if (message) {
+      try {
+        const parsed = JSON.parse(message) as { detail?: string; message?: string };
+        message = parsed.detail || parsed.message || message;
+      } catch {
+        // Preserve a non-JSON backend error as received.
+      }
+    }
+
+    throw new Error(
+      message || `TD Venture API error ${response.status} ${response.statusText}`
+    );
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  return response.json() as Promise<T>;
 }
 
 async function conversionRequest<T>(
@@ -127,4 +232,93 @@ export function createConversionHandoff(
     method: 'POST',
     body: JSON.stringify(params)
   });
+}
+function createPaymentIdempotencyKey(): string {
+  const randomPart = (
+    typeof window !== 'undefined'
+    && window.crypto
+    && typeof window.crypto.randomUUID === 'function'
+  )
+    ? window.crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+  return `conversion-founder-${randomPart}`;
+}
+
+function validateCheckoutUrl(checkoutUrl: string): string {
+  let expected: URL;
+  let actual: URL;
+
+  try {
+    expected = new URL(TDVENTURE_PAYMENT_BASE);
+    actual = new URL(checkoutUrl);
+  } catch {
+    throw new Error('The secure checkout URL is invalid.');
+  }
+
+  if (
+    actual.protocol !== 'https:'
+    || actual.origin !== expected.origin
+    || actual.pathname !== expected.pathname
+  ) {
+    throw new Error(
+      'The secure checkout URL did not match the approved TD Venture Payment Plane.'
+    );
+  }
+
+  return actual.toString();
+}
+
+export async function startConversionFounderCheckout(): Promise<void> {
+  if (typeof window === 'undefined') {
+    throw new Error('Secure checkout is available only in the browser.');
+  }
+
+  const startup = await tdventureRequest<StartupIdentityResponse>(
+    '/startups/me',
+    { method: 'GET' }
+  );
+
+  const startupId = (
+    typeof startup.id === 'string'
+      ? startup.id
+      : (typeof startup.startup_id === 'string' ? startup.startup_id : '')
+  ).trim();
+
+  if (!startupId) {
+    throw new Error(
+      'No founder startup profile is linked to this TD Venture account.'
+    );
+  }
+
+  let workspaceReturnUrl: string;
+
+  try {
+    const parsedWorkspaceUrl = new URL(TDVENTURE_WORKSPACE_URL);
+    if (parsedWorkspaceUrl.protocol !== 'https:') {
+      throw new Error();
+    }
+    workspaceReturnUrl = parsedWorkspaceUrl.toString();
+  } catch {
+    throw new Error('The Conversion workspace return URL is invalid.');
+  }
+
+  const paymentIntent = await tdventureRequest<PaymentIntentCreateResponse>(
+    '/payment-plane/intents',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        plan_code: 'conversion_founder_2999',
+        subject_id: startupId,
+        idempotency_key: createPaymentIdempotencyKey(),
+        return_url: workspaceReturnUrl
+      })
+    }
+  );
+
+  const checkoutUrl = validateCheckoutUrl(
+    String(paymentIntent.checkout_url || '').trim()
+  );
+
+  window.location.assign(checkoutUrl);
 }
