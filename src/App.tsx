@@ -511,16 +511,11 @@ export default function App() {
 
   const ROLE_TABS = {
     founder: [
-      { id: 'dashboard', name: 'Conversion Dashboard', icon: LayoutDashboard, desc: 'Pitch quality and investor fit' },
-      { id: 'pitch_analyzer', name: 'Conversion Review', icon: TrendingUp, desc: 'Signal review to investor-ready action' },
-      { id: 'gdocs_hub', name: 'Founder Briefs', icon: FileText, desc: 'Founder notes and CRM handoff' },
-      { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof room' },
-      { id: 'linkedin_intel', name: 'Investor Signal Research', icon: Linkedin, desc: 'Market and investor context' },
-      { id: 'fundraising_intel', name: 'Fundraise Readiness', icon: Coins, desc: 'Round readiness and ask logic' },
-      { id: 'validation', name: 'Narrative Clarity', icon: CheckCircle2, desc: 'Problem, market and proof strength' },
-      { id: 'matchmaking', name: 'Investor Fit', icon: Target, desc: 'Right investor, right stage' },
-      { id: 'docs_hub', name: 'Founder Vault', icon: FileText, desc: 'Deck, proof and investor handoff' },
-      { id: 'forecasting', name: 'Financial Forecasting', icon: BarChart3, desc: 'Revenues scalability hologram' }
+      { id: 'dashboard', name: 'Conversion Terminal', icon: LayoutDashboard, desc: 'Readiness, signals and next action' },
+      { id: 'docs_hub', name: 'Founder Vault', icon: FileText, desc: 'Founder inputs and evidence' },
+      { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof' },
+      { id: 'pitch_analyzer', name: 'Conversion Review', icon: TrendingUp, desc: 'Analyse readiness and risk' },
+      { id: 'fundraising_intel', name: 'Fundraise Readiness', icon: Coins, desc: 'Round logic and raise ask' },
     ],
     investor: [
       { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, desc: 'Active deal queue & ROI counters' },
@@ -1001,30 +996,29 @@ export default function App() {
                   
                   <div className="relative z-10 space-y-3">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/40 border border-purple-500/20 text-purple-300 text-[10px] font-mono leading-none">
-                      <Sparkles className="w-3 h-3 animate-pulse" /> TD Conversion OS Sourcing Live Portal Protocol
+                      <Sparkles className="w-3 h-3 animate-pulse" /> TD Venture Conversion Terminal
                     </div>
                     <h1 className="text-2xl md:text-4xl font-extrabold text-[#F8FAFC] tracking-tight leading-tight">
-                      TD Conversion OS — Where Trust <br />
+                      TD Conversion OS — Convert Trust <br />
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
                         Into Investor-Ready Action.
                       </span>
                     </h1>
                     <p className="text-sm text-[#CBD5E1] leading-relaxed max-w-3xl">
-                      Conversion turns a founder\x27s pitch, proof, traction and raise narrative into investor-ready signals, next best actions, and CRM-ready summaries for the TD Conversion OS Deal Desk.
+                      Analyse founder evidence, strengthen fundraise readiness, and create the signal that moves the opportunity into Deal Desk.
                     </p>
 
                     <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
                       <div className="flex flex-col gap-3">
                         <div className="min-w-0">
-                          <p className="text-xs uppercase tracking-[0.2em] text-[#D4FF00] font-extrabold">CDB Signal Layer</p>
-                          <p className="text-sm text-slate-300 mt-1.5"><span className="font-black text-white">Stores intelligence, not documents.</span> Application data, AI signals, Deal Desk action and investor feedback become the Common Intelligence DB.</p>
+                          <p className="text-xs uppercase tracking-[0.2em] text-[#D4FF00] font-extrabold">Common Intelligence</p>
+                          <p className="text-sm text-slate-300 mt-1.5"><span className="font-black text-white">One source of truth.</span> Founder evidence, Conversion signals, investor fit and Deal Desk feedback strengthen the same startup record.</p>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-[10px] uppercase tracking-wider font-black">
-                          <span className="flex items-center justify-center text-center rounded-lg border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Apply</span>
-                          <span className="flex items-center justify-center text-center rounded-lg border border-[#D4FF00]/30 bg-[#080D1A] px-3 py-2 text-[#D4FF00]">Signals</span>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] uppercase tracking-wider font-black">
+                          <span className="flex items-center justify-center text-center rounded-lg border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Founder Vault</span>
+                          <span className="flex items-center justify-center text-center rounded-lg border border-[#D4FF00]/30 bg-[#080D1A] px-3 py-2 text-[#D4FF00]">Conversion Review</span>
+                          <span className="flex items-center justify-center text-center rounded-lg border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Investor Signal</span>
                           <span className="flex items-center justify-center text-center rounded-lg border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Deal Desk</span>
-                          <span className="flex items-center justify-center text-center rounded-lg border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">CRM</span>
-                          <span className="flex items-center justify-center text-center rounded-lg border border-slate-800 bg-[#080D1A] px-3 py-2 text-slate-300">Feedback</span>
                         </div>
                       </div>
                     </div>
@@ -1048,11 +1042,11 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Input Source Matrix - triangulation overview */}
+                {/* Conversion Signal Sources */}
                 <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80 space-y-4">
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-[0.28em] text-[#D4FF00] font-bold block">Input Source Matrix</span>
-                    <p className="text-xs text-slate-400 mt-1">Conversion Signal Engine triangulates these sources before producing a signal.</p>
+                    <span className="text-[10px] font-mono uppercase tracking-[0.28em] text-[#D4FF00] font-bold block">Signal Sources</span>
+                    <p className="text-xs text-slate-400 mt-1">Conversion triangulates founder evidence, pitch-deck proof, marketplace data and Deal Desk feedback.</p>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
@@ -1065,19 +1059,19 @@ export default function App() {
                       {
                         label: 'Pitch Deck',
                         status: uploadedFile ? 'Uploaded' : 'Not uploaded',
-                        detail: uploadedFile ? uploadedFile.name : 'Deck analysis preview only',
+                        detail: uploadedFile ? uploadedFile.name : 'Deck evidence strengthens the signal',
                         active: !!uploadedFile
                       },
                       {
-                        label: 'Staging Application',
-                        status: 'Mock preview',
-                        detail: 'Live application snapshot connects later',
+                        label: 'Private Marketplace',
+                        status: 'Not loaded',
+                        detail: 'Canonical startup profile will load from tdventure_db',
                         active: false
                       },
                       {
-                        label: 'CRM Feedback',
-                        status: 'Coming soon',
-                        detail: 'Investor feedback loop not yet connected',
+                        label: 'Deal Desk Feedback',
+                        status: 'Not connected',
+                        detail: 'Engagement feedback will strengthen future signals',
                         active: false
                       }
                     ].map((src) => (
@@ -1094,16 +1088,15 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-
-                {/* CDB Signal Path - visual only, no live wiring yet */}
+                {/* Conversion Path */}
                 <div className="p-4 rounded-2xl border border-slate-800 bg-[#0c1222]/60">
-                  <span className="text-[9px] font-mono uppercase tracking-[0.28em] text-slate-500 font-bold block mb-3">CDB Signal Path</span>
+                  <span className="text-[9px] font-mono uppercase tracking-[0.28em] text-slate-500 font-bold block mb-3">Conversion Path</span>
                   <div className="flex items-center flex-wrap gap-2">
                     {[
                       { label: 'Founder Vault', active: !!(conversionProfile.startupName && conversionProfile.pitchSummary.trim().length > 40) },
-                      { label: 'Application', active: false },
-                      { label: 'Deck Evidence', active: !!uploadedFile },
-                      { label: 'CDB Signal', active: false },
+                      { label: 'Pitch Deck', active: !!uploadedFile },
+                      { label: 'Conversion Review', active: false },
+                      { label: 'Investor Signal', active: false },
                       { label: 'Deal Desk', active: false }
                     ].map((step, i, arr) => (
                       <React.Fragment key={step.label}>
@@ -1116,19 +1109,18 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-
                 {/* Dashboard KPIs based on selected role */}
                 {role === 'founder' && (
                   <div className="space-y-4">
-                    <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider font-bold block">Founder Conversion Signals</span>
+                    <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider font-bold block">Signal Monitor</span>
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                       {[
-                        { title: 'Conversion Review', val: '78/100', text: 'Story clear; proof gaps remain', color: 'text-purple-400' },
-                        { title: 'Narrative Clarity', val: '84/100', text: 'Problem and ICP are clear', color: 'text-indigo-400' },
-                        { title: 'Risk Signals', val: 'Moderate', text: 'Needs evidence cleanup', color: 'text-[#22C55E]' },
-                        { title: 'Investor Fit', val: '72/100', text: 'Best for seed-stage funds', color: 'text-cyan-400' },
+                        { title: 'Pitch Deck Quality', val: '78/100', text: 'Story clear; proof gaps remain', color: 'text-purple-400' },
+                        { title: 'Narrative Clarity', val: '84/100', text: 'Problem and market are clear', color: 'text-indigo-400' },
+                        { title: 'Risk Level', val: 'Moderate', text: 'Evidence needs strengthening', color: 'text-[#22C55E]' },
+                        { title: 'Investor Fit', val: '72/100', text: 'Strongest for seed-stage funds', color: 'text-cyan-400' },
                         { title: 'Fundraise Readiness', val: '69/100', text: 'Round ask needs tightening', color: 'text-amber-500' },
-                        { title: 'CRM Summary', val: 'Ready', text: 'Ready for CRM handoff', color: 'text-[#F59E0B]' }
+                        { title: 'Deal Desk Signal', val: 'Ready', text: 'Prepared for engagement review', color: 'text-[#F59E0B]' }
                       ].map((item, idx) => (
                         <div key={idx} className="p-4 rounded-xl border border-slate-800 bg-[#0c1222]/70 space-y-1.5 hover:border-slate-700 transition-colors">
                           <span className="text-[9px] text-slate-400 block font-bold leading-none">{item.title}</span>
@@ -1897,8 +1889,8 @@ export default function App() {
               <div className='space-y-6 animate-in fade-in duration-500'>
                 <div className='p-6 rounded-3xl border border-slate-800 bg-[#0c1222]/90 shadow-2xl'>
                   <span className='text-[10px] font-mono uppercase tracking-[0.28em] text-[#D4FF00] font-bold'>Founder Vault</span>
-                  <h2 className='text-2xl md:text-3xl font-black text-white mt-2'>Founder Conversion Input</h2>
-                  <p className='text-sm text-slate-400 mt-2 max-w-3xl'>Capture the core founder material before running Conversion Review: deck story, traction proof, raise ask, risk notes and ideal investor type.</p>
+                  <h2 className='text-2xl md:text-3xl font-black text-white mt-2'>Build the Founder Signal</h2>
+                  <p className='text-sm text-slate-400 mt-2 max-w-3xl'>Capture the evidence Conversion needs: startup story, traction, raise, risk and investor target.</p>
                 </div>
 
                 <div className='grid grid-cols-1 xl:grid-cols-3 gap-6'>
@@ -1917,7 +1909,7 @@ export default function App() {
                   </div>
 
                   <div className='p-6 rounded-3xl border border-slate-800 bg-[#080d1a] h-fit space-y-4'>
-                    <div><span className='text-[10px] font-mono uppercase tracking-[0.24em] text-[#D4FF00] font-bold'>Vault Snapshot</span><h3 className='text-xl font-black text-white mt-2'>Ready for review</h3></div>
+                    <div><span className='text-[10px] font-mono uppercase tracking-[0.24em] text-[#D4FF00] font-bold'>Signal Input</span><h3 className='text-xl font-black text-white mt-2'>Founder input snapshot</h3></div>
                     {[
                       ['Startup', conversionProfile.startupName || 'Not set'],
                       ['Sector', conversionProfile.sector || 'Not set'],
@@ -1926,7 +1918,7 @@ export default function App() {
                       ['Investor', conversionProfile.targetInvestor || 'Not set']
                     ].map(([label, value]) => (<div key={label} className='p-3 rounded-xl border border-slate-800 bg-slate-950/70'><div className='text-[10px] uppercase text-slate-500 font-bold'>{label}</div><div className='text-sm text-white font-semibold mt-1'>{value}</div></div>))}
                     <button onClick={() => { generateConversionReview(); setActiveTab('pitch_analyzer'); triggerToast('Conversion Review generated from Founder Vault.', 'success'); }} className='w-full px-4 py-3 rounded-xl bg-[#D4FF00] text-slate-950 text-sm font-black hover:scale-[1.01] transition-transform'>Run Conversion Review</button>
-                    <button onClick={() => setActiveTab('dashboard')} className='w-full px-4 py-3 rounded-xl border border-slate-800 text-slate-300 text-sm font-bold hover:bg-slate-900'>Back to Dashboard</button>
+                    <button onClick={() => setActiveTab('dashboard')} className='w-full px-4 py-3 rounded-xl border border-slate-800 text-slate-300 text-sm font-bold hover:bg-slate-900'>Back to Conversion Terminal</button>
                   </div>
                 </div>
               </div>
