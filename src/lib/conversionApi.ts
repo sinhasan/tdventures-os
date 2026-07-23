@@ -85,22 +85,132 @@ export type PaymentIntentCreateResponse = {
   };
 };
 
+export type WorkspaceLaunchExchangeResponse = {
+  access_token: string;
+  token_type: string;
+  user_id: string;
+  email: string;
+  role: string;
+  email_verified: boolean;
+};
+
+export type TdventureSessionInitialization = {
+  token: string | null;
+  exchanged: boolean;
+};
+
+let launchExchangePromise: Promise<string> | null = null;
+
 export function getStoredTdventureToken(): string | null {
   if (typeof window === 'undefined') {
     return null;
   }
 
-  const url = new URL(window.location.href);
-  const tokenFromUrl = url.searchParams.get('token');
+  return window.localStorage.getItem('tdventure_token');
+}
 
-  if (tokenFromUrl) {
-    window.localStorage.setItem('tdventure_token', tokenFromUrl);
-    url.searchParams.delete('token');
-    window.history.replaceState({}, document.title, url.toString());
-    return tokenFromUrl;
+function scrubWorkspaceLaunchParameters(url: URL): void {
+  url.searchParams.delete('launch');
+  url.searchParams.delete('token');
+  window.history.replaceState({}, document.title, url.toString());
+}
+
+async function exchangeWorkspaceLaunchToken(rawLaunchToken: string): Promise<string> {
+  const response = await fetch(`${CONVERSION_API_BASE}/launch/exchange`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      launch_token: rawLaunchToken
+    })
+  });
+
+  if (!response.ok) {
+    const rawBody = await response.text();
+    let message = rawBody.trim();
+
+    if (message) {
+      try {
+        const parsed = JSON.parse(message) as { detail?: string; message?: string };
+        message = parsed.detail || parsed.message || message;
+      } catch {
+        // Preserve a non-JSON backend error as received.
+      }
+    }
+
+    throw new Error(
+      message || `TD Venture launch exchange failed with API error ${response.status}`
+    );
   }
 
-  return window.localStorage.getItem('tdventure_token');
+  const data = (await response.json()) as WorkspaceLaunchExchangeResponse;
+  const accessToken = String(data.access_token || '').trim();
+
+  if (!accessToken) {
+    throw new Error('TD Venture launch exchange did not return a session token.');
+  }
+
+  window.localStorage.setItem('tdventure_token', accessToken);
+  return accessToken;
+}
+
+export async function initializeTdventureSessionFromLaunch():
+  Promise<TdventureSessionInitialization> {
+  if (typeof window === 'undefined') {
+    return {
+      token: null,
+      exchanged: false
+    };
+  }
+
+  if (launchExchangePromise) {
+    return {
+      token: await launchExchangePromise,
+      exchanged: true
+    };
+  }
+
+  const url = new URL(window.location.href);
+  const rawLaunchToken = String(url.searchParams.get('launch') || '').trim();
+  const hasLegacyUrlToken = url.searchParams.has('token');
+
+  if (rawLaunchToken || hasLegacyUrlToken) {
+    scrubWorkspaceLaunchParameters(url);
+  }
+
+  if (!rawLaunchToken) {
+    if (hasLegacyUrlToken) {
+      throw new Error(
+        'Legacy token links are no longer accepted. Open Conversion again from TD Venture.'
+      );
+    }
+
+    return {
+      token: getStoredTdventureToken(),
+      exchanged: false
+    };
+  }
+
+  if (rawLaunchToken.length < 32 || rawLaunchToken.length > 512) {
+    throw new Error('The TD Venture workspace launch link is invalid.');
+  }
+
+  launchExchangePromise = exchangeWorkspaceLaunchToken(rawLaunchToken);
+
+  try {
+    const token = await launchExchangePromise;
+    return {
+      token,
+      exchanged: true
+    };
+  } catch (error) {
+    window.localStorage.removeItem('tdventure_token');
+    throw error;
+  } finally {
+    launchExchangePromise = null;
+  }
 }
 
 
@@ -108,7 +218,8 @@ async function tdventureRequest<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = getStoredTdventureToken();
+  const session = await initializeTdventureSessionFromLaunch();
+  const token = session.token || getStoredTdventureToken();
 
   if (!token) {
     throw new Error(
@@ -160,7 +271,8 @@ async function conversionRequest<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = getStoredTdventureToken();
+  const session = await initializeTdventureSessionFromLaunch();
+  const token = session.token || getStoredTdventureToken();
 
   if (!token) {
     throw new Error('TD Venture authentication token was not found.');

@@ -165,6 +165,40 @@ export default function App() {
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'info' | 'warn' | null }>({ text: '', type: null });
 
   useEffect(() => {
+    let cancelled = false;
+
+    void import('./lib/conversionApi')
+      .then(({ initializeTdventureSessionFromLaunch }) =>
+        initializeTdventureSessionFromLaunch()
+      )
+      .then(({ exchanged }) => {
+        if (!cancelled && exchanged) {
+          setFeedbackMsg({
+            text: 'TD Venture session connected.',
+            type: 'success'
+          });
+        }
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Could not connect your TD Venture session.';
+
+        setFeedbackMsg({
+          text: `${message} Reopen Conversion from TD Venture.`,
+          type: 'warn'
+        });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
     try {
       localStorage.setItem('venture_ai_theme', themeMode);
     } catch (e) {
