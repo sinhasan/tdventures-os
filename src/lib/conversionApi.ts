@@ -94,6 +94,14 @@ export type WorkspaceLaunchExchangeResponse = {
   email_verified: boolean;
 };
 
+export type TdventureCurrentUser = {
+  id: string;
+  email: string;
+  full_name?: string | null;
+  role: string;
+  created_at?: string | null;
+};
+
 export type TdventureSessionInitialization = {
   token: string | null;
   exchanged: boolean;
@@ -266,6 +274,12 @@ async function tdventureRequest<T>(
 
   return response.json() as Promise<T>;
 }
+
+export async function getTdventureCurrentUser():
+  Promise<TdventureCurrentUser> {
+  return tdventureRequest<TdventureCurrentUser>('/auth/me');
+}
+
 
 async function conversionRequest<T>(
   path: string,

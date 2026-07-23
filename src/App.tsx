@@ -3,6 +3,7 @@ import {
   Activity, 
   BarChart3, 
   ChevronRight, 
+  ArrowLeft,
   Globe2, 
   Layers, 
   Mic, 
@@ -88,6 +89,7 @@ import {
 } from './components/AIChatVoiceBanner';
 
 import { SEOOptimizedSuite, DueDiligenceReport, DealFlowItem } from './types';
+import type { TdventureCurrentUser } from './lib/conversionApi';
 import { 
   COMPONENT_ROLES, 
   INITIAL_ALERTS, 
@@ -163,14 +165,64 @@ export default function App() {
   const [activePitchModal, setActivePitchModal] = useState<'download' | 'share' | 'schedule' | 'plan' | null>(null);
   const [agiAutoMode, setAgiAutoMode] = useState<boolean>(true);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'info' | 'warn' | null }>({ text: '', type: null });
+  const [tdventureUser, setTdventureUser] =
+    useState<TdventureCurrentUser | null>(null);
+  const [tdventureSessionChecked, setTdventureSessionChecked] =
+    useState(false);
+
+  const tdventureAccountName =
+    tdventureUser?.full_name?.trim() ||
+    tdventureUser?.email?.split('@')[0] ||
+    (tdventureSessionChecked ? 'Public Preview' : 'Connecting…');
+
+  const tdventureAccountEmail =
+    tdventureUser?.email ||
+    (tdventureSessionChecked
+      ? 'No shared TD Venture session'
+      : 'Checking TD Venture session');
+
+  const tdventureAccountRole = tdventureUser?.role
+    ? `${tdventureUser.role.replace(/_/g, ' ')} account`
+    : tdventureSessionChecked
+      ? 'Public workspace'
+      : 'Session check';
+
+  const tdventureAccountInitials =
+    tdventureAccountName
+      .split(' ')
+      .map((part) => part.charAt(0))
+      .filter(Boolean)
+      .slice(0, 2)
+      .join('')
+      .toUpperCase() || 'TD';
+
+
 
   useEffect(() => {
     let cancelled = false;
 
     void import('./lib/conversionApi')
-      .then(({ initializeTdventureSessionFromLaunch }) =>
-        initializeTdventureSessionFromLaunch()
-      )
+      .then(async ({
+        initializeTdventureSessionFromLaunch,
+        getTdventureCurrentUser
+      }) => {
+        const session =
+          await initializeTdventureSessionFromLaunch();
+
+        if (cancelled) return session;
+
+        if (session.token) {
+          const accountUser = await getTdventureCurrentUser();
+
+          if (!cancelled) {
+            setTdventureUser(accountUser);
+          }
+        } else {
+          setTdventureUser(null);
+        }
+
+        return session;
+      })
       .then(({ exchanged }) => {
         if (!cancelled && exchanged) {
           setFeedbackMsg({
@@ -182,6 +234,8 @@ export default function App() {
       .catch((error: unknown) => {
         if (cancelled) return;
 
+        setTdventureUser(null);
+
         const message =
           error instanceof Error
             ? error.message
@@ -191,6 +245,11 @@ export default function App() {
           text: `${message} Reopen Conversion from TD Venture.`,
           type: 'warn'
         });
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setTdventureSessionChecked(true);
+        }
       });
 
     return () => {
@@ -718,29 +777,33 @@ export default function App() {
               </div>
             </div>
 
-            {/* User credentials panel (Conversion Operator, matching first image) */}
-            <div className="p-4 mx-4 mt-4 rounded-2xl bg-[#090e1a]/80 border border-slate-800/60 flex items-center gap-3">
-              <div className="relative w-10 h-10 rounded-full overflow-hidden border border-slate-700 bg-slate-800 flex items-center justify-center font-bold text-white uppercase text-xs">
-                TD
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#F8FAFC] block">Conversion Operator</span>
+              {/* Shared TD Venture account identity */}
+              <div className="p-4 mx-4 mt-4 rounded-2xl bg-[#090e1a]/80 border border-slate-800/60 flex items-center gap-3">
+                <div className="relative w-10 h-10 rounded-full border border-purple-500/30 bg-purple-500/10 flex items-center justify-center font-bold text-purple-200 uppercase text-xs">
+                  {tdventureAccountInitials}
                 </div>
-                <span className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded-full mt-1 ${
-                  role === 'founder' ? 'bg-purple-500/10 text-purple-300 border border-purple-500/20' :
-                  role === 'investor' ? 'bg-blue-500/10 text-blue-300 border border-blue-500/20' :
-                  role === 'smb' ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20' :
-                  'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'
-                }`}>
-                  {role === 'founder' ? 'Founder' : role === 'investor' ? 'Investor' : role === 'smb' ? 'SMB Exec' : 'Admin'}
-                </span>
+
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-bold text-[#F8FAFC] block truncate">
+                    {tdventureAccountName}
+                  </span>
+
+                  <span
+                    className="text-[9px] text-slate-500 block truncate mt-0.5"
+                    title={tdventureAccountEmail}
+                  >
+                    {tdventureAccountEmail}
+                  </span>
+
+                  <span className="inline-block text-[9px] font-bold px-2 py-0.5 rounded-full mt-1 border border-purple-500/20 bg-purple-500/10 text-purple-300 capitalize">
+                    {tdventureAccountRole}
+                  </span>
+                </div>
               </div>
-            </div>
 
             {/* Switch Role Dropdown (Exactly same features as screenshot dropdown) */}
             <div className="p-4 mx-4 mt-2 border-b border-slate-800/40">
-              <label className="text-[10px] font-mono tracking-widest uppercase text-slate-400 block mb-1.5 font-bold">Switch Role</label>
+              <label className="text-[10px] font-mono tracking-widest uppercase text-slate-400 block mb-1.5 font-bold">Workspace View</label>
               <div className="relative">
                 <select 
                   id="role_switch_select"
@@ -847,7 +910,7 @@ export default function App() {
 
             <div className="flex items-center gap-4">
               {/* Dark mode locked for Bloomberg-style Conversion workspace */}
-              <div className='p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 flex items-center gap-1.5 shadow-sm' title='Dark mode locked'>
+              <div className='p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hidden xl:flex items-center gap-1.5 shadow-sm' title='Dark mode locked'>
                 <Moon className='w-4 h-4 text-[#D4FF00]' />
                 <span className='text-[10px] font-bold hidden sm:inline'>Dark Command Mode</span>
               </div>
@@ -884,11 +947,44 @@ export default function App() {
                 )}
               </div>
 
-              {/* Account Profile header indicator */}
-              <div className="text-right hidden sm:block">
-                <span className="text-xs block text-[#F8FAFC] font-extrabold leading-tight">TD Conversion OS</span>
-                <span className="text-[9px] block text-purple-400 font-mono">Investor-ready founder signals</span>
-              </div>
+                {/* Cross-workspace product journey */}
+                <div className="flex items-center gap-1.5">
+                  <a
+                    href="https://staging.tdventure.vc/app"
+                    title="Return to Private Marketplace"
+                    className="inline-flex h-10 items-center gap-1 rounded-xl border border-slate-700 bg-slate-900 px-2.5 text-[10px] font-bold text-slate-300 transition hover:border-purple-500/50 hover:text-white"
+                  >
+                    <ArrowLeft className="h-3.5 w-3.5" />
+                    <span className="hidden xl:inline">Private Marketplace</span>
+                    <span className="xl:hidden">Marketplace</span>
+                  </a>
+
+                  <div
+                    title={tdventureAccountEmail}
+                    className="inline-flex h-10 items-center gap-2 rounded-xl border border-purple-500/30 bg-purple-500/10 px-2"
+                  >
+                    <div className="grid h-7 w-7 place-items-center rounded-full bg-purple-500/20 text-[9px] font-black text-purple-200">
+                      {tdventureAccountInitials}
+                    </div>
+                    <div className="hidden 2xl:block min-w-0">
+                      <span className="block max-w-[130px] truncate text-[10px] font-bold text-white">
+                        {tdventureAccountName}
+                      </span>
+                      <span className="block max-w-[130px] truncate text-[8px] capitalize text-purple-300">
+                        {tdventureAccountRole}
+                      </span>
+                    </div>
+                  </div>
+
+                  <a
+                    href="https://crm.tdventure.vc/login"
+                    title="Continue to Deal Desk"
+                    className="inline-flex h-10 items-center gap-1 rounded-xl border border-[#D4FF00]/30 bg-[#D4FF00]/10 px-2.5 text-[10px] font-bold text-[#D4FF00] transition hover:border-[#D4FF00]/60 hover:bg-[#D4FF00]/15"
+                  >
+                    <span>Deal Desk</span>
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </a>
+                </div>
             </div>
           </header>
 
