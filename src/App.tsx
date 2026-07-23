@@ -973,6 +973,8 @@ export default function App() {
 
                   <a
                     href="https://crm.tdventure.vc/login"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     title="Continue to Deal Desk"
                     className="inline-flex h-10 items-center gap-1 rounded-xl border border-[#D4FF00]/30 bg-[#D4FF00]/10 px-2.5 text-[10px] font-bold text-[#D4FF00] transition hover:border-[#D4FF00]/60 hover:bg-[#D4FF00]/15"
                   >
