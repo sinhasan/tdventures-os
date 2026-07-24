@@ -997,7 +997,7 @@ export default function App() {
                   <a
                     href="https://staging.tdventure.vc/app"
                     title="Return to Private Marketplace"
-                    className="inline-flex h-10 items-center gap-1 rounded-xl border border-slate-700 bg-slate-900 px-2.5 text-[10px] font-bold text-slate-300 transition hover:border-purple-500/50 hover:text-white"
+                    className="motion-safe:animate-pulse inline-flex h-10 w-[150px] shrink-0 items-center justify-center gap-1 rounded-xl border border-[#D4FF00] bg-[#D4FF00] px-3 text-[10px] font-black text-slate-950 shadow-[0_0_22px_rgba(212,255,0,0.75)] transition hover:bg-[#E7FF66]"
                   >
                     <ArrowLeft className="h-3.5 w-3.5" />
                     <span className="hidden xl:inline">Private Marketplace</span>
@@ -1025,7 +1025,7 @@ export default function App() {
                     type="button"
                     onClick={openDealDeskWorkspace}
                     title="Continue securely to Deal Desk"
-                    className="inline-flex h-10 items-center gap-1 rounded-xl border border-[#D4FF00]/30 bg-[#D4FF00]/10 px-2.5 text-[10px] font-bold text-[#D4FF00] transition hover:border-[#D4FF00]/60 hover:bg-[#D4FF00]/15"
+                    className="motion-safe:animate-pulse inline-flex h-10 w-[150px] shrink-0 items-center justify-center gap-1 rounded-xl border border-[#D4FF00] bg-[#D4FF00] px-3 text-[10px] font-black text-slate-950 shadow-[0_0_22px_rgba(212,255,0,0.75)] transition hover:bg-[#E7FF66]"
                   >
                     <span>Deal Desk</span>
                     <ChevronRight className="h-3.5 w-3.5" />
