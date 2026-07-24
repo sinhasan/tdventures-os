@@ -395,6 +395,56 @@ export default function App() {
     }
   };
 
+
+  const openDealDeskWorkspace = async () => {
+    const launchWindow =
+      window.open('', '_blank');
+
+    if (launchWindow) {
+      launchWindow.opener = null;
+      launchWindow.document.title =
+        'Opening Deal Desk…';
+    }
+
+    try {
+      const {
+        createDealDeskWorkspaceLaunch
+      } = await import(
+        './lib/conversionApi'
+      );
+
+      const launch =
+        await createDealDeskWorkspaceLaunch();
+
+      if (
+        launchWindow &&
+        !launchWindow.closed
+      ) {
+        launchWindow.location.replace(
+          launch.launch_url
+        );
+      } else {
+        window.location.assign(
+          launch.launch_url
+        );
+      }
+    } catch (error) {
+      if (
+        launchWindow &&
+        !launchWindow.closed
+      ) {
+        launchWindow.close();
+      }
+
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Could not open Deal Desk securely.';
+
+      triggerToast(message, 'warn');
+    }
+  };
+
   const [selectedModel, setSelectedModel] = useState<'owl' | 'qwen' | 'openai' | 'gemini' | 'deepseek'>('owl');
   const [customApiKey, setCustomApiKey] = useState<string>('');
 
@@ -971,16 +1021,15 @@ export default function App() {
                     </div>
                   </div>
 
-                  <a
-                    href="https://crm.tdventure.vc/login"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Continue to Deal Desk"
+                  <button
+                    type="button"
+                    onClick={openDealDeskWorkspace}
+                    title="Continue securely to Deal Desk"
                     className="inline-flex h-10 items-center gap-1 rounded-xl border border-[#D4FF00]/30 bg-[#D4FF00]/10 px-2.5 text-[10px] font-bold text-[#D4FF00] transition hover:border-[#D4FF00]/60 hover:bg-[#D4FF00]/15"
                   >
                     <span>Deal Desk</span>
                     <ChevronRight className="h-3.5 w-3.5" />
-                  </a>
+                  </button>
                 </div>
             </div>
           </header>

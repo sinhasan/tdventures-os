@@ -448,3 +448,83 @@ export async function startConversionFounderCheckout(): Promise<void> {
 
   window.location.assign(checkoutUrl);
 }
+
+export type DealDeskWorkspaceLaunchResponse = {
+  ok: boolean;
+  workspace: 'deal_desk';
+  launch_url: string;
+  expires_in_seconds: number;
+  expires_at: string;
+};
+
+export async function createDealDeskWorkspaceLaunch():
+  Promise<DealDeskWorkspaceLaunchResponse> {
+  const session =
+    await initializeTdventureSessionFromLaunch();
+
+  const token =
+    session.token || getStoredTdventureToken();
+
+  if (!token) {
+    throw new Error(
+      'Your TD Venture session was not found. Open Conversion from Private Marketplace again.'
+    );
+  }
+
+  const canonicalApiRoot =
+    CONVERSION_API_BASE.replace(
+      /\/conversion\/?$/,
+      ''
+    );
+
+  const response = await fetch(
+    `${canonicalApiRoot}/deal-desk/launch`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  if (!response.ok) {
+    const rawBody = await response.text();
+    let message = rawBody.trim();
+
+    try {
+      const parsed = JSON.parse(rawBody);
+
+      if (
+        parsed &&
+        typeof parsed.detail === 'string'
+      ) {
+        message = parsed.detail;
+      }
+    } catch {
+      // Preserve the plain-text backend message.
+    }
+
+    throw new Error(
+      message ||
+      'Could not open Deal Desk securely.'
+    );
+  }
+
+  const data =
+    await response.json() as
+      DealDeskWorkspaceLaunchResponse;
+
+  if (
+    !data.launch_url ||
+    !data.launch_url.startsWith(
+      'https://crm.tdventure.vc/'
+    )
+  ) {
+    throw new Error(
+      'Deal Desk returned an invalid secure launch URL.'
+    );
+  }
+
+  return data;
+}
