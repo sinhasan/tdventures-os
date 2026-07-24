@@ -232,14 +232,21 @@ const ConversionEntryGate = ({
               TD Venture Conversion
             </div>
 
-            <h1 className="mt-7 max-w-3xl text-6xl font-black leading-[1.02] tracking-tight">
-              Convert founder evidence into
+            <h1 className="mt-7 max-w-3xl text-5xl font-black leading-[1.04] tracking-tight">
+              <span className="block text-white">
+                Convert founder
+              </span>
+
               <span className="block text-[#D4FF00]">
+                evidence into
+              </span>
+
+              <span className="block text-slate-400">
                 investor-ready action.
               </span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-slate-400 xl:text-lg">
               Strengthen pitch proof, fundraise readiness,
               narrative clarity and investor fit before moving
               an opportunity into Deal Desk.
@@ -532,6 +539,38 @@ export default function App() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!tdventureSessionChecked) {
+      return;
+    }
+
+    const pathname =
+      window.location.pathname;
+
+    if (tdventureUser) {
+      if (pathname === '/login') {
+        window.history.replaceState(
+          {},
+          document.title,
+          '/'
+        );
+      }
+
+      return;
+    }
+
+    if (pathname !== '/login') {
+      window.history.replaceState(
+        {},
+        document.title,
+        '/login'
+      );
+    }
+  }, [
+    tdventureSessionChecked,
+    tdventureUser
+  ]);
 
   useEffect(() => {
     try {
