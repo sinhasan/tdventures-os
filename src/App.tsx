@@ -429,17 +429,47 @@ export default function App() {
         );
       }
     } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Could not open Deal Desk securely.';
+
+      const authenticationFailed =
+        /session|credential|token|unauthori[sz]ed|forbidden|401|403/i.test(
+          message
+        );
+
+      if (authenticationFailed) {
+        const dealDeskLoginUrl =
+          'https://crm.tdventure.vc/login';
+
+        if (
+          launchWindow &&
+          !launchWindow.closed
+        ) {
+          launchWindow.location.replace(
+            dealDeskLoginUrl
+          );
+        } else {
+          window.location.assign(
+            dealDeskLoginUrl
+          );
+        }
+
+        triggerToast(
+          'TD Venture session could not be validated. Opening Deal Desk login.',
+          'warn'
+        );
+
+        return;
+      }
+
       if (
         launchWindow &&
         !launchWindow.closed
       ) {
         launchWindow.close();
       }
-
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Could not open Deal Desk securely.';
 
       triggerToast(message, 'warn');
     }
@@ -997,9 +1027,13 @@ export default function App() {
                   <a
                     href="https://staging.tdventure.vc/app"
                     title="Return to Private Marketplace"
-                    className="motion-safe:animate-pulse inline-flex h-10 w-[150px] shrink-0 items-center justify-center gap-1 rounded-xl border border-[#D4FF00] bg-[#D4FF00] px-3 text-[10px] font-black text-slate-950 shadow-[0_0_22px_rgba(212,255,0,0.75)] transition hover:bg-[#E7FF66]"
+                    className="inline-flex h-10 w-[150px] shrink-0 items-center justify-center gap-1.5 rounded-xl border border-[#D4FF00] bg-[#D4FF00] px-3 text-[10px] font-black text-black shadow-[0_0_22px_rgba(212,255,0,0.75)] transition hover:bg-[#E7FF66]"
                   >
                     <ArrowLeft className="h-3.5 w-3.5" />
+                    <span className="relative flex h-2 w-2 shrink-0">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-black/50" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-black" />
+                    </span>
                     <span className="hidden xl:inline">Private Marketplace</span>
                     <span className="xl:hidden">Marketplace</span>
                   </a>
@@ -1025,8 +1059,12 @@ export default function App() {
                     type="button"
                     onClick={openDealDeskWorkspace}
                     title="Continue securely to Deal Desk"
-                    className="motion-safe:animate-pulse inline-flex h-10 w-[150px] shrink-0 items-center justify-center gap-1 rounded-xl border border-[#D4FF00] bg-[#D4FF00] px-3 text-[10px] font-black text-slate-950 shadow-[0_0_22px_rgba(212,255,0,0.75)] transition hover:bg-[#E7FF66]"
+                    className="inline-flex h-10 w-[150px] shrink-0 items-center justify-center gap-1.5 rounded-xl border border-[#D4FF00] bg-[#D4FF00] px-3 text-[10px] font-black text-black shadow-[0_0_22px_rgba(212,255,0,0.75)] transition hover:bg-[#E7FF66]"
                   >
+                    <span className="relative flex h-2 w-2 shrink-0">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-black/50" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-black" />
+                    </span>
                     <span>Deal Desk</span>
                     <ChevronRight className="h-3.5 w-3.5" />
                   </button>
