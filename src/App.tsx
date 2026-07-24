@@ -1001,9 +1001,13 @@ export default function App() {
                       <Sparkles className="w-3 h-3 animate-pulse" /> TD Venture Conversion Terminal
                     </div>
                     <h1 className="text-3xl md:text-5xl font-display font-bold text-[#F5F1E8] tracking-[-0.03em] leading-[0.98]">
-                      TD Conversion OS — Convert Trust <br />
+                      TD Conversion OS —{" "}
+                      <span className="text-[#D4FF00]">
+                        Convert Trust Into
+                      </span>
+                      <br />
                       <span className="text-[#98A2B3]">
-                        Into Investor-Ready Action.
+                        Investor-Ready Action.
                       </span>
                     </h1>
                     <p className="text-sm text-[#CBD5E1] leading-relaxed max-w-3xl">
