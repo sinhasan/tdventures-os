@@ -102,6 +102,97 @@ export type TdventureCurrentUser = {
   created_at?: string | null;
 };
 
+export type TdventureLoginResponse = {
+  access_token: string;
+  token_type: string;
+  user_id: string;
+  email: string;
+  role: string;
+  email_verified: boolean;
+};
+
+export function clearStoredTdventureToken(): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.localStorage.removeItem('tdventure_token');
+}
+
+export async function loginTdventureAccount(
+  email: string,
+  password: string
+): Promise<TdventureCurrentUser> {
+  const body = new URLSearchParams();
+
+  body.set('username', email.trim().toLowerCase());
+  body.set('password', password);
+
+  const response = await fetch(
+    `${TDVENTURE_API_BASE}/auth/login`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body
+    }
+  );
+
+  if (!response.ok) {
+    const rawBody = await response.text();
+    let message = rawBody.trim();
+
+    if (message) {
+      try {
+        const parsed = JSON.parse(message) as {
+          detail?: string;
+          message?: string;
+        };
+
+        message =
+          parsed.detail ||
+          parsed.message ||
+          message;
+      } catch {
+        // Preserve a plain-text backend response.
+      }
+    }
+
+    throw new Error(
+      message ||
+      'Incorrect email or password.'
+    );
+  }
+
+  const login =
+    await response.json() as
+      TdventureLoginResponse;
+
+  const accessToken =
+    String(login.access_token || '').trim();
+
+  if (!accessToken) {
+    throw new Error(
+      'TD Venture login did not return a valid session.'
+    );
+  }
+
+  window.localStorage.setItem(
+    'tdventure_token',
+    accessToken
+  );
+
+  try {
+    return await getTdventureCurrentUser();
+  } catch (error) {
+    clearStoredTdventureToken();
+    throw error;
+  }
+}
+
 export type TdventureSessionInitialization = {
   token: string | null;
   exchanged: boolean;

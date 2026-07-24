@@ -129,6 +129,262 @@ const EmailCaptureBanner = () => {
   );
 };
 
+
+const CONVERSION_ALLOWED_ACCOUNT_ROLES =
+  new Set(['startup', 'investor', 'admin']);
+
+function isConversionAccountAllowed(
+  role: string | null | undefined
+): boolean {
+  return CONVERSION_ALLOWED_ACCOUNT_ROLES.has(
+    String(role || '').trim().toLowerCase()
+  );
+}
+
+type ConversionEntryGateProps = {
+  initialMessage?: string;
+  onAuthenticated: (
+    user: TdventureCurrentUser
+  ) => void;
+};
+
+const ConversionEntryGate = ({
+  initialMessage = '',
+  onAuthenticated
+}: ConversionEntryGateProps) => {
+  const [email, setEmail] =
+    useState('');
+
+  const [password, setPassword] =
+    useState('');
+
+  const [error, setError] =
+    useState(initialMessage);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const handleLogin = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const {
+        loginTdventureAccount,
+        clearStoredTdventureToken
+      } = await import(
+        './lib/conversionApi'
+      );
+
+      const accountUser =
+        await loginTdventureAccount(
+          email,
+          password
+        );
+
+      if (
+        !isConversionAccountAllowed(
+          accountUser.role
+        )
+      ) {
+        clearStoredTdventureToken();
+
+        setError(
+          'Your TD Venture account is verified, but no Startup or Investor application is attached. Apply using one of the options below.'
+        );
+
+        return;
+      }
+
+      onAuthenticated(accountUser);
+    } catch (loginError) {
+      const message =
+        loginError instanceof Error
+          ? loginError.message
+          : 'Could not sign in to TD Venture.';
+
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-[#020205] text-white">
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(212,255,0,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(212,255,0,0.035)_1px,transparent_1px)] bg-[size:28px_28px]" />
+      <div className="absolute left-[-10%] top-[-15%] h-[520px] w-[520px] rounded-full bg-purple-700/20 blur-[150px]" />
+      <div className="absolute bottom-[-20%] right-[-10%] h-[560px] w-[560px] rounded-full bg-[#D4FF00]/10 blur-[170px]" />
+
+      <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-10">
+        <div className="grid w-full max-w-6xl gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
+
+          <section className="hidden lg:block">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#D4FF00]/60 bg-black/70 px-5 py-2 text-xs font-black uppercase tracking-[0.32em] text-[#D4FF00] shadow-[0_0_26px_rgba(212,255,0,0.16)]">
+              <ShieldCheck className="h-4 w-4" />
+              TD Venture Conversion
+            </div>
+
+            <h1 className="mt-7 max-w-3xl text-6xl font-black leading-[1.02] tracking-tight">
+              Convert founder evidence into
+              <span className="block text-[#D4FF00]">
+                investor-ready action.
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
+              Strengthen pitch proof, fundraise readiness,
+              narrative clarity and investor fit before moving
+              an opportunity into Deal Desk.
+            </p>
+
+            <div className="mt-8 grid max-w-3xl grid-cols-3 gap-4">
+              {[
+                ['01', 'Founder evidence'],
+                ['02', 'Conversion signals'],
+                ['03', 'Deal Desk handoff'],
+              ].map(([number, label]) => (
+                <div
+                  key={number}
+                  className="rounded-2xl border border-slate-800 bg-[#080D1A]/90 p-5"
+                >
+                  <div className="text-xs font-black tracking-[0.3em] text-[#D4FF00]">
+                    {number}
+                  </div>
+
+                  <div className="mt-3 text-sm font-bold text-white">
+                    {label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="mx-auto w-full max-w-md">
+            <div className="rounded-3xl border border-[#D4FF00]/55 bg-[#070A0F]/95 p-7 shadow-[0_0_70px_rgba(212,255,0,0.18)] backdrop-blur-xl">
+
+              <div className="mb-6">
+                <div className="text-xs font-black uppercase tracking-[0.3em] text-[#D4FF00]">
+                  Secure Conversion Terminal
+                </div>
+
+                <h2 className="mt-3 text-3xl font-black text-white">
+                  Sign in
+                </h2>
+
+                <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                  Access is available to registered Startup and
+                  Investor accounts. Global administrators retain
+                  system access.
+                </p>
+              </div>
+
+              {error && (
+                <div className="mb-5 rounded-xl border border-red-500/35 bg-red-500/10 px-4 py-3 text-sm leading-relaxed text-red-200">
+                  {error}
+                </div>
+              )}
+
+              <form
+                onSubmit={handleLogin}
+              >
+                <label className="mb-2 block text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
+                  Email
+                </label>
+
+                <input
+                  type="email"
+                  required
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(event) =>
+                    setEmail(event.target.value)
+                  }
+                  className="mb-4 w-full rounded-xl border border-slate-700 bg-black/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-700 focus:border-[#D4FF00] focus:shadow-[0_0_20px_rgba(212,255,0,0.18)]"
+                />
+
+                <label className="mb-2 block text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
+                  Password
+                </label>
+
+                <input
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(event) =>
+                    setPassword(event.target.value)
+                  }
+                  className="mb-5 w-full rounded-xl border border-slate-700 bg-black/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-700 focus:border-[#D4FF00] focus:shadow-[0_0_20px_rgba(212,255,0,0.18)]"
+                />
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full rounded-xl bg-[#D4FF00] py-3.5 text-sm font-black uppercase tracking-[0.12em] !text-black shadow-[0_0_28px_rgba(212,255,0,0.36)] transition hover:bg-[#E7FF66] disabled:cursor-wait disabled:opacity-60"
+                >
+                  {loading
+                    ? 'Signing in…'
+                    : 'Enter Conversion'}
+                </button>
+              </form>
+
+              <div className="my-6 flex items-center gap-3">
+                <div className="h-px flex-1 bg-slate-800" />
+                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-600">
+                  New to TD Venture
+                </span>
+                <div className="h-px flex-1 bg-slate-800" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <a
+                  href="https://staging.tdventure.vc/signup/startup"
+                  className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#D4FF00]/60 bg-[#D4FF00]/10 px-3 text-center text-xs font-black text-[#D4FF00] transition hover:bg-[#D4FF00] hover:!text-black"
+                >
+                  Apply as Startup
+                </a>
+
+                <a
+                  href="https://staging.tdventure.vc/signup/investor"
+                  className="inline-flex min-h-12 items-center justify-center rounded-xl border border-purple-400/60 bg-purple-500/10 px-3 text-center text-xs font-black text-purple-200 transition hover:bg-purple-500 hover:text-white"
+                >
+                  Apply as Investor
+                </a>
+              </div>
+
+              <a
+                href="https://staging.tdventure.vc/app"
+                className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/70 px-4 text-xs font-black text-slate-200 transition hover:border-[#D4FF00]/60 hover:text-white"
+              >
+                Continue from Private Marketplace
+                <ChevronRight className="h-4 w-4" />
+              </a>
+
+              <a
+                href="https://staging.tdventure.vc"
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 text-xs font-bold text-slate-500 transition hover:text-[#D4FF00]"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Return to TD Venture
+              </a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const PREMIUM_THEMES = [
   { id: 'enterprise-blue', name: 'Deep Enterprise Blue', bg: '#0F172A', gradientStart: '#0F172A', gradientEnd: '#090D1A', accent: '#7C3AED', glowColor: 'rgba(124, 58, 237, 0.4)' },
   { id: 'electric-purple', name: 'Electric Purple Pulse', bg: '#0F172A', gradientStart: '#1E1B4B', gradientEnd: '#090514', accent: '#7C3AED', glowColor: 'rgba(124, 58, 237, 0.4)' },
@@ -169,6 +425,9 @@ export default function App() {
     useState<TdventureCurrentUser | null>(null);
   const [tdventureSessionChecked, setTdventureSessionChecked] =
     useState(false);
+
+  const [tdventureSessionError, setTdventureSessionError] =
+    useState('');
 
   const tdventureAccountName =
     tdventureUser?.full_name?.trim() ||
@@ -214,11 +473,23 @@ export default function App() {
         if (session.token) {
           const accountUser = await getTdventureCurrentUser();
 
+          if (
+            !isConversionAccountAllowed(
+              accountUser.role
+            )
+          ) {
+            throw new Error(
+              'Your TD Venture account is verified, but no Startup or Investor application is attached.'
+            );
+          }
+
           if (!cancelled) {
             setTdventureUser(accountUser);
+            setTdventureSessionError('');
           }
         } else {
           setTdventureUser(null);
+          setTdventureSessionError('');
         }
 
         return session;
@@ -236,15 +507,20 @@ export default function App() {
 
         setTdventureUser(null);
 
+        try {
+          localStorage.removeItem(
+            'tdventure_token'
+          );
+        } catch {
+          // Browser storage may be unavailable.
+        }
+
         const message =
           error instanceof Error
             ? error.message
             : 'Could not connect your TD Venture session.';
 
-        setFeedbackMsg({
-          text: `${message} Reopen Conversion from TD Venture.`,
-          type: 'warn'
-        });
+        setTdventureSessionError(message);
       })
       .finally(() => {
         if (!cancelled) {
@@ -801,6 +1077,36 @@ export default function App() {
     setPitchResults(null);
     triggerToast(`Selected ${dossier.name} preloaded file! Click Start Deep TD Conversion OS Analysis.`, 'info');
   };
+
+  if (!tdventureSessionChecked) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#020205] text-[#D4FF00]">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[#D4FF00]/20 border-t-[#D4FF00]" />
+          <div className="text-xs font-black uppercase tracking-[0.3em]">
+            Checking TD Venture session
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!tdventureUser) {
+    return (
+      <ConversionEntryGate
+        initialMessage={tdventureSessionError}
+        onAuthenticated={(accountUser) => {
+          setTdventureUser(accountUser);
+          setTdventureSessionError('');
+
+          setFeedbackMsg({
+            text: 'TD Venture session connected.',
+            type: 'success'
+          });
+        }}
+      />
+    );
+  }
 
   const activeThemeObj = PREMIUM_THEMES.find(t => t.id === selectedTheme) || PREMIUM_THEMES[0];
 
