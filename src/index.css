@@ -364,6 +364,7 @@ body,
   background-color: var(--tdv-ink);
   color: var(--tdv-ivory);
   font-family: "Inter", system-ui, sans-serif;
+  font-weight: 400;
   font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -381,10 +382,14 @@ h3,
 
 h4,
 h5,
-h6,
-.font-sans {
+h6 {
   font-family: "Inter", system-ui, sans-serif;
   font-weight: 700;
+}
+
+.font-sans {
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 400;
 }
 
 .font-mono,

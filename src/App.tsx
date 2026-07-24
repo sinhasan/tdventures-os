@@ -725,7 +725,7 @@ export default function App() {
   const activeThemeObj = PREMIUM_THEMES.find(t => t.id === selectedTheme) || PREMIUM_THEMES[0];
 
   return (
-    <div className={`min-h-screen font-sans overflow-x-hidden selection:bg-purple-600/40 pb-14 md:pb-0 transition-colors duration-300 ${
+    <div className={`min-h-screen font-sans overflow-x-hidden selection:bg-[#D4FF00]/30 pb-14 md:pb-0 transition-colors duration-300 ${
       themeMode === 'light' 
         ? 'light-theme bg-[#F8FAFC] text-[#0F172A]' 
         : 'dark-theme bg-[#020205] text-slate-200'
@@ -757,7 +757,7 @@ export default function App() {
             {/* Branding Header matching screenshot style */}
             <div className="h-20 flex items-center px-6 border-b border-slate-800/50 justify-between">
               <div className="flex items-center gap-3">
-                <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-600 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+                <div className="relative flex items-center justify-center w-10 h-10 rounded-xl border border-[#D4FF00]/35 bg-[#111821] shadow-[0_0_20px_rgba(212,255,0,0.10)]">
                   <span className="text-[#D4AF37] text-xl">🎯</span>
                   <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22C55E] rounded-full border border-black animate-pulse" />
                 </div>
@@ -774,7 +774,7 @@ export default function App() {
 
               {/* Shared TD Venture account identity */}
               <div className="p-4 mx-4 mt-4 rounded-2xl bg-[#090e1a]/80 border border-slate-800/60 flex items-center gap-3">
-                <div className="relative w-10 h-10 rounded-full border border-purple-500/30 bg-purple-500/10 flex items-center justify-center font-bold text-purple-200 uppercase text-xs">
+                <div className="relative w-10 h-10 rounded-full border border-[#D4FF00]/35 bg-[#D4FF00]/[0.06] flex items-center justify-center font-bold text-[#D4FF00] uppercase text-xs">
                   {tdventureAccountInitials}
                 </div>
 
@@ -992,17 +992,17 @@ export default function App() {
             {activeTab === 'dashboard' && (
               <div className="space-y-6 animate-fade-in">
                 {/* Mega Banner Hero statements */}
-                <div className="p-6 rounded-3xl border border-indigo-900/30 bg-gradient-to-br from-[#0F172A] via-[#0A0A16] to-[#04040a] relative overflow-hidden group shadow-2xl">
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(124,58,237,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(124,58,237,0.03)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
-                  <div className="absolute -right-24 -top-24 w-80 h-80 bg-gradient-to-tr from-purple-600/10 to-indigo-600/20 rounded-full blur-[80px] pointer-events-none" />
+                <div className="p-6 rounded-3xl border border-white/10 bg-gradient-to-br from-[#111821] via-[#0B1118] to-[#070A0E] relative overflow-hidden group shadow-2xl">
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(212,255,0,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(212,255,0,0.025)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+                  <div className="absolute -right-24 -top-24 w-80 h-80 bg-[#D4FF00]/[0.06] rounded-full blur-[90px] pointer-events-none" />
                   
                   <div className="relative z-10 space-y-3">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/40 border border-purple-500/20 text-purple-300 text-[10px] font-mono leading-none">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#070A0E]/80 border border-[#D4FF00]/35 text-[#D4FF00] text-[10px] font-mono leading-none">
                       <Sparkles className="w-3 h-3 animate-pulse" /> TD Venture Conversion Terminal
                     </div>
-                    <h1 className="text-2xl md:text-4xl font-extrabold text-[#F8FAFC] tracking-tight leading-tight">
+                    <h1 className="text-3xl md:text-5xl font-display font-bold text-[#F5F1E8] tracking-[-0.03em] leading-[0.98]">
                       TD Conversion OS — Convert Trust <br />
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
+                      <span className="text-[#D4FF00]">
                         Into Investor-Ready Action.
                       </span>
                     </h1>
