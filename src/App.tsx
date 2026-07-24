@@ -1002,7 +1002,7 @@ export default function App() {
                     </div>
                     <h1 className="text-3xl md:text-5xl font-display font-bold text-[#F5F1E8] tracking-[-0.03em] leading-[0.98]">
                       TD Conversion OS — Convert Trust <br />
-                      <span className="text-[#D4FF00]">
+                      <span className="text-[#98A2B3]">
                         Into Investor-Ready Action.
                       </span>
                     </h1>
