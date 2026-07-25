@@ -89,7 +89,10 @@ import {
 } from './components/AIChatVoiceBanner';
 
 import { SEOOptimizedSuite, DueDiligenceReport, DealFlowItem } from './types';
-import type { TdventureCurrentUser } from './lib/conversionApi';
+import type {
+  TdventureCurrentUser,
+  ProfilePlaneResolution
+} from './lib/conversionApi';
 import { 
   COMPONENT_ROLES, 
   INITIAL_ALERTS, 
@@ -432,6 +435,9 @@ export default function App() {
   const [tdventureSessionError, setTdventureSessionError] =
     useState('');
 
+  const [profilePlaneResolution, setProfilePlaneResolution] =
+    useState<ProfilePlaneResolution | null>(null);
+
   const tdventureAccountName =
     tdventureUser?.full_name?.trim() ||
     tdventureUser?.email?.split('@')[0] ||
@@ -467,7 +473,8 @@ export default function App() {
       .then(async ({
         initializeTdventureSessionFromLaunch,
         getTdventureCurrentUser,
-        getConversionWorkspaceAccess
+        getConversionWorkspaceAccess,
+        getCurrentProfilePlane
       }) => {
         const session =
           await initializeTdventureSessionFromLaunch();
@@ -486,9 +493,49 @@ export default function App() {
             );
           }
 
+          const profilePlane =
+            await getCurrentProfilePlane();
+
           if (!cancelled) {
             setTdventureUser(accountUser);
+            setProfilePlaneResolution(profilePlane);
             setTdventureSessionError('');
+
+            const profile = profilePlane.profile;
+
+            if (
+              profilePlane.state === 'linked' &&
+              profilePlane.profile_type === 'startup' &&
+              profile
+            ) {
+              setConversionProfile((current) => ({
+                ...current,
+                startupName:
+                  current.startupName.trim() ||
+                  String(profile.startup_name || '').trim(),
+                sector:
+                  current.sector.trim() ||
+                  String(profile.sector || '').trim(),
+                stage:
+                  current.stage !== 'Seed'
+                    ? current.stage
+                    : (
+                      String(profile.stage || '').trim() ||
+                      current.stage
+                    ),
+                raiseAmount:
+                  current.raiseAmount.trim() ||
+                  String(profile.ask || '').trim(),
+                pitchSummary:
+                  current.pitchSummary.trim() ||
+                  String(profile.pitch_summary || '').trim(),
+              }));
+
+              setFeedbackMsg({
+                text: 'Startup profile loaded from TD Venture.',
+                type: 'success'
+              });
+            }
           }
         } else {
           setTdventureUser(null);
@@ -1796,7 +1843,7 @@ export default function App() {
                           <Sparkles className="text-purple-400 w-5 h-5 animate-spin" style={{ animationDuration: '3s' }} /> Conversion Readiness Report
                         </h3>
                         <p className="text-xs text-slate-400 font-mono mt-1">
-                          Founder Vault Analysis • Conversion signals synced • File: {uploadedFile?.name || 'InspectZero_Investor_Readiness_Report.pdf'}
+                          Founder Vault Analysis • Conversion signals synced • File: {uploadedFile?.name || 'No deck uploaded'}
                         </p>
                       </div>
 
@@ -2293,7 +2340,7 @@ export default function App() {
                   <p className="text-sm text-slate-400 mt-3 max-w-3xl">This converts the intelligence report into an execution package for founder follow-up, IC review and CRM action.</p>
                 </div>
                 <div className="grid md:grid-cols-4 gap-4">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Startup</p><p className="text-lg font-black text-white mt-2">{conversionProfile.startupName || 'InspectZero Demo'}</p><p className="text-xs text-slate-500 mt-1">{conversionProfile.sector || 'AI Inspections'} · {conversionProfile.stage || 'Seed'}</p></div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Startup</p><p className="text-lg font-black text-white mt-2">{conversionProfile.startupName || 'Not set'}</p><p className="text-xs text-slate-500 mt-1">{conversionProfile.sector || 'Not set'} · {conversionProfile.stage || 'Seed'}</p></div>
                   <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Conversion Score</p><p className="text-3xl font-black text-[#D4FF00] mt-2">{pitchResults?.score || conversionReview?.pitchDeckQuality || 87}/100</p><p className="text-xs text-slate-500 mt-1">Signal quality for investor action</p></div>
                   <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Risk Level</p><p className="text-lg font-black text-orange-300 mt-2">{conversionReview?.riskLevel || 'Moderate'}</p><p className="text-xs text-slate-500 mt-1">Needs proof-backed follow-up</p></div>
                   <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Deal Desk Status</p><p className="text-lg font-black text-emerald-300 mt-2">Ready for review</p><p className="text-xs text-slate-500 mt-1">Prepared for CRM workflow</p></div>

@@ -110,6 +110,38 @@ export type ConversionWorkspaceAccess = {
   profile_id: string | null;
 };
 
+export type ProfilePlaneStartupProfile = {
+  id: string;
+  email: string;
+  is_active: boolean;
+  startup_name?: string | null;
+  founder_name?: string | null;
+  phone?: string | null;
+  city?: string | null;
+  country?: string | null;
+  sector?: string | null;
+  stage?: string | null;
+  website?: string | null;
+  pitch_summary?: string | null;
+  ask?: string | null;
+  linkedin_profile?: string | null;
+  social_media_handles?: string | null;
+};
+
+export type ProfilePlaneResolution = {
+  state:
+    | 'linked'
+    | 'claim_available'
+    | 'application_required'
+    | 'verification_required'
+    | 'ambiguous';
+  role?: string | null;
+  profile_type?: 'startup' | 'investor' | 'admin' | null;
+  profile_id?: string | null;
+  profile?: ProfilePlaneStartupProfile | null;
+  reason?: string | null;
+};
+
 export type TdventureLoginResponse = {
   access_token: string;
   token_type: string;
@@ -383,6 +415,13 @@ export async function getConversionWorkspaceAccess():
   Promise<ConversionWorkspaceAccess> {
   return tdventureRequest<ConversionWorkspaceAccess>(
     '/conversion/access'
+  );
+}
+
+export async function getCurrentProfilePlane():
+  Promise<ProfilePlaneResolution> {
+  return tdventureRequest<ProfilePlaneResolution>(
+    '/profile-plane/current'
   );
 }
 
