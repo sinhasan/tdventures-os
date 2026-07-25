@@ -130,17 +130,6 @@ const EmailCaptureBanner = () => {
 };
 
 
-const CONVERSION_ALLOWED_ACCOUNT_ROLES =
-  new Set(['startup', 'investor', 'admin']);
-
-function isConversionAccountAllowed(
-  role: string | null | undefined
-): boolean {
-  return CONVERSION_ALLOWED_ACCOUNT_ROLES.has(
-    String(role || '').trim().toLowerCase()
-  );
-}
-
 type ConversionEntryGateProps = {
   initialMessage?: string;
   onAuthenticated: (
@@ -179,7 +168,8 @@ const ConversionEntryGate = ({
     try {
       const {
         loginTdventureAccount,
-        clearStoredTdventureToken
+        clearStoredTdventureToken,
+        getConversionWorkspaceAccess
       } = await import(
         './lib/conversionApi'
       );
@@ -190,18 +180,18 @@ const ConversionEntryGate = ({
           password
         );
 
-      if (
-        !isConversionAccountAllowed(
-          accountUser.role
-        )
-      ) {
+      try {
+        const access =
+          await getConversionWorkspaceAccess();
+
+        if (!access.allowed) {
+          throw new Error(
+            'Your account is not eligible to enter Conversion.'
+          );
+        }
+      } catch (accessError) {
         clearStoredTdventureToken();
-
-        setError(
-          'Your TD Venture account is verified, but no Startup or Investor application is attached. Apply using one of the options below.'
-        );
-
-        return;
+        throw accessError;
       }
 
       onAuthenticated(accountUser);
@@ -470,7 +460,8 @@ export default function App() {
     void import('./lib/conversionApi')
       .then(async ({
         initializeTdventureSessionFromLaunch,
-        getTdventureCurrentUser
+        getTdventureCurrentUser,
+        getConversionWorkspaceAccess
       }) => {
         const session =
           await initializeTdventureSessionFromLaunch();
@@ -480,13 +471,12 @@ export default function App() {
         if (session.token) {
           const accountUser = await getTdventureCurrentUser();
 
-          if (
-            !isConversionAccountAllowed(
-              accountUser.role
-            )
-          ) {
+          const access =
+            await getConversionWorkspaceAccess();
+
+          if (!access.allowed) {
             throw new Error(
-              'Your TD Venture account is verified, but no Startup or Investor application is attached.'
+              'Your account is not eligible to enter Conversion.'
             );
           }
 

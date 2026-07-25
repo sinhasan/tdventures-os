@@ -102,6 +102,14 @@ export type TdventureCurrentUser = {
   created_at?: string | null;
 };
 
+export type ConversionWorkspaceAccess = {
+  ok: boolean;
+  allowed: boolean;
+  role: string;
+  profile_type: 'startup' | 'investor' | 'admin';
+  profile_id: string | null;
+};
+
 export type TdventureLoginResponse = {
   access_token: string;
   token_type: string;
@@ -369,6 +377,13 @@ async function tdventureRequest<T>(
 export async function getTdventureCurrentUser():
   Promise<TdventureCurrentUser> {
   return tdventureRequest<TdventureCurrentUser>('/auth/me');
+}
+
+export async function getConversionWorkspaceAccess():
+  Promise<ConversionWorkspaceAccess> {
+  return tdventureRequest<ConversionWorkspaceAccess>(
+    '/conversion/access'
+  );
 }
 
 
