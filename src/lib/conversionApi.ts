@@ -418,11 +418,25 @@ export async function getConversionWorkspaceAccess():
   );
 }
 
+type ProfilePlaneCurrentResponse = {
+  ok: boolean;
+  resolution: ProfilePlaneResolution;
+};
+
 export async function getCurrentProfilePlane():
   Promise<ProfilePlaneResolution> {
-  return tdventureRequest<ProfilePlaneResolution>(
-    '/profile-plane/current'
-  );
+  const response =
+    await tdventureRequest<ProfilePlaneCurrentResponse>(
+      '/profile-plane/current'
+    );
+
+  if (!response || !response.resolution) {
+    throw new Error(
+      'TD Venture did not return a valid profile resolution.'
+    );
+  }
+
+  return response.resolution;
 }
 
 
