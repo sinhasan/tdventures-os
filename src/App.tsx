@@ -283,6 +283,27 @@ const ConversionEntryGate = ({
                 </p>
               </div>
 
+                <div className="mb-5 grid grid-cols-2 gap-3">
+                  <a
+                    href="https://staging.tdventure.vc/app"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Open Private Marketplace"
+                    className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex min-h-11 items-center justify-center rounded-md border border-cyan-300/70 bg-cyan-400/10 px-3 text-center text-xs font-bold text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.24)] transition hover:bg-cyan-300 hover:!text-black"
+                  >
+                    ← Private Marketplace
+                  </a>
+
+                  <a
+                    href="https://crm.tdventure.vc/login"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Open Deal Desk"
+                    className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex min-h-11 items-center justify-center rounded-md border border-[#D4FF00]/70 bg-[#D4FF00]/10 px-3 text-center text-xs font-bold text-[#D4FF00] shadow-[0_0_22px_rgba(212,255,0,0.24)] transition hover:bg-[#D4FF00] hover:!text-black"
+                  >
+                    Deal Desk →
+                  </a>
+                </div>
               {error && (
                 <div className="mb-5 rounded-xl border border-red-500/35 bg-red-500/10 px-4 py-3 text-sm leading-relaxed text-red-200">
                   {error}
@@ -359,21 +380,6 @@ const ConversionEntryGate = ({
                 </a>
               </div>
 
-              <a
-                href="https://staging.tdventure.vc/app"
-                className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/70 px-4 text-xs font-black text-slate-200 transition hover:border-[#D4FF00]/60 hover:text-white"
-              >
-                Continue from Private Marketplace
-                <ChevronRight className="h-4 w-4" />
-              </a>
-
-              <a
-                href="https://staging.tdventure.vc"
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 text-xs font-bold text-slate-500 transition hover:text-[#D4FF00]"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Return to TD Venture
-              </a>
             </div>
           </section>
         </div>
@@ -1358,19 +1364,15 @@ export default function App() {
               </div>
 
                 {/* Cross-workspace product journey */}
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
                   <a
                     href="https://staging.tdventure.vc/app"
-                    title="Return to Private Marketplace"
-                    className="inline-flex h-10 w-[150px] shrink-0 items-center justify-center gap-1.5 rounded-xl border border-[#D4FF00] bg-[#D4FF00] px-3 text-[10px] font-black !text-black shadow-[0_0_22px_rgba(212,255,0,0.75)] transition hover:bg-[#E7FF66]"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Open Private Marketplace"
+                    className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex h-10 w-[170px] shrink-0 items-center justify-center rounded-md border border-cyan-300/70 bg-cyan-400/10 px-3 text-[10px] font-black text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.24)] transition hover:bg-cyan-300 hover:!text-black"
                   >
-                    <ArrowLeft className="h-3.5 w-3.5 !text-black" />
-                    <span className="relative flex h-2 w-2 shrink-0">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-black/50" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-black" />
-                    </span>
-                    <span className="hidden xl:inline !text-black">Private Marketplace</span>
-                    <span className="xl:hidden !text-black">Marketplace</span>
+                    ← Private Marketplace
                   </a>
 
                   <div
@@ -1380,10 +1382,12 @@ export default function App() {
                     <div className="grid h-7 w-7 place-items-center rounded-full bg-purple-500/20 text-[9px] font-black text-purple-200">
                       {tdventureAccountInitials}
                     </div>
+
                     <div className="hidden 2xl:block min-w-0">
                       <span className="block max-w-[130px] truncate text-[10px] font-bold text-white">
                         {tdventureAccountName}
                       </span>
+
                       <span className="block max-w-[130px] truncate text-[8px] capitalize text-purple-300">
                         {tdventureAccountRole}
                       </span>
@@ -1394,14 +1398,9 @@ export default function App() {
                     type="button"
                     onClick={openDealDeskWorkspace}
                     title="Continue securely to Deal Desk"
-                    className="inline-flex h-10 w-[150px] shrink-0 items-center justify-center gap-1.5 rounded-xl border border-[#D4FF00] bg-[#D4FF00] px-3 text-[10px] font-black !text-black shadow-[0_0_22px_rgba(212,255,0,0.75)] transition hover:bg-[#E7FF66]"
+                    className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex h-10 w-[150px] shrink-0 items-center justify-center rounded-md border border-[#D4FF00]/70 bg-[#D4FF00]/10 px-3 text-[10px] font-black text-[#D4FF00] shadow-[0_0_22px_rgba(212,255,0,0.24)] transition hover:bg-[#D4FF00] hover:!text-black"
                   >
-                    <span className="relative flex h-2 w-2 shrink-0">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-black/50" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-black" />
-                    </span>
-                    <span className="!text-black">Deal Desk</span>
-                    <ChevronRight className="h-3.5 w-3.5 !text-black" />
+                    Deal Desk →
                   </button>
                 </div>
             </div>
