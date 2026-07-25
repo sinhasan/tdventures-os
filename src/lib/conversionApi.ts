@@ -142,6 +142,52 @@ export type ProfilePlaneResolution = {
   reason?: string | null;
 };
 
+export type ConversionPreviewAnalysis = {
+  pitch_deck_quality: number;
+  narrative_clarity: number;
+  fundraise_readiness: number;
+  risk_level: 'Low' | 'Moderate' | 'High';
+  risk_flags: string[];
+  next_best_action: string;
+};
+
+export type ConversionPreviewResponse = {
+  ok: boolean;
+  usage_type: 'preview';
+  provider: string;
+  model: string;
+  analysis_version: string;
+  generated_at: string;
+  analysis: ConversionPreviewAnalysis;
+  signal: null;
+  preview_limitations: Record<string, string>;
+  credits: {
+    total: number;
+    reserved: number;
+    consumed: number;
+    remaining: number;
+    status: string;
+  };
+  storage_rule: {
+    raw_file_stored: boolean;
+    raw_extracted_text_stored: boolean;
+    conversion_signal_saved: boolean;
+  };
+};
+
+export type ConversionPreviewParams = {
+  startupId: string;
+  idempotencyKey: string;
+  startupName?: string;
+  sector?: string;
+  stage?: string;
+  raiseAmount?: string;
+  pitchSummary: string;
+  tractionProof?: string;
+  riskNotes?: string;
+  targetInvestor?: string;
+};
+
 export type TdventureLoginResponse = {
   access_token: string;
   token_type: string;
@@ -518,6 +564,46 @@ export function createConversionHandoff(
     body: JSON.stringify(params)
   });
 }
+function createAnalysisIdempotencyKey(): string {
+  const randomPart =
+    typeof window !== 'undefined' &&
+    window.crypto &&
+    typeof window.crypto.randomUUID === 'function'
+      ? window.crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+  return `conversion-preview-${randomPart}`;
+}
+
+export function runConversionPreview(
+  params: ConversionPreviewParams
+): Promise<ConversionPreviewResponse> {
+  const startupId = params.startupId.trim();
+
+  if (!startupId) {
+    return Promise.reject(
+      new Error('A canonical startup profile is required for Preview Analysis.')
+    );
+  }
+
+  return conversionRequest<ConversionPreviewResponse>('/analyze', {
+    method: 'POST',
+    body: JSON.stringify({
+      startup_id: startupId,
+      usage_type: 'preview',
+      idempotency_key: params.idempotencyKey || createAnalysisIdempotencyKey(),
+      startup_name: params.startupName?.trim() || undefined,
+      sector: params.sector?.trim() || undefined,
+      stage: params.stage?.trim() || undefined,
+      raise_amount: params.raiseAmount?.trim() || undefined,
+      pitch_summary: params.pitchSummary.trim(),
+      traction_proof: params.tractionProof?.trim() || undefined,
+      risk_notes: params.riskNotes?.trim() || undefined,
+      target_investor: params.targetInvestor?.trim() || undefined
+    })
+  });
+}
+
 function createPaymentIdempotencyKey(): string {
   const randomPart = (
     typeof window !== 'undefined'

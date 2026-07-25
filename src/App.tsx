@@ -670,57 +670,103 @@ export default function App() {
     pitchDeckQuality: number;
     fundraiseReadiness: number;
     narrativeClarity: number;
-    investorFit: number;
     riskLevel: 'Low' | 'Moderate' | 'High';
     riskFlags: string[];
     nextBestAction: string;
-    crmSummary: string;
     generatedAt: string;
+    limitations: Record<string, string>;
   };
 
-  const [conversionReview, setConversionReview] = useState<ConversionReviewResult | null>(null);
+  const [conversionReview, setConversionReview] =
+    useState<ConversionReviewResult | null>(null);
 
-  const generateConversionReview = () => {
-    const p = conversionProfile;
-    const hasPitch = p.pitchSummary.trim().length > 60;
-    const hasTraction = p.tractionProof.trim().length > 40;
-    const hasRaise = p.raiseAmount.trim().length > 0;
-    const hasInvestor = p.targetInvestor.trim().length > 10;
-    const hasRisk = p.riskNotes.trim().length > 20;
+  const [isConversionReviewRunning, setIsConversionReviewRunning] =
+    useState(false);
 
-    const pitchDeckQuality = Math.min(94, 48 + (hasPitch ? 24 : 8) + (hasTraction ? 10 : 0) + (hasRaise ? 6 : 0));
-    const fundraiseReadiness = Math.min(92, 42 + (hasRaise ? 18 : 0) + (hasTraction ? 18 : 4) + (hasInvestor ? 10 : 0));
-    const narrativeClarity = Math.min(95, 45 + (hasPitch ? 28 : 10) + (p.sector ? 8 : 0) + (p.stage ? 6 : 0));
-    const investorFit = Math.min(93, 44 + (hasInvestor ? 24 : 8) + (p.sector ? 10 : 0) + (hasTraction ? 8 : 0));
+  const runConversionPreview = async () => {
+    const startupId = String(
+      profilePlaneResolution?.state === 'linked' &&
+      profilePlaneResolution?.profile_type === 'startup'
+        ? profilePlaneResolution.profile_id || ''
+        : ''
+    ).trim();
 
-    const riskFlags = [
-      !hasTraction ? 'Traction proof needs stronger evidence' : '',
-      !hasRaise ? 'Raise amount is not clearly stated' : '',
-      !hasInvestor ? 'Target investor profile is too broad' : '',
-      hasRisk ? 'Founder has disclosed risks that need cleanup before investor handoff' : ''
-    ].filter(Boolean) as string[];
+    if (!startupId) {
+      triggerToast(
+        'Link a verified Startup profile before running Preview Analysis.',
+        'warn'
+      );
+      return;
+    }
 
-    const riskLevel: 'Low' | 'Moderate' | 'High' = riskFlags.length >= 3 ? 'High' : riskFlags.length >= 1 ? 'Moderate' : 'Low';
-    const startup = p.startupName.trim() || 'This founder';
-    const nextBestAction = riskLevel === 'High'
-      ? 'Tighten proof, raise logic and investor targeting before Deal Desk handoff.'
-      : riskLevel === 'Moderate'
-        ? 'Clean evidence gaps and prepare a focused founder brief for investor outreach.'
-        : 'Move to Deal Desk with CRM-ready summary and investor shortlist.';
+    if (conversionProfile.pitchSummary.trim().length < 40) {
+      triggerToast(
+        'Add at least a short founder pitch summary before running Preview Analysis.',
+        'warn'
+      );
+      return;
+    }
 
-    setConversionReview({
-      pitchDeckQuality,
-      fundraiseReadiness,
-      narrativeClarity,
-      investorFit,
-      riskLevel,
-      riskFlags: riskFlags.length ? riskFlags : ['No major frontend risk flag detected from current inputs'],
-      nextBestAction,
-      crmSummary: startup + ' is a ' + (p.stage || 'stage-not-set') + ' company in ' + (p.sector || 'sector-not-set') + '. Raise ask: ' + (p.raiseAmount || 'not stated') + '. Target investor: ' + (p.targetInvestor || 'not stated') + '. Recommended action: ' + nextBestAction,
-      generatedAt: new Date().toLocaleString()
-    });
+    setIsConversionReviewRunning(true);
+    setConversionReview(null);
+
+    try {
+      const { runConversionPreview: requestPreview } =
+        await import('./lib/conversionApi');
+
+      const response = await requestPreview({
+        startupId,
+        idempotencyKey:
+          `conversion-preview-${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2)}`,
+        startupName: conversionProfile.startupName,
+        sector: conversionProfile.sector,
+        stage: conversionProfile.stage,
+        raiseAmount: conversionProfile.raiseAmount,
+        pitchSummary: conversionProfile.pitchSummary,
+        tractionProof: conversionProfile.tractionProof,
+        riskNotes: conversionProfile.riskNotes,
+        targetInvestor: conversionProfile.targetInvestor
+      });
+
+      const analysis = response.analysis;
+
+      setConversionReview({
+        pitchDeckQuality: analysis.pitch_deck_quality,
+        fundraiseReadiness: analysis.fundraise_readiness,
+        narrativeClarity: analysis.narrative_clarity,
+        riskLevel: analysis.risk_level,
+        riskFlags: analysis.risk_flags,
+        nextBestAction: analysis.next_best_action,
+        generatedAt: new Date(response.generated_at).toLocaleString(),
+        limitations: response.preview_limitations
+      });
+
+      setActiveTab('pitch_analyzer');
+      setFeedbackMsg({
+        text: 'Founder Signal Preview generated from central TD Venture analysis.',
+        type: 'success'
+      });
+      triggerToast(
+        'Founder Signal Preview is ready.',
+        'success'
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Preview Analysis could not be completed.';
+
+      setFeedbackMsg({
+        text: message,
+        type: 'warn'
+      });
+      triggerToast(message, 'warn');
+    } finally {
+      setIsConversionReviewRunning(false);
+    }
   };
-
 
   const [activeAlerts, setActiveAlerts] = useState(INITIAL_ALERTS);
   const [showAlertsDropdown, setShowAlertsDropdown] = useState<boolean>(false);
@@ -1789,6 +1835,58 @@ export default function App() {
                   </div>
                 )}
 
+                {conversionReview && !isConversionReviewRunning && (
+                  <div className='mb-6 p-6 rounded-3xl border border-[#D4FF00]/30 bg-[#0c1222]/90 shadow-2xl'>
+                    <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5'>
+                      <div>
+                        <span className='text-[10px] font-mono uppercase tracking-[0.28em] text-[#D4FF00] font-bold'>Central Founder Signal Preview</span>
+                        <h2 className='text-2xl font-black text-white mt-2'>{conversionProfile.startupName || 'Founder'} Readiness Preview</h2>
+                        <p className='text-xs text-slate-400 mt-1'>AI interpretation of founder-provided evidence. This Preview does not create a CRM signal.</p>
+                      </div>
+                      <div className='px-4 py-3 rounded-2xl border border-slate-800 bg-slate-950/70'>
+                        <div className='text-[10px] uppercase tracking-wider text-slate-500 font-bold'>Risk Level</div>
+                        <div className={conversionReview.riskLevel === 'High' ? 'text-red-400 font-black' : conversionReview.riskLevel === 'Moderate' ? 'text-yellow-300 font-black' : 'text-[#D4FF00] font-black'}>{conversionReview.riskLevel}</div>
+                      </div>
+                    </div>
+
+                    <div className='grid grid-cols-1 md:grid-cols-3 gap-3 mb-5'>
+                      {[
+                        ['Pitch Deck Quality', conversionReview.pitchDeckQuality],
+                        ['Fundraise Readiness', conversionReview.fundraiseReadiness],
+                        ['Narrative Clarity', conversionReview.narrativeClarity]
+                      ].map(([label, score]) => (
+                        <div key={label as string} className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
+                          <div className='text-[10px] uppercase tracking-wider text-slate-500 font-bold'>{label}</div>
+                          <div className='text-2xl font-black text-white mt-1'>{score}<span className='text-xs text-slate-500'>/100</span></div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+                      <div className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
+                        <div className='text-[10px] uppercase tracking-wider text-[#D4FF00] font-bold mb-2'>Next Best Action</div>
+                        <p className='text-sm text-slate-200 leading-relaxed'>{conversionReview.nextBestAction}</p>
+                      </div>
+                      <div className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
+                        <div className='text-[10px] uppercase tracking-wider text-[#D4FF00] font-bold mb-2'>Risk Flags</div>
+                        {conversionReview.riskFlags.length > 0 ? (
+                          <ul className='space-y-1 text-sm text-slate-300'>
+                            {conversionReview.riskFlags.map((flag) => <li key={flag}>- {flag}</li>)}
+                          </ul>
+                        ) : (
+                          <p className='text-sm text-slate-400'>No specific risk flags were returned in this Preview.</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className='mt-4 p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
+                      <div className='text-[10px] uppercase tracking-wider text-slate-500 font-bold'>Preview boundary</div>
+                      <p className='text-sm text-slate-300 leading-relaxed mt-2'>Investor Fit, traction interpretation, contradictions, investment thesis, CRM summary, Deal Desk recommendation, reruns and history are available only in the full Conversion Review.</p>
+                      <div className='text-[10px] text-slate-500 mt-3'>Generated: {conversionReview.generatedAt}</div>
+                    </div>
+                  </div>
+                )}
+
                 {pitchResults && !isAnalyzingPitch && (
                   <div className="space-y-6 animate-fade-in w-full text-left" id="deep_analysis_dashboard_root">
                     
@@ -2391,7 +2489,15 @@ export default function App() {
                       ['Raise', conversionProfile.raiseAmount || 'Not set'],
                       ['Investor', conversionProfile.targetInvestor || 'Not set']
                     ].map(([label, value]) => (<div key={label} className='p-3 rounded-xl border border-slate-800 bg-slate-950/70'><div className='text-[10px] uppercase text-slate-500 font-bold'>{label}</div><div className='text-sm text-white font-semibold mt-1'>{value}</div></div>))}
-                    <button onClick={() => { generateConversionReview(); setActiveTab('pitch_analyzer'); triggerToast('Conversion Review generated from Founder Vault.', 'success'); }} className='w-full px-4 py-3 rounded-xl bg-[#D4FF00] text-slate-950 text-sm font-black hover:scale-[1.01] transition-transform'>Run Conversion Review</button>
+                    <button
+                      onClick={() => void runConversionPreview()}
+                      disabled={isConversionReviewRunning}
+                      className='w-full px-4 py-3 rounded-xl bg-[#D4FF00] text-slate-950 text-sm font-black hover:scale-[1.01] transition-transform disabled:cursor-not-allowed disabled:opacity-60'
+                    >
+                      {isConversionReviewRunning
+                        ? 'Running Preview Analysis…'
+                        : 'Run Preview Analysis'}
+                    </button>
                     <button onClick={() => setActiveTab('dashboard')} className='w-full px-4 py-3 rounded-xl border border-slate-800 text-slate-300 text-sm font-bold hover:bg-slate-900'>Back to Conversion Terminal</button>
                   </div>
                 </div>
