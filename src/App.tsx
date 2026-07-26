@@ -94,9 +94,7 @@ import type {
   ProfilePlaneResolution
 } from './lib/conversionApi';
 import { 
-  COMPONENT_ROLES, 
-  INITIAL_ALERTS, 
-  STATIC_PITCH_DOSSIERS 
+  COMPONENT_ROLES
 } from './data';
 
 // Email capture banner component (inline for simplicity)
@@ -429,12 +427,7 @@ const PREMIUM_THEMES = [
   { id: 'neon-violet', name: 'Neon Violet Glow', bg: '#0F172A', gradientStart: '#3B0764', gradientEnd: '#0B071F', accent: '#9333EA', glowColor: 'rgba(147, 51, 234, 0.4)' }
 ];
 
-const INITIAL_DEAL_FLOW: DealFlowItem[] = [
-  { id: 'df-1', companyName: 'AlphaFlow Logistics', stage: 'Series A', sector: 'AI & Logistics', valuation: '$14.2M', askAmount: '$2.5M', agiScore: 94, riskLevel: 'Low', status: 'Strong Buy', lastUpdated: '2 mins ago' },
-  { id: 'df-2', companyName: 'OceanPulse Shipping', stage: 'Seed', sector: 'Maritime Tech', valuation: '$8.5M', askAmount: '$1.2M', agiScore: 89, riskLevel: 'Medium', status: 'Buy', lastUpdated: '1 hour ago' },
-  { id: 'df-3', companyName: 'Agronomix spatial', stage: 'Pre-Seed', sector: 'AgTech', valuation: '$4.1M', askAmount: '$600K', agiScore: 78, riskLevel: 'High', status: 'Hold', lastUpdated: '4 hours ago' },
-  { id: 'df-4', companyName: 'InspectZero Insurance QA', stage: 'Series B', sector: 'Cybersecurity', valuation: '$42.0M', askAmount: '$8.0M', agiScore: 91, riskLevel: 'Low', status: 'Strong Buy', lastUpdated: '1 day ago' }
-];
+const INITIAL_DEAL_FLOW: DealFlowItem[] = [];
 
 export default function App() {
   const [themeMode] = useState<'light' | 'dark'>('dark');
@@ -815,12 +808,17 @@ export default function App() {
     }
   };
 
-  const [activeAlerts, setActiveAlerts] = useState(INITIAL_ALERTS);
+  const [activeAlerts, setActiveAlerts] =
+    useState<Array<{ id: string; text: string; type: string; time: string }>>([]);
   const [showAlertsDropdown, setShowAlertsDropdown] = useState<boolean>(false);
 
   const [telemetryLogs, setTelemetryLogs] = useState<Array<{ id: string; time: string; source: string; text: string }>>([
-    { id: '1', time: '09:33:47', source: 'Orchestrator', text: 'Conversion workspace ready. Visibility and CRM handoff stays isolated.' },
-    { id: '2', time: '09:34:02', source: 'Self-Healing', text: 'Restored zero-knowledge SSL gateway channels.' }
+    {
+      id: 'session-start',
+      time: new Date().toTimeString().split(' ')[0],
+      source: 'Workspace',
+      text: 'Conversion workspace opened. No analysis has run in this session.'
+    }
   ]);
 
   const [showPricingModal, setShowPricingModal] = useState<boolean>(false);
@@ -966,13 +964,6 @@ export default function App() {
       setEditableCtaText(activeAd.ctaText);
     }
   }, [selectedAdSizeName, adSuite]);
-
-  const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string; type: string } | null>(null);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isAnalyzingPitch, setIsAnalyzingPitch] = useState<boolean>(false);
-  const [analysisStep, setAnalysisStep] = useState<number>(0);
-  const [pitchResults, setPitchResults] = useState<any>(null);
 
   const [ddCompanyName, setDdCompanyName] = useState<string>('Enigma Spatial logistics');
   const [ddPitchText, setDdPitchText] = useState<string>('We build micro-sensors tracking marine containers and autonomous inland drone supply fleets.');
@@ -1173,84 +1164,6 @@ export default function App() {
     } finally {
       setAnalyzingDD(false);
     }
-  };
-
-  const handleFileUploadSim = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileObj = e.target.files?.[0];
-    if (fileObj) {
-      setUploadedFile({
-        name: fileObj.name,
-        size: `${(fileObj.size / 1024 / 1024).toFixed(1)} MB`,
-        type: fileObj.name.split('.').pop()?.toUpperCase() || 'PDF'
-      });
-      addLog('Telemetry Sentinel', `Unstructured file loaded: ${fileObj.name}. Ingestion sandbox active.`);
-      triggerToast('File uploaded! Ready for conversion signal review', 'success');
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const fileObj = e.dataTransfer.files?.[0];
-    if (fileObj) {
-      setUploadedFile({
-        name: fileObj.name,
-        size: `${(fileObj.size / 1024 / 1024).toFixed(1)} MB`,
-        type: fileObj.name.split('.').pop()?.toUpperCase() || 'PDF'
-      });
-      addLog('Telemetry Sentinel', `Unstructured file loaded via drag-and-drop: ${fileObj.name}. Ingestion sandbox active.`);
-      triggerToast('File uploaded! Ready for conversion signal review', 'success');
-    }
-  };
-
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleStartAnalysis = () => {
-    if (!uploadedFile) {
-      triggerToast('Please upload or select a document first!', 'warn');
-      return;
-    }
-    setIsAnalyzingPitch(true);
-    setAnalysisStep(0);
-    setPitchResults(null);
-    addLog('Orchestrator', `Querying TD Conversion OS signal engine to analyze founder material: ${uploadedFile.name}`);
-
-    const interval = setInterval(() => {
-      setAnalysisStep(prev => {
-        if (prev >= 2) {
-          clearInterval(interval);
-          setIsAnalyzingPitch(false);
-          const match = STATIC_PITCH_DOSSIERS.find(x => x.name.toLowerCase().includes(uploadedFile.name.split('.')[0].toLowerCase())) || STATIC_PITCH_DOSSIERS[0];
-          setPitchResults(match);
-          addLog('Self-Healing', `Compiled conversion signal indices for ${match.name}`);
-          triggerToast(`Analysis complete for ${match.name}!`, 'success');
-          return 2;
-        }
-        return prev + 1;
-      });
-    }, 1200);
-  };
-
-  const handleQuickDossierSim = (dossier: any) => {
-    setUploadedFile({
-      name: `${dossier.name}.pdf`,
-      size: '2.4 MB',
-      type: 'PDF'
-    });
-    setPitchResults(null);
-    triggerToast(`Selected ${dossier.name} preloaded file! Click Start Deep TD Conversion OS Analysis.`, 'info');
   };
 
   if (!tdventureSessionChecked) {
@@ -1625,15 +1538,17 @@ export default function App() {
                       },
                       {
                         label: 'Pitch Deck',
-                        status: uploadedFile ? 'Uploaded' : 'Not uploaded',
-                        detail: uploadedFile ? uploadedFile.name : 'Deck evidence strengthens the signal',
-                        active: !!uploadedFile
+                        status: 'Not connected',
+                        detail: 'Secure evidence ingestion is the next intelligence checkpoint',
+                        active: false
                       },
                       {
                         label: 'Private Marketplace',
-                        status: 'Not loaded',
-                        detail: 'Canonical startup profile will load from tdventure_db',
-                        active: false
+                        status: profilePlaneResolution?.state === 'linked' ? 'Canonical' : 'Not linked',
+                        detail: profilePlaneResolution?.state === 'linked'
+                          ? 'Verified startup profile loaded through Profile Plane'
+                          : 'A verified startup profile is required',
+                        active: profilePlaneResolution?.state === 'linked'
                       },
                       {
                         label: 'Deal Desk Feedback',
@@ -1661,8 +1576,8 @@ export default function App() {
                   <div className="flex items-center flex-wrap gap-2">
                     {[
                       { label: 'Founder Vault', active: !!(conversionProfile.startupName && conversionProfile.pitchSummary.trim().length > 40) },
-                      { label: 'Pitch Deck', active: !!uploadedFile },
-                      { label: 'Conversion Review', active: false },
+                      { label: 'Pitch Deck', active: false },
+                      { label: 'Conversion Preview', active: !!conversionReview },
                       { label: 'Investor Signal', active: false },
                       { label: 'Deal Desk', active: false }
                     ].map((step, i, arr) => (
@@ -1682,12 +1597,42 @@ export default function App() {
                     <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider font-bold block">Signal Monitor</span>
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                       {[
-                        { title: 'Pitch Deck Quality', val: '78/100', text: 'Story clear; proof gaps remain', color: 'text-purple-400' },
-                        { title: 'Narrative Clarity', val: '84/100', text: 'Problem and market are clear', color: 'text-indigo-400' },
-                        { title: 'Risk Level', val: 'Moderate', text: 'Evidence needs strengthening', color: 'text-[#22C55E]' },
-                        { title: 'Investor Fit', val: '72/100', text: 'Strongest for seed-stage funds', color: 'text-cyan-400' },
-                        { title: 'Fundraise Readiness', val: '69/100', text: 'Round ask needs tightening', color: 'text-amber-500' },
-                        { title: 'Deal Desk Signal', val: 'Ready', text: 'Prepared for engagement review', color: 'text-[#F59E0B]' }
+                        {
+                          title: 'Pitch Deck Quality',
+                          val: conversionReview ? `${conversionReview.pitchDeckQuality}/100` : 'Awaiting',
+                          text: conversionReview ? 'Central Preview result' : 'No analysis has run',
+                          color: conversionReview ? 'text-purple-400' : 'text-slate-500'
+                        },
+                        {
+                          title: 'Narrative Clarity',
+                          val: conversionReview ? `${conversionReview.narrativeClarity}/100` : 'Awaiting',
+                          text: conversionReview ? 'Central Preview result' : 'No analysis has run',
+                          color: conversionReview ? 'text-indigo-400' : 'text-slate-500'
+                        },
+                        {
+                          title: 'Risk Level',
+                          val: conversionReview?.riskLevel || 'Awaiting',
+                          text: conversionReview ? 'Central Preview result' : 'No analysis has run',
+                          color: conversionReview ? 'text-[#22C55E]' : 'text-slate-500'
+                        },
+                        {
+                          title: 'Investor Fit',
+                          val: 'Not assessed',
+                          text: 'Full evidence-backed review only',
+                          color: 'text-slate-500'
+                        },
+                        {
+                          title: 'Fundraise Readiness',
+                          val: conversionReview ? `${conversionReview.fundraiseReadiness}/100` : 'Awaiting',
+                          text: conversionReview ? 'Central Preview result' : 'No analysis has run',
+                          color: conversionReview ? 'text-amber-500' : 'text-slate-500'
+                        },
+                        {
+                          title: 'Deal Desk Signal',
+                          val: 'Not created',
+                          text: 'Preview does not create a CRM signal',
+                          color: 'text-slate-500'
+                        }
                       ].map((item, idx) => (
                         <div key={idx} className="p-4 rounded-xl border border-slate-800 bg-[#0c1222]/70 space-y-1.5 hover:border-slate-700 transition-colors">
                           <span className="text-[9px] text-slate-400 block font-bold leading-none">{item.title}</span>
@@ -1763,739 +1708,231 @@ export default function App() {
             {/* 2. THE PITCH DECK ANALYZER COMPONENT */}
             {activeTab === 'pitch_analyzer' && (
               <div className="space-y-6 animate-fade-in">
-                <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 space-y-4 relative overflow-hidden">
-                  <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-purple-500 via-indigo-600 to-cyan-400" />
-                  
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div>
-                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                       <span className="text-[#D4AF37] text-base">🎯</span> Conversion Signal Engine
-                      </h3>
-                      <p className="text-xs text-slate-400">Upload a deck or founder brief to read conversion signals: proof strength, narrative clarity, fundraise readiness, investor fit, risk signals and next best action.</p>
-                    </div>
+                <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-[#0B1220] p-6 shadow-2xl">
+                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#D4FF00] via-cyan-400 to-indigo-500" />
+                  <p className="text-[10px] font-mono font-black uppercase tracking-[0.32em] text-[#D4FF00]">
+                    Evidence-backed intelligence
+                  </p>
+                  <h2 className="mt-2 text-3xl font-black text-white">
+                    Conversion Review
+                  </h2>
+                  <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+                    Founder truth remains the record. Central analysis interprets only the evidence
+                    currently supplied. Preview results do not create an Investor Fit score or a
+                    Deal Desk signal.
+                  </p>
+                </section>
 
-                    <div className="flex gap-2 text-xs">
-                      <button 
-                        type="button"
-                        onClick={triggerFileInput}
-                        className="text-[11px] bg-slate-900 hover:bg-slate-850 text-slate-350 hover:text-white px-3.5 py-1.5 rounded-lg cursor-pointer border border-slate-800 font-bold transition-colors"
-                      >
-                        Choose Document File
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Preloaded Targets selector for Demo */}
-                  <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
-                    <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest block font-bold">InspectZero Demo Dataset:</span>
-                    <div className="flex gap-2 flex-wrap">
-                      {STATIC_PITCH_DOSSIERS.map(doss => (
-                        <button 
-                          key={doss.name}
-                          onClick={() => handleQuickDossierSim(doss)}
-                          className={`text-[9px] px-3 py-1.5 rounded bg-slate-900 hover:bg-[#15152a] border font-mono transition-all font-bold ${
-                            uploadedFile?.name.includes(doss.name.split(' ')[0]) ? 'border-purple-500 text-purple-400' : 'border-slate-800 text-slate-300'
-                          }`}
-                        >
-                          {doss.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* File Upload component style exactly matching user request */}
-                  <div 
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    onClick={uploadedFile ? undefined : triggerFileInput}
-                    className={`p-6 rounded-xl border border-dashed text-center space-y-4 transition-all cursor-pointer select-none ${
-                      isDragging 
-                        ? 'border-purple-500 bg-purple-950/25 shadow-[0_0_15px_rgba(124,58,237,0.25)]' 
-                        : 'border-slate-800 bg-[#080d1a] hover:border-slate-700 hover:bg-[#0b1326]'
-                    }`}
-                  >
-                    <input 
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileUploadSim}
-                      accept=".pdf,.docx,.txt,.pptx,image/*"
-                      className="hidden"
-                    />
-                    {uploadedFile ? (
-                      <div 
-                        onClick={(e) => e.stopPropagation()} // Stop propagation so clicking buttons inside doesn't trigger parent onClick
-                        className="p-4 rounded-xl border border-[#22C55E]/30 bg-[#22C55E]/10 flex items-center justify-between text-left max-w-xl mx-auto"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <CheckCircle2 className="w-5 h-5 text-[#22C55E]" />
-                          <div>
-                            <p className="text-xs font-bold text-white">✔ File Uploaded Successfully</p>
-                            <p className="text-[10px] text-slate-400 font-mono mt-0.5">{uploadedFile.name} ({uploadedFile.size})</p>
-                          </div>
-                        </div>
-                        <button 
-                          onClick={() => setUploadedFile(null)}
-                          className="text-[9px] font-mono font-bold text-slate-500 hover:text-slate-300 bg-slate-950 rounded py-1 px-2 border border-slate-850"
-                        >
-                          Clear File
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-2 py-6 pointer-events-none">
-                        <UploadCloud className={`w-8 h-8 mx-auto ${isDragging ? 'text-purple-400 animate-bounce' : 'text-slate-400 animate-pulse'}`} />
-                        <p className="text-xs font-bold text-slate-300">
-                          {isDragging ? 'Drop your pitch deck here now!' : 'Drag & drop pitch deck here, or click to upload'}
-                        </p>
-                        <p className="text-[10px] text-slate-500 font-mono">Accepts PDF, DOCX, TXT, PPTX & Images (deck, brief and image-based founder evidence)</p>
-                      </div>
-                    )}
-
-                    {uploadedFile && (
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleStartAnalysis();
-                        }}
-                        disabled={isAnalyzingPitch}
-                        className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md flex items-center gap-1.5 mx-auto disabled:opacity-50"
-                      >
-                        <Play className="w-3.5 h-3.5" /> Run Conversion Analysis
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {isAnalyzingPitch && (
-                  <div className="p-12 text-center border border-slate-850 rounded-2xl bg-[#0F172A]/70 relative overflow-hidden space-y-4">
-                    <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-purple-500 via-cyan-400 to-pink-500 animate-pulse" />
-                    <div className="w-10 h-10 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                    
-                    <div className="max-w-md mx-auto space-y-2">
-                      <span className="text-xs text-purple-400 font-mono font-bold block uppercase tracking-widest">Running conversion analysis:</span>
-                      <p className="text-[11px] text-slate-400 italic">
-                        {analysisStep === 0 && "Reading pitch deck structure, story flow and proof points..."}
-                        {analysisStep === 1 && "Checking fundraise readiness, investor fit and risk signals..."}
-                        {analysisStep === 2 && "Preparing next best action and CRM-ready founder summary..."}
+                <section className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                  {[
+                    {
+                      label: 'Founder record',
+                      value: profilePlaneResolution?.state === 'linked' ? 'Canonical profile linked' : 'Profile required',
+                      active: profilePlaneResolution?.state === 'linked'
+                    },
+                    {
+                      label: 'Pitch deck evidence',
+                      value: 'Secure ingestion not connected',
+                      active: false
+                    },
+                    {
+                      label: 'Central analysis',
+                      value: conversionReview ? 'Preview completed' : 'Not run in this session',
+                      active: !!conversionReview
+                    },
+                    {
+                      label: 'CRM signal',
+                      value: 'Not created by Preview',
+                      active: false
+                    }
+                  ].map((item) => (
+                    <div
+                      key={item.label}
+                      className={`rounded-2xl border p-4 ${
+                        item.active
+                          ? 'border-[#D4FF00]/35 bg-[#D4FF00]/5'
+                          : 'border-slate-800 bg-slate-950/60'
+                      }`}
+                    >
+                      <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500">
+                        {item.label}
+                      </p>
+                      <p className={`mt-2 text-sm font-bold ${item.active ? 'text-white' : 'text-slate-400'}`}>
+                        {item.value}
                       </p>
                     </div>
-                  </div>
-                )}
+                  ))}
+                </section>
 
-                {conversionReview && !isConversionReviewRunning && (
-                  <div className='mb-6 p-6 rounded-3xl border border-[#D4FF00]/30 bg-[#0c1222]/90 shadow-2xl'>
-                    <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5'>
+                {conversionReview ? (
+                  <section className="space-y-6 rounded-3xl border border-[#D4FF00]/25 bg-slate-950/70 p-6">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <div>
-                        <span className='text-[10px] font-mono uppercase tracking-[0.28em] text-[#D4FF00] font-bold'>Central Founder Signal Preview</span>
-                        <h2 className='text-2xl font-black text-white mt-2'>{conversionProfile.startupName || 'Founder'} Readiness Preview</h2>
-                        <p className='text-xs text-slate-400 mt-1'>AI interpretation of founder-provided evidence. This Preview does not create a CRM signal.</p>
-                      </div>
-                      <div className='px-4 py-3 rounded-2xl border border-slate-800 bg-slate-950/70'>
-                        <div className='text-[10px] uppercase tracking-wider text-slate-500 font-bold'>Risk Level</div>
-                        <div className={conversionReview.riskLevel === 'High' ? 'text-red-400 font-black' : conversionReview.riskLevel === 'Moderate' ? 'text-yellow-300 font-black' : 'text-[#D4FF00] font-black'}>{conversionReview.riskLevel}</div>
-                      </div>
-                    </div>
-
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-3 mb-5'>
-                      {[
-                        ['Pitch Deck Quality', conversionReview.pitchDeckQuality],
-                        ['Fundraise Readiness', conversionReview.fundraiseReadiness],
-                        ['Narrative Clarity', conversionReview.narrativeClarity]
-                      ].map(([label, score]) => (
-                        <div key={label as string} className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
-                          <div className='text-[10px] uppercase tracking-wider text-slate-500 font-bold'>{label}</div>
-                          <div className='text-2xl font-black text-white mt-1'>{score}<span className='text-xs text-slate-500'>/100</span></div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-                      <div className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
-                        <div className='text-[10px] uppercase tracking-wider text-[#D4FF00] font-bold mb-2'>Next Best Action</div>
-                        <p className='text-sm text-slate-200 leading-relaxed'>{conversionReview.nextBestAction}</p>
-                      </div>
-                      <div className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
-                        <div className='text-[10px] uppercase tracking-wider text-[#D4FF00] font-bold mb-2'>Risk Flags</div>
-                        {conversionReview.riskFlags.length > 0 ? (
-                          <ul className='space-y-1 text-sm text-slate-300'>
-                            {conversionReview.riskFlags.map((flag) => <li key={flag}>- {flag}</li>)}
-                          </ul>
-                        ) : (
-                          <p className='text-sm text-slate-400'>No specific risk flags were returned in this Preview.</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className='mt-4 p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
-                      <div className='text-[10px] uppercase tracking-wider text-slate-500 font-bold'>Preview boundary</div>
-                      <p className='text-sm text-slate-300 leading-relaxed mt-2'>Investor Fit, traction interpretation, contradictions, investment thesis, CRM summary, Deal Desk recommendation, reruns and history are available only in the full Conversion Review.</p>
-                      <div className='text-[10px] text-slate-500 mt-3'>Generated: {conversionReview.generatedAt}</div>
-                    </div>
-                  </div>
-                )}
-
-                {pitchResults && !isAnalyzingPitch && (
-                  <div className="space-y-6 animate-fade-in w-full text-left" id="deep_analysis_dashboard_root">
-                    
-                    {conversionReview && (
-                      <div className='mb-6 p-6 rounded-3xl border border-[#D4FF00]/30 bg-[#0c1222]/90 shadow-2xl'>
-                        <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5'>
-                          <div>
-                            <span className='text-[10px] font-mono uppercase tracking-[0.28em] text-[#D4FF00] font-bold'>Generated Founder Vault Review</span>
-                            <h2 className='text-2xl font-black text-white mt-2'>{conversionProfile.startupName || 'Founder'} Conversion Readiness</h2>
-                            <p className='text-xs text-slate-400 mt-1'>Generated locally from Founder Vault inputs. Backend/OpenAI integration comes later.</p>
-                          </div>
-                          <div className='px-4 py-3 rounded-2xl border border-slate-800 bg-slate-950/70'>
-                            <div className='text-[10px] uppercase tracking-wider text-slate-500 font-bold'>Risk Level</div>
-                            <div className={conversionReview.riskLevel === 'High' ? 'text-red-400 font-black' : conversionReview.riskLevel === 'Moderate' ? 'text-yellow-300 font-black' : 'text-[#D4FF00] font-black'}>{conversionReview.riskLevel}</div>
-                          </div>
-                        </div>
-                        <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5'>
-                          {[
-                            ['Conversion Review', conversionReview.pitchDeckQuality],
-                            ['Fundraise Readiness', conversionReview.fundraiseReadiness],
-                            ['Narrative Clarity', conversionReview.narrativeClarity],
-                            ['Investor Fit', conversionReview.investorFit]
-                          ].map(([label, score]) => (
-                            <div key={label as string} className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
-                              <div className='text-[10px] uppercase tracking-wider text-slate-500 font-bold'>{label}</div>
-                              <div className='text-2xl font-black text-white mt-1'>{score}<span className='text-xs text-slate-500'>/100</span></div>
-                            </div>
-                          ))}
-                        </div>
-                        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-                          <div className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
-                            <div className='text-[10px] uppercase tracking-wider text-[#D4FF00] font-bold mb-2'>Next Best Action</div>
-                            <p className='text-sm text-slate-200 leading-relaxed'>{conversionReview.nextBestAction}</p>
-                          </div>
-                          <div className='p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
-                            <div className='text-[10px] uppercase tracking-wider text-[#D4FF00] font-bold mb-2'>Risk Flags</div>
-                            <ul className='space-y-1 text-sm text-slate-300'>{conversionReview.riskFlags.map((flag) => <li key={flag}>- {flag}</li>)}</ul>
-                          </div>
-                        </div>
-                        <div className='mt-4 p-4 rounded-2xl border border-slate-800 bg-slate-950/70'>
-                          <div className='text-[10px] uppercase tracking-wider text-[#D4FF00] font-bold mb-2'>CRM-ready Summary</div>
-                          <p className='text-sm text-slate-200 leading-relaxed'>{conversionReview.crmSummary}</p>
-                          <div className='text-[10px] text-slate-500 mt-3'>Generated: {conversionReview.generatedAt}</div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Header: Conversion Readiness Report Title & BUY indicator */}
-                    <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
-                      <div>
-                        <h3 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
-                          <Sparkles className="text-purple-400 w-5 h-5 animate-spin" style={{ animationDuration: '3s' }} /> Conversion Readiness Report
+                        <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-[#D4FF00]">
+                          Central Founder Signal Preview
+                        </p>
+                        <h3 className="mt-2 text-2xl font-black text-white">
+                          {conversionProfile.startupName || 'Founder'} Readiness Preview
                         </h3>
-                        <p className="text-xs text-slate-400 font-mono mt-1">
-                          Founder Vault Analysis • Conversion signals synced • File: {uploadedFile?.name || 'No deck uploaded'}
-                        </p>
                       </div>
-
-                      <div className="flex items-center gap-3">
-                        {/* BUY Outline Tag */}
-                        <div className="px-5 py-1.5 rounded-full border-2 border-blue-500/80 bg-blue-500/10 text-blue-400 text-xs font-black tracking-widest uppercase hover:bg-blue-500/20 cursor-help transition-all" title="Investment Decision Recommendation: STRONG BUY">
-                          BUY
-                        </div>
-                        {/* Conversion Score */}
-                        <div className="text-right">
-                          <span className="text-2xl font-black text-[#22C55E] block leading-none">87%</span>
-                          <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider mt-0.5">Conversion Score</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Executive Summary panel matching image blue container */}
-                    <div className="p-5 rounded-2xl border border-blue-400/30 bg-blue-500/5 space-y-2 relative overflow-hidden">
-                      <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500" />
-                      <span className="text-[10px] font-mono tracking-widest uppercase text-blue-400 block font-black">Executive Summary</span>
-                      <p className="text-xs md:text-sm text-slate-300 leading-relaxed font-sans font-medium">
-                        This pitch deck presents a compelling AI inspection startup with strong market positioning and experienced team. The OS analysis reveals solid fundamentals with some areas requiring attention for optimal investor appeal.
+                      <p className="text-xs text-slate-500">
+                        Generated {conversionReview.generatedAt}
                       </p>
                     </div>
 
-                    {/* Metrics grid underneath executive summary */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      
-                      {/* Confidence score */}
-                      <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80 text-center space-y-1 hover:border-purple-500/30 transition-all cursor-pointer group">
-                        <span className="text-2xl font-black text-purple-400 block group-hover:scale-105 transition-transform">92%</span>
-                        <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Investor Confidence</span>
-                      </div>
-
-                      {/* Valuation range */}
-                      <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80 text-center space-y-1 hover:border-[#22C55E]/30 transition-all cursor-pointer group">
-                        <span className="text-2xl font-black text-[#22C55E] block group-hover:scale-105 transition-transform">INR 80L - INR 1.5Cr</span>
-                        <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Suggested Raise Band</span>
-                      </div>
-
-                      {/* Next Best Action */}
-                      <div className="p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/80 text-center space-y-1 hover:border-blue-500/30 transition-all cursor-pointer group">
-                        <span className="text-2xl font-black text-blue-400 block group-hover:scale-105 transition-transform">INR 1Cr seed extension</span>
-                        <span className="text-[10px] text-slate-400 block font-bold font-mono uppercase tracking-wider">Next Best Action</span>
-                      </div>
-
-                    </div>
-
-                    {/* Conversion Signal Analysis section */}
-                    <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 space-y-6">
-                      
-                      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-                        <BarChart3 className="w-5 h-5 text-blue-400" />
-                        <h4 className="text-sm font-black text-white uppercase tracking-wider">Conversion Signal Analysis</h4>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        
-                        {/* Founder-Market Fit item card */}
-                        <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 flex items-center justify-between gap-3 hover:border-slate-700 transition-colors cursor-pointer">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                              <Globe2 className="w-4 h-4 text-emerald-400" />
-                            </div>
-                            <div>
-                              <h5 className="text-xs font-bold text-white leading-tight">Founder-Market Fit</h5>
-                              <span className="text-[9px] text-slate-500 leading-none">Leadership & execution capability</span>
-                            </div>
-                          </div>
-                          <span className="text-sm font-black text-emerald-400">92%</span>
-                        </div>
-
-                        {/* Fundraise Readiness card */}
-                        <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 flex items-center justify-between gap-3 hover:border-slate-700 transition-colors cursor-pointer">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                              <Coins className="w-4 h-4 text-blue-400" />
-                            </div>
-                            <div>
-                              <h5 className="text-xs font-bold text-white leading-tight">Fundraise Readiness</h5>
-                              <span className="text-[9px] text-slate-500 leading-none">Revenue model & sustainability</span>
-                            </div>
-                          </div>
-                          <span className="text-sm font-black text-blue-400">78%</span>
-                        </div>
-
-                        {/* Investor Fit card */}
-                        <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 flex items-center justify-between gap-3 hover:border-slate-700 transition-colors cursor-pointer">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                              <TrendingUp className="w-4 h-4 text-purple-400" />
-                            </div>
-                            <div>
-                              <h5 className="text-xs font-bold text-white leading-tight">Investor Fit</h5>
-                              <span className="text-[9px] text-slate-500 leading-none">Growth potential & market reach</span>
-                            </div>
-                          </div>
-                          <span className="text-sm font-black text-purple-400">88%</span>
-                        </div>
-
-                      </div>
-
-                      {/* Side inline rows below key metrics */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-slate-800/60 text-xs">
-                        <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-350 block uppercase tracking-wider">Narrative Clarity</span>
-                          <p className="text-xs text-slate-400 font-medium">
-                            Large real estate, construction and insurance inspection market
+                    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                      {[
+                        ['Pitch Deck Quality', `${conversionReview.pitchDeckQuality}/100`],
+                        ['Narrative Clarity', `${conversionReview.narrativeClarity}/100`],
+                        ['Fundraise Readiness', `${conversionReview.fundraiseReadiness}/100`],
+                        ['Risk Level', conversionReview.riskLevel]
+                      ].map(([label, value]) => (
+                        <div key={label} className="rounded-2xl border border-slate-800 bg-[#080D1A] p-4">
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                            {label}
                           </p>
-                          <span className="text-[9px] font-mono text-slate-500 block leading-none">Proprietary AI algorithms • Real estate, insurance and construction workflow partnerships</span>
+                          <p className="mt-2 text-xl font-black text-white">{value}</p>
                         </div>
-
-                        <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-350 block uppercase tracking-wider">CRM Summary</span>
-                          <p className="text-xs text-slate-400 font-medium">
-                            SaaS + Transaction fees
-                          </p>
-                          <span className="text-[9px] font-mono text-slate-500 block leading-none">Dynamic recurring subscriptions combined with high transaction volume</span>
-                        </div>
-                      </div>
-
+                      ))}
                     </div>
 
-                    {/* Word-Level Semantic Analysis block */}
-                    <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 space-y-4">
-                      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-                        <Search className="w-5 h-5 text-purple-400" />
-                        <h4 className="text-sm font-black text-white uppercase tracking-wider">Word-Level Semantic Analysis</h4>
+                    <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                      <div className="rounded-2xl border border-red-400/25 bg-red-950/10 p-5">
+                        <h4 className="font-black text-white">Risk flags</h4>
+                        <div className="mt-3 space-y-2">
+                          {conversionReview.riskFlags.length ? (
+                            conversionReview.riskFlags.map((flag, index) => (
+                              <p key={`${flag}-${index}`} className="text-sm leading-6 text-slate-300">
+                                <span className="mr-2 text-red-300">•</span>{flag}
+                              </p>
+                            ))
+                          ) : (
+                            <p className="text-sm text-slate-500">No risk flags were returned.</p>
+                          )}
+                        </div>
                       </div>
 
-                      <div className="space-y-3">
-                        
-                        {/* Word 1 */}
-                        <div className="p-3 rounded-xl bg-slate-950/40 border border-slate-800/80 flex items-center justify-between flex-wrap gap-4 hover:bg-slate-950/80 transition-all cursor-help" title="Neural Sentiment: positive confidence value indicator">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-extrabold text-white font-mono">"revolutionary"</span>
-                              <span className="px-2 py-0.5 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/20 text-[#22C55E] text-[9px] font-bold font-mono">positive</span>
-                            </div>
-                            <p className="text-[11px] text-slate-400">Used to describe technology - moderate credibility due to overuse in startup pitches</p>
-                          </div>
-
-                          <div className="flex items-center gap-4 text-[10px] font-mono">
-                            <div className="text-right">
-                              <span className="text-purple-400 font-extrabold block">70%</span>
-                              <span className="text-slate-500 text-[8px] uppercase font-bold block">Credibility</span>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-indigo-400 font-extrabold block">90%</span>
-                              <span className="text-slate-500 text-[8px] uppercase font-bold block">Importance</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Word 2 */}
-                        <div className="p-3 rounded-xl bg-slate-950/40 border border-slate-800/80 flex items-center justify-between flex-wrap gap-4 hover:bg-slate-950/80 transition-all cursor-help" title="Neural Sentiment: positive confidence value indicator">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-extrabold text-white font-mono">"validated"</span>
-                              <span className="px-2 py-0.5 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/20 text-[#22C55E] text-[9px] font-bold font-mono">positive</span>
-                            </div>
-                            <p className="text-[11px] text-slate-400">Strong credibility indicator when describing market research</p>
-                          </div>
-
-                          <div className="flex items-center gap-4 text-[10px] font-mono">
-                            <div className="text-right">
-                              <span className="text-purple-400 font-extrabold block">95%</span>
-                              <span className="text-slate-500 text-[8px] uppercase font-bold block">Credibility</span>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-indigo-400 font-extrabold block">85%</span>
-                              <span className="text-slate-500 text-[8px] uppercase font-bold block">Importance</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Word 3 */}
-                        <div className="p-3 rounded-xl bg-slate-950/40 border border-slate-800/80 flex items-center justify-between flex-wrap gap-4 hover:bg-slate-950/80 transition-all cursor-help" title="Neural Sentiment: positive confidence value indicator">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-extrabold text-white font-mono">"scalable"</span>
-                              <span className="px-2 py-0.5 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/20 text-[#22C55E] text-[9px] font-bold font-mono">positive</span>
-                            </div>
-                            <p className="text-[11px] text-slate-400">Critical for investor appeal - well supported by technical architecture</p>
-                          </div>
-
-                          <div className="flex items-center gap-4 text-[10px] font-mono">
-                            <div className="text-right">
-                              <span className="text-purple-400 font-extrabold block">80%</span>
-                              <span className="text-slate-500 text-[8px] uppercase font-bold block">Credibility</span>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-indigo-400 font-extrabold block">90%</span>
-                              <span className="text-slate-500 text-[8px] uppercase font-bold block">Importance</span>
-                            </div>
-                          </div>
-                        </div>
-
+                      <div className="rounded-2xl border border-cyan-400/25 bg-cyan-950/10 p-5">
+                        <h4 className="font-black text-white">Next best action</h4>
+                        <p className="mt-3 text-sm leading-6 text-slate-300">
+                          {conversionReview.nextBestAction}
+                        </p>
                       </div>
                     </div>
 
-                    {/* Paragraph-Level Structure Analysis */}
-                    <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 space-y-6">
-                      
-                      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-                        <FileText className="w-5 h-5 text-indigo-400" />
-                        <h4 className="text-sm font-black text-white uppercase tracking-wider">Paragraph-Level Structure Analysis</h4>
+                    <div className="rounded-2xl border border-slate-800 bg-[#080D1A] p-5">
+                      <h4 className="font-black text-white">Preview boundary</h4>
+                      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                        {Object.entries(conversionReview.limitations).map(([label, value]) => (
+                          <div key={label} className="border-l border-slate-700 pl-3">
+                            <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
+                              {label.replace(/_/g, ' ')}
+                            </p>
+                            <p className="mt-1 text-sm leading-5 text-slate-300">{value}</p>
+                          </div>
+                        ))}
                       </div>
-
-                      {/* Quoted source section exact matching */}
-                      <div className="p-4 rounded-xl bg-slate-950 border border-slate-850 font-serif text-slate-300 text-xs italic leading-relaxed relative pl-8">
-                        <span className="absolute left-3 top-2 text-2xl font-black text-purple-500 font-mono">“</span>
-                        "Our AI-powered AI-powered inspection platform addresses the $50B manual inspection and reporting gap..."
-                      </div>
-
-                      {/* Analysis indicators sliders underneath */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-                        
-                        {/* Sentiment */}
-                        <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 block font-mono">Sentiment</span>
-                          <span className="text-sm font-black text-emerald-400 block font-mono">80%</span>
-                          <div className="w-full bg-slate-855 rounded-full h-1">
-                            <div className="bg-emerald-400 h-1 rounded-full" style={{ width: '80%' }} />
-                          </div>
-                        </div>
-
-                        {/* Clarity */}
-                        <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 block font-mono">Clarity</span>
-                          <span className="text-sm font-black text-blue-400 block font-mono">90%</span>
-                          <div className="w-full bg-slate-855 rounded-full h-1">
-                            <div className="bg-blue-400 h-1 rounded-full" style={{ width: '90%' }} />
-                          </div>
-                        </div>
-
-                        {/* Persuasiveness */}
-                        <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 block font-mono">Persuasiveness</span>
-                          <span className="text-sm font-black text-purple-400 block font-mono">85%</span>
-                          <div className="w-full bg-slate-855 rounded-full h-1">
-                            <div className="bg-purple-400 h-1 rounded-full" style={{ width: '85%' }} />
-                          </div>
-                        </div>
-
-                        {/* Data Support */}
-                        <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 block font-mono">Data Support</span>
-                          <span className="text-sm font-black text-amber-500 block font-mono">90%</span>
-                          <div className="w-full bg-slate-855 rounded-full h-1">
-                            <div className="bg-amber-500 h-1 rounded-full" style={{ width: '90%' }} />
-                          </div>
-                        </div>
-
-                      </div>
-
-                      {/* Split column checklists (Key Insights left vs right) */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-800/60">
-                        
-                        {/* Lelf column */}
-                        <div className="space-y-4">
-                          
-                          {/* Key insights */}
-                          <div className="space-y-2">
-                            <h5 className="text-[10px] font-mono tracking-widest uppercase text-emerald-400 font-extrabold block">Key Insights</h5>
-                            <ul className="space-y-1.5 text-xs text-slate-300">
-                              <li className="flex items-center gap-2 font-medium">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Clear problem articulation
-                              </li>
-                              <li className="flex items-center gap-2 font-medium">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Strong market data
-                              </li>
-                              <li className="flex items-center gap-2 font-medium">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Emotional connection
-                              </li>
-                            </ul>
-                          </div>
-
-                          {/* Areas for Improvement */}
-                          <div className="space-y-2 pt-2 border-t border-slate-850">
-                            <h5 className="text-[10px] font-mono tracking-widest uppercase text-amber-500 font-extrabold block">Areas for Improvement</h5>
-                            <ul className="space-y-1 text-xs text-slate-300 font-medium">
-                              <li className="flex items-start gap-2 text-amber-400">
-                                <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> Could use more specific pain points
-                              </li>
-                              <li className="flex items-start gap-2 text-amber-400 font-medium">
-                                <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> Missing urgency indicators
-                              </li>
-                            </ul>
-                          </div>
-
-                          {/* Prescriptive Actions */}
-                          <div className="space-y-2 pt-2 border-t border-slate-850">
-                            <h5 className="text-[10px] font-mono tracking-widest uppercase text-blue-400 font-extrabold block">Prescriptive Actions</h5>
-                            <ul className="space-y-1 text-xs text-slate-300">
-                              <li className="flex items-center gap-2 font-medium">
-                                <Target className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" /> Add patient testimonials
-                              </li>
-                              <li className="flex items-center gap-2 font-medium">
-                                <Target className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" /> Include cost of inaction data
-                              </li>
-                            </ul>
-                          </div>
-
-                        </div>
-
-                        {/* Right column */}
-                        <div className="space-y-4">
-                          
-                          <div className="space-y-2">
-                            <h5 className="text-[10px] font-mono tracking-widest uppercase text-emerald-400 font-extrabold block">Technical Soundness</h5>
-                            <ul className="space-y-1.5 text-xs text-slate-300">
-                              <li className="flex items-center gap-2 font-medium">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Innovative approach
-                              </li>
-                              <li className="flex items-center gap-2 font-medium">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Technical feasibility
-                              </li>
-                              <li className="flex items-center gap-2 font-medium">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Clear value proposition
-                              </li>
-                            </ul>
-                          </div>
-
-                          <div className="space-y-2 pt-2 border-t border-slate-850">
-                            <h5 className="text-[10px] font-mono tracking-widest uppercase text-amber-500 font-extrabold block">Structural Limits</h5>
-                            <ul className="space-y-1 text-xs text-slate-300">
-                              <li className="flex items-start gap-2 text-amber-400 font-medium">
-                                <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> Implementation timeline unclear
-                              </li>
-                            </ul>
-                          </div>
-
-                          <div className="space-y-2 pt-2 border-t border-slate-850">
-                            <h5 className="text-[10px] font-mono tracking-widest uppercase text-blue-400 font-extrabold block">Advanced Prescriptive Actions</h5>
-                            <ul className="space-y-1 text-xs text-slate-300">
-                              <li className="flex items-center gap-2 font-medium">
-                                <Target className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" /> Add technical architecture diagram
-                              </li>
-                              <li className="flex items-center gap-2 font-medium">
-                                <Target className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" /> Include pilot results
-                              </li>
-                            </ul>
-                          </div>
-
-                        </div>
-
-                      </div>
-
                     </div>
 
-                    {/* Section: Investment Thesis & Recommended Next Steps */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      
-                      {/* Investment Thesis (Amber custom border card block) */}
-                      <div className="p-6 rounded-2xl border border-amber-300 bg-[#1e1e12] space-y-4">
-                        <div className="flex items-center gap-2 border-b border-amber-500/20 pb-2">
-                          <Sparkles className="text-amber-400 w-5 h-5 animate-pulse" />
-                          <h4 className="text-sm font-black text-amber-400 uppercase tracking-widest">Investment Thesis</h4>
-                        </div>
-                        
-                        {/* Amber layout advice sentence */}
-                        <div className="p-4 rounded-xl border border-amber-400/30 bg-amber-500/5 font-sans text-amber-300 text-xs font-semibold leading-relaxed">
-                          Strong team with proven inspection AI technology addressing large market opportunity. Clear path to profitability with defensible moat through real estate, insurance and construction workflow partnerships and proprietary data.
-                        </div>
-
-                        <div className="space-y-2 pt-2 text-xs">
-                          <span className="text-[10px] uppercase font-mono tracking-widest text-[#cbd5e1] block font-bold">Key Risk Factors Detected:</span>
-                          <ul className="space-y-1.5 font-medium text-slate-300">
-                            <li className="flex items-start gap-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
-                              <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> Inspection accuracy and liability confidence must be proven
-                            </li>
-                            <li className="flex items-start gap-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
-                              <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> Long enterprise sales cycles in real estate, insurance and construction
-                            </li>
-                            <li className="flex items-start gap-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
-                              <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" /> Competitive pressure from established players
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      {/* Recommended Next Steps with round numbers exact matching */}
-                      <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 space-y-4">
-                        <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-                          <Activity className="text-blue-400 w-5 h-5 animate-pulse" />
-                          <h4 className="text-sm font-black text-white uppercase tracking-widest">Recommended Next Steps</h4>
-                        </div>
-
-                        <div className="space-y-2 text-xs font-medium">
-                          {[
-                            "Schedule management presentation",
-                            "Review inspection report samples and pilot proof",
-                            "Conduct customer reference calls",
-                            "Analyze competitive landscape",
-                            "Evaluate regulatory pathway"
-                          ].map((step, stepIdx) => (
-                            <div key={stepIdx} className="p-3.5 rounded-xl border border-slate-850 bg-[#080d19] hover:bg-slate-900 flex items-center gap-3.5 hover:border-blue-500/30 transition-all cursor-pointer group">
-                              <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center font-bold text-[10px] text-white flex-shrink-0 group-hover:scale-110 transition-transform">
-                                {stepIdx + 1}
-                              </div>
-                              <span className="text-slate-200 group-hover:text-white">{step}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                    </div>
-
-                    {/* Highly Engaging Action CTA Footer Buttons matching mockups */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-slate-800/60 pb-8">
-                      <button 
-                        onClick={() => {
-                          addLog('Self-Healing', 'Triggered compiled report export SHA-256 build logs package.');
-                          setActivePitchModal('download');
-                          triggerToast('Opening analytical export matrix...', 'success');
-                        }}
-                        className="py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-blue-500/10"
+                    <div className="flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('docs_hub')}
+                        className="rounded-xl border border-slate-700 px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-200 hover:border-slate-500"
                       >
-                        <Download className="w-4 h-4 text-slate-200" /> Download Conversion Report
+                        Strengthen Founder Record
                       </button>
-
-                      <button 
-                        onClick={() => {
-                          addLog('Orchestrator', 'Initiated secure token link dispatcher layer.');
-                          setActivePitchModal('share');
-                          triggerToast('Loading secure dispatcher config...', 'success');
-                        }}
-                        className="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-emerald-500/10"
+                      <button
+                        type="button"
+                        onClick={() => setShowPricingModal(true)}
+                        className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950"
                       >
-                        <Share2 className="w-4 h-4 text-slate-200" /> Share Founder Brief
+                        View Founder Pass
                       </button>
-
-                      <button 
-                        onClick={() => {
-                          addLog('Deal Desk', 'Created CRM-ready Execute Deal Desk handoff package.');
-                          setActiveTab('deal_desk_handoff');
-                          triggerToast('Execute Deal Desk handoff prepared.', 'success');
-                        }}
-                        className="py-3 px-4 rounded-xl bg-[#D4FF00] hover:bg-[#B7EF09] text-slate-950 font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-[#D4FF00]/20"
-                      >
-                        <Users className="w-4 h-4 text-slate-950" /> Send to Execute Deal Desk
-                      </button>
-
-                      <button 
-                        onClick={() => {
-                          addLog('Qwen-Reasoning', 'Compiling OS cognitive suggestions index...');
-                          setActivePitchModal('plan');
-                          triggerToast('Evaluating structural optimizations...', 'success');
-                        }}
-                        className="py-3 px-4 rounded-xl bg-[#F59E0B] hover:bg-[#D97706] text-white font-black text-[11px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 border border-[#F59E0B]/10"
-                      >
-                        <Layers className="w-4 h-4 text-slate-200" /> Get Next Best Action
-                      </button>
-
-                      {/* Twitter & LinkedIn share buttons added here */}
-                      <div className="flex gap-2 mt-2 justify-end col-span-2 md:col-span-1">
-                        <button
-                          onClick={() => {
-                            const text = `My startup scored ${pitchResults?.score || 87} on TD Conversion OS due diligence. How does yours compare?`;
-                            const url = "https://tdventures-os.vercel.app";
-                            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
-                          }}
-                          className="p-2 rounded-full bg-black hover:bg-gray-900 text-white transition"
-                          title="Share on X (Twitter)"
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                        </button>
-                        <button
-                          onClick={() => {
-                            const text = `My startup scored ${pitchResults?.score || 87} on TD Conversion OS due diligence. How does yours compare?`;
-                            const url = "https://tdventures-os.vercel.app";
-                            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`, "_blank");
-                          }}
-                          className="p-2 rounded-full bg-blue-700 hover:bg-blue-600 text-white transition"
-                          title="Share on LinkedIn"
-                        >
-                          <Linkedin className="w-4 h-4" />
-                        </button>
-                      </div>
                     </div>
-
-                  </div>
+                  </section>
+                ) : (
+                  <section className="rounded-3xl border border-slate-800 bg-slate-950/60 p-6">
+                    <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-slate-500">
+                      Current state
+                    </p>
+                    <h3 className="mt-2 text-2xl font-black text-white">
+                      No Conversion analysis has run in this session
+                    </h3>
+                    <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+                      Add founder evidence in Founder Vault and run the guarded Preview there.
+                      Pitch-deck files will be interpreted only after secure evidence ingestion is
+                      connected; selecting a filename alone will never produce a score.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('docs_hub')}
+                      className="mt-5 rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950"
+                    >
+                      Open Founder Vault
+                    </button>
+                  </section>
                 )}
+
+                <section className="rounded-3xl border border-slate-800 bg-[#080D1A] p-6">
+                  <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-cyan-300">
+                    Diamond Index framework
+                  </p>
+                  <h3 className="mt-2 text-xl font-black text-white">
+                    Assessment not yet run
+                  </h3>
+                  <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+                    The evidence-backed Diamond Index will score ten dimensions without using the
+                    founder’s self-score as the official result.
+                  </p>
+                  <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-5">
+                    {[
+                      'Idea',
+                      'Innovation',
+                      'Solution',
+                      'Timing',
+                      'Market wedge',
+                      'TAM',
+                      'Durability',
+                      'Team',
+                      'Distribution',
+                      'Secret sauce'
+                    ].map((criterion, index) => (
+                      <div key={criterion} className="rounded-xl border border-slate-800 bg-slate-950/70 p-3">
+                        <p className="text-[9px] font-mono text-slate-600">
+                          {String(index + 1).padStart(2, '0')}
+                        </p>
+                        <p className="mt-1 text-xs font-bold text-slate-300">{criterion}</p>
+                        <p className="mt-2 text-[10px] text-slate-600">Awaiting evidence</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
               </div>
             )}
 
             {/* 3. CONDITIONAL TABS REDIRECT FOR OTHER PAGES */}
             {activeTab === 'deal_desk_handoff' && (
-              <div className="space-y-6 animate-in fade-in duration-500">
-                <div className="rounded-3xl border border-slate-800 bg-[#0B1220] p-6 shadow-2xl">
-                  <p className="text-[10px] uppercase tracking-[0.35em] text-[#D4FF00] font-black">Execute Deal Desk</p>
-                  <h2 className="text-3xl font-black text-white mt-2">CRM-ready handoff from Conversion Signal Engine</h2>
-                  <p className="text-sm text-slate-400 mt-3 max-w-3xl">This converts the intelligence report into an execution package for founder follow-up, IC review and CRM action.</p>
-                </div>
-                <div className="grid md:grid-cols-4 gap-4">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Startup</p><p className="text-lg font-black text-white mt-2">{conversionProfile.startupName || 'Not set'}</p><p className="text-xs text-slate-500 mt-1">{conversionProfile.sector || 'Not set'} · {conversionProfile.stage || 'Seed'}</p></div>
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Conversion Score</p><p className="text-3xl font-black text-[#D4FF00] mt-2">{pitchResults?.score || conversionReview?.pitchDeckQuality || 87}/100</p><p className="text-xs text-slate-500 mt-1">Signal quality for investor action</p></div>
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Risk Level</p><p className="text-lg font-black text-orange-300 mt-2">{conversionReview?.riskLevel || 'Moderate'}</p><p className="text-xs text-slate-500 mt-1">Needs proof-backed follow-up</p></div>
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"><p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Deal Desk Status</p><p className="text-lg font-black text-emerald-300 mt-2">Ready for review</p><p className="text-xs text-slate-500 mt-1">Prepared for CRM workflow</p></div>
-                </div>
-                <div className="grid lg:grid-cols-2 gap-6">
-                  <div className="rounded-3xl border border-slate-800 bg-[#080D1A] p-6"><p className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-black">Founder / Startup Brief</p><h3 className="text-xl font-black text-white mt-2">CRM-ready summary</h3><p className="text-sm text-slate-300 leading-relaxed mt-4">{conversionReview?.crmSummary || ((conversionProfile.startupName || 'The startup') + ' is ready for Deal Desk review based on the current Conversion Signal Report. The next step is to validate proof, sharpen investor targeting and prepare follow-up actions.')}</p></div>
-                  <div className="rounded-3xl border border-slate-800 bg-[#080D1A] p-6"><p className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-black">IC Note & Follow-up</p><h3 className="text-xl font-black text-white mt-2">Next best action</h3><p className="text-sm text-slate-300 leading-relaxed mt-4">{conversionReview?.nextBestAction || 'Move this opportunity into Deal Desk review, validate traction proof, prepare founder follow-up questions and create an investor shortlist.'}</p><div className="mt-5 rounded-xl border border-slate-800 bg-slate-950 p-4 text-xs text-slate-300"><span className="font-black text-white">CRM action:</span> Create opportunity, attach Conversion Report and mark status as Deal Desk Review.</div></div>
-                </div>
-                <button onClick={() => setActiveTab('pitch_analyzer')} className="px-4 py-3 rounded-xl border border-slate-700 text-slate-300 text-xs font-black uppercase tracking-wider hover:bg-slate-900 transition-all">Back to Conversion Review</button>
-              </div>
+              <section className="rounded-3xl border border-slate-800 bg-[#0B1220] p-6 shadow-2xl">
+                <p className="text-[10px] font-mono font-black uppercase tracking-[0.32em] text-[#D4FF00]">
+                  Deal Desk handoff
+                </p>
+                <h2 className="mt-2 text-3xl font-black text-white">
+                  No CRM handoff has been created
+                </h2>
+                <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+                  A Founder Signal Preview is non-persistent and cannot create a CRM signal.
+                  Deal Desk will receive data only after the full Conversion Review creates a
+                  versioned, evidence-backed signal.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('pitch_analyzer')}
+                  className="mt-5 rounded-xl border border-slate-700 px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-200 hover:border-slate-500"
+                >
+                  Back to Conversion Review
+                </button>
+              </section>
             )}
 
             {activeTab === 'gdocs_hub' && <GoogleDocsTab addLog={addLog} triggerToast={triggerToast} />}
