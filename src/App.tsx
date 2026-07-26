@@ -790,11 +790,26 @@ export default function App() {
           ? error.message
           : 'Preview Analysis could not be completed.';
 
+      const previewAlreadyUsed =
+        message.includes('Conversion entitlement is not active');
+
+      const displayMessage = previewAlreadyUsed
+        ? (
+            'Your Founder Signal Preview is complete. To continue with the '
+            + 'Conversion Founder Pass for full analysis, reruns, investor '
+            + 'fit & CRM handoff, go to our payment plan to unlock.'
+          )
+        : message;
+
       setFeedbackMsg({
-        text: message,
+        text: displayMessage,
         type: 'warn'
       });
-      triggerToast(message, 'warn');
+      triggerToast(displayMessage, 'warn');
+
+      if (previewAlreadyUsed) {
+        setShowPricingModal(true);
+      }
     } finally {
       setIsConversionReviewRunning(false);
     }
