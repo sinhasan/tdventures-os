@@ -100,6 +100,38 @@ import {
 } from './data';
 
 // Email capture banner component (inline for simplicity)
+
+function ConversionReviewProgressModal() {
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/85 px-5 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="conversion-review-progress-title"
+    >
+      <div className="w-full max-w-md rounded-3xl border border-[#D4FF00]/35 bg-[#0c1222] p-8 text-center shadow-2xl">
+        <div className="mx-auto mb-5 h-12 w-12 animate-spin rounded-full border-4 border-[#D4FF00]/25 border-t-[#D4FF00]" />
+        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.28em] text-[#D4FF00]">
+          TD Conversion OS
+        </p>
+        <h2
+          id="conversion-review-progress-title"
+          className="mt-3 text-2xl font-black text-white"
+        >
+          Your Conversion Review is in progress
+        </h2>
+        <p className="mt-3 text-sm leading-6 text-slate-300">
+          We are interpreting your founder record and the evidence you have supplied.
+          Please keep this window open.
+        </p>
+        <p className="mt-4 text-xs text-slate-500">
+          This usually takes less than a minute.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 const EmailCaptureBanner = () => {
   const [dismissed, setDismissed] = useState(false);
 
@@ -2760,6 +2792,7 @@ export default function App() {
       )}
 
       {/* Email capture banner */}
+      {isConversionReviewRunning && <ConversionReviewProgressModal />}
       <EmailCaptureBanner />
 
     </div>
