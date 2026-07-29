@@ -188,6 +188,204 @@ export type ConversionPreviewParams = {
   targetInvestor?: string;
 };
 
+export type ConversionDimensionAssessment = {
+  key: string;
+  ai_rating: number;
+  evidence_status:
+    | 'Missing'
+    | 'Claimed'
+    | 'AI-supported'
+    | 'Contradicted';
+  rationale: string;
+  interview_question: string;
+  sources: string[];
+};
+
+export type ConversionProfileVerification = {
+  status:
+    | 'not_verified'
+    | 'profile_verified'
+    | 'verification_declined';
+  label: string;
+  display_tone: 'destructive' | 'neon';
+  execution_allowed: true;
+  verified_at: string | null;
+  verified_claim_count: number;
+  accepted_claim_keys?: string[];
+  scope: string | null;
+  disclaimer: string;
+};
+
+export type ConversionV2Analysis = {
+  founder_claim_score: number;
+  ai_evidence_score: number;
+  weighted_base_score: number;
+  openai_contribution_points?: number;
+  founder_contribution_before_sector?: number;
+  founder_contribution_after_sector?: number;
+  sector_adjustment_points: 0 | -10;
+  sector_contribution_points?: number;
+  is_hot_sector: boolean;
+  conversion_score: number;
+  founder_ai_gap: number;
+  gap_classification: string;
+  reliability_score: number;
+  pitch_deck_quality: number | null;
+  narrative_clarity: number;
+  fundraise_readiness: number;
+  investor_fit: number;
+  traction_strength: number;
+  confidence_level: 'Low' | 'Medium' | 'High';
+  risk_level: 'Low' | 'Moderate' | 'High';
+  risk_flags: string[];
+  leading_signals: Array<{
+    signal: string;
+    strength: 'Weak' | 'Moderate' | 'Strong';
+    evidence_status:
+      | 'Missing'
+      | 'Claimed'
+      | 'Partially supported'
+      | 'Supported';
+  }>;
+  contradictions: Array<{ field: string; issue: string }>;
+  missing_evidence: Array<{
+    item: string;
+    priority: 'Low' | 'Medium' | 'High';
+  }>;
+  dimension_assessments: ConversionDimensionAssessment[];
+  behaviour_assessment: {
+    consistency_score: number;
+    specificity_score: number;
+    proof_discipline_score: number;
+    anomaly_level: 'Low' | 'Moderate' | 'High';
+    explanation: string;
+  };
+  sector_intelligence: {
+    structural_score: number;
+    confidence: 'Low' | 'Medium' | 'High';
+    rationale: string;
+  };
+  deck_assessment: {
+    status: 'Analysed' | 'Not supplied';
+    score: number | null;
+    analysis_mode: 'text_and_visual' | 'text_only' | 'not_assessed';
+    filename: string | null;
+    limitation: string;
+  };
+  interview_questions: Array<{
+    claim_key: string;
+    label: string;
+    question: string;
+    reason: string;
+    priority: 'High' | 'Medium';
+  }>;
+  score_formula: {
+    founder_weight: number;
+    openai_weight: number;
+    hot_sector_threshold: number;
+    non_hot_sector_founder_penalty: number;
+    sector_adjustment_rule: string;
+    rule: string;
+  };
+  profile_verification: ConversionProfileVerification;
+  investment_thesis: string;
+  investor_summary: string;
+  crm_summary: string;
+  next_best_action: string;
+  deal_desk_recommendation: string;
+};
+
+export type ConversionClaimReview = {
+  id: string;
+  startup_id: string;
+  conversion_signal_id: string;
+  review_status:
+    | 'analysis_complete'
+    | 'interview_required'
+    | 'interview_submitted'
+    | 'profile_verified'
+    | 'verification_declined';
+  claims: ConversionDimensionAssessment[];
+  interview_questions: ConversionV2Analysis['interview_questions'];
+  interview_responses: Record<string, string>;
+  verification_scope: string | null;
+  accepted_claim_keys: string[];
+  verified_claim_count: number;
+  verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ConversionV2ContextResponse = {
+  ok: boolean;
+  profile: {
+    id: string;
+    startup_name: string;
+    sector: string;
+    stage: string;
+    geography: string;
+    city: string;
+    country: string;
+    ask_usd: string | null;
+  };
+  evidence: {
+    id: string;
+    rubric_version: string;
+    revision: number;
+    status: string;
+    completion_count: number;
+    evidence_count: number;
+    founder_claim_score: number;
+    facts: Record<string, unknown>;
+    claims: Array<{
+      key: string;
+      label: string;
+      rating: number;
+      evidence: string;
+    }>;
+    updated_at: string;
+  };
+  current_analysis: ConversionV2Analysis | null;
+  generated_at: string | null;
+  claim_review: ConversionClaimReview | null;
+};
+
+export type ConversionV2Response = {
+  ok: boolean;
+  usage_type: 'preview' | 'paid';
+  provider: string;
+  model: string;
+  analysis_version: string;
+  generated_at: string;
+  analysis: ConversionV2Analysis;
+  signal: unknown | null;
+  claim_review: ConversionClaimReview | null;
+  credits: {
+    total: number;
+    reserved: number;
+    consumed: number;
+    remaining: number;
+    status: string;
+    expires_at?: string | null;
+  };
+  storage_rule: {
+    raw_file_stored: false;
+    raw_extracted_text_stored: false;
+    conversion_signal_saved: boolean;
+  };
+};
+
+export type ConversionV2Params = {
+  startupId: string;
+  usageType: 'preview' | 'paid';
+  idempotencyKey?: string;
+  pitchSummary?: string;
+  tractionProof?: string;
+  riskNotes?: string;
+  targetInvestor?: string;
+  deckFile?: File | null;
+};
+
 export type TdventureLoginResponse = {
   access_token: string;
   token_type: string;
@@ -602,6 +800,104 @@ export function runConversionPreview(
       target_investor: params.targetInvestor?.trim() || undefined
     })
   });
+}
+
+function readFileAsBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(
+      new Error('The pitch deck could not be read.')
+    );
+    reader.onload = () => {
+      const result = String(reader.result || '');
+      const separator = result.indexOf(',');
+      resolve(separator >= 0 ? result.slice(separator + 1) : result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+export function getConversionV2Context(
+  startupId: string
+): Promise<ConversionV2ContextResponse> {
+  return conversionRequest<ConversionV2ContextResponse>(
+    `/context/${encodeURIComponent(startupId.trim())}`,
+    { method: 'GET' }
+  );
+}
+
+export async function runConversionV2(
+  params: ConversionV2Params
+): Promise<ConversionV2Response> {
+  const startupId = params.startupId.trim();
+  if (!startupId) {
+    throw new Error(
+      'A canonical startup profile is required for Conversion Review.'
+    );
+  }
+
+  const deckFile = params.deckFile || null;
+  if (deckFile && deckFile.size > 8 * 1024 * 1024) {
+    throw new Error('Pitch deck must be no larger than 8 MB.');
+  }
+
+  const extension = deckFile
+    ? deckFile.name.split('.').pop()?.toLowerCase()
+    : '';
+  if (deckFile && !['pdf', 'pptx'].includes(extension || '')) {
+    throw new Error('Upload a PDF or PPTX pitch deck.');
+  }
+
+  const deckBase64 = deckFile
+    ? await readFileAsBase64(deckFile)
+    : undefined;
+
+  return conversionRequest<ConversionV2Response>('/analyze-v2', {
+    method: 'POST',
+    body: JSON.stringify({
+      startup_id: startupId,
+      usage_type: params.usageType,
+      idempotency_key:
+        params.idempotencyKey || createAnalysisIdempotencyKey(),
+      pitch_summary: params.pitchSummary?.trim() || undefined,
+      traction_proof: params.tractionProof?.trim() || undefined,
+      risk_notes: params.riskNotes?.trim() || undefined,
+      target_investor: params.targetInvestor?.trim() || undefined,
+      deck_filename: deckFile?.name,
+      deck_mime_type: deckFile?.type,
+      deck_base64: deckBase64
+    })
+  });
+}
+
+export async function getConversionClaimReview(
+  startupId: string
+): Promise<ConversionClaimReview | null> {
+  const response = await conversionRequest<{
+    ok: boolean;
+    claim_review: ConversionClaimReview | null;
+  }>(
+    `/claim-review/${encodeURIComponent(startupId.trim())}`,
+    { method: 'GET' }
+  );
+  return response.claim_review;
+}
+
+export async function saveConversionInterview(
+  reviewId: string,
+  responses: Record<string, string>
+): Promise<ConversionClaimReview> {
+  const result = await conversionRequest<{
+    ok: boolean;
+    claim_review: ConversionClaimReview;
+  }>(
+    `/claim-review/${encodeURIComponent(reviewId)}/interview`,
+    {
+      method: 'PUT',
+      body: JSON.stringify({ responses })
+    }
+  );
+  return result.claim_review;
 }
 
 function createPaymentIdempotencyKey(): string {

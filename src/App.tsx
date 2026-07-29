@@ -53,6 +53,11 @@ import {
 import { LinkedInIntelTab } from './components/LinkedInIntelTab';
 import { GoogleDocsTab } from './components/GoogleDocsTab';
 import { GoogleSlidesTab } from './components/GoogleSlidesTab';
+import {
+  AcceptClaimsPanel,
+  ConversionV2ResultPanel,
+  PitchDeckEvidencePanel
+} from './components/ConversionV2Panels';
 
 import { 
   FundraisingIntelTab, 
@@ -90,6 +95,8 @@ import {
 
 import { SEOOptimizedSuite, DueDiligenceReport, DealFlowItem } from './types';
 import type {
+  ConversionClaimReview,
+  ConversionV2Analysis,
   TdventureCurrentUser,
   ProfilePlaneResolution
 } from './lib/conversionApi';
@@ -705,16 +712,192 @@ export default function App() {
   const [conversionReview, setConversionReview] =
     useState<ConversionReviewResult | null>(null);
 
+  const [conversionV2Analysis, setConversionV2Analysis] =
+    useState<ConversionV2Analysis | null>(null);
+  const [conversionV2GeneratedAt, setConversionV2GeneratedAt] =
+    useState('');
+  const [conversionClaimReview, setConversionClaimReview] =
+    useState<ConversionClaimReview | null>(null);
+  const [selectedPitchDeck, setSelectedPitchDeck] =
+    useState<File | null>(null);
+  const [claimInterviewResponses, setClaimInterviewResponses] =
+    useState<Record<string, string>>({});
+  const [savingClaimInterview, setSavingClaimInterview] =
+    useState(false);
+
   const [isConversionReviewRunning, setIsConversionReviewRunning] =
     useState(false);
 
+  const linkedStartupId = String(
+    profilePlaneResolution?.state === 'linked' &&
+    profilePlaneResolution?.profile_type === 'startup'
+      ? profilePlaneResolution.profile_id || ''
+      : ''
+  ).trim();
+
+  useEffect(() => {
+    if (!linkedStartupId) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void import('./lib/conversionApi')
+      .then(async ({
+        getConversionV2Context,
+        getConversionClaimReview
+      }) => {
+        const [context, review] = await Promise.all([
+          getConversionV2Context(linkedStartupId),
+          getConversionClaimReview(linkedStartupId).catch(() => null)
+        ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        setConversionProfile((current) => ({
+          ...current,
+          startupName:
+            String(context.profile.startup_name || '').trim()
+            || current.startupName,
+          sector:
+            String(context.profile.sector || '').trim()
+            || current.sector,
+          stage:
+            String(context.profile.stage || '').trim()
+            || current.stage,
+          raiseAmount:
+            context.profile.ask_usd
+              ? `USD ${context.profile.ask_usd}`
+              : current.raiseAmount
+        }));
+
+        const resolvedReview =
+          review || context.claim_review || null;
+
+        setConversionClaimReview(resolvedReview);
+        setClaimInterviewResponses(
+          resolvedReview?.interview_responses || {}
+        );
+
+        if (context.current_analysis) {
+          setConversionV2Analysis(context.current_analysis);
+          setConversionV2GeneratedAt(
+            context.generated_at
+              ? new Date(context.generated_at).toLocaleString()
+              : ''
+          );
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          console.warn('Conversion V2 context unavailable', error);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [linkedStartupId]);
+
+  const runFullConversionReview = async () => {
+    if (!linkedStartupId) {
+      triggerToast(
+        'Link a verified Startup profile before running Conversion Review.',
+        'warn'
+      );
+      return;
+    }
+
+    setIsConversionReviewRunning(true);
+
+    try {
+      const { runConversionV2 } =
+        await import('./lib/conversionApi');
+
+      const response = await runConversionV2({
+        startupId: linkedStartupId,
+        usageType: 'paid',
+        idempotencyKey:
+          `conversion-v2-${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2)}`,
+        pitchSummary: conversionProfile.pitchSummary,
+        tractionProof: conversionProfile.tractionProof,
+        riskNotes: conversionProfile.riskNotes,
+        targetInvestor: conversionProfile.targetInvestor,
+        deckFile: selectedPitchDeck
+      });
+
+      setConversionV2Analysis(response.analysis);
+      setConversionV2GeneratedAt(
+        new Date(response.generated_at).toLocaleString()
+      );
+      setConversionClaimReview(response.claim_review);
+      setClaimInterviewResponses(
+        response.claim_review?.interview_responses || {}
+      );
+      setActiveTab('pitch_analyzer');
+
+      addLog(
+        'OpenAI Evidence Engine',
+        `Created Conversion V2 signal for ${
+          conversionProfile.startupName || 'the founder'
+        } with score ${response.analysis.conversion_score}/100.`
+      );
+      triggerToast(
+        'Full evidence-backed Conversion Review is ready.',
+        'success'
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Conversion Review could not be completed.';
+      triggerToast(message, 'warn');
+
+      if (
+        message.toLowerCase().includes('entitlement')
+        || message.toLowerCase().includes('credit')
+      ) {
+        setShowPricingModal(true);
+      }
+    } finally {
+      setIsConversionReviewRunning(false);
+    }
+  };
+
+  const saveClaimInterview = async () => {
+    if (!conversionClaimReview?.id) {
+      triggerToast('Run Conversion Review before Accept Claims.', 'warn');
+      return;
+    }
+
+    setSavingClaimInterview(true);
+    try {
+      const { saveConversionInterview } =
+        await import('./lib/conversionApi');
+      const updated = await saveConversionInterview(
+        conversionClaimReview.id,
+        claimInterviewResponses
+      );
+      setConversionClaimReview(updated);
+      triggerToast('Interview responses saved to the review record.', 'success');
+    } catch (error) {
+      triggerToast(
+        error instanceof Error
+          ? error.message
+          : 'Interview responses could not be saved.',
+        'warn'
+      );
+    } finally {
+      setSavingClaimInterview(false);
+    }
+  };
+
   const runConversionPreview = async () => {
-    const startupId = String(
-      profilePlaneResolution?.state === 'linked' &&
-      profilePlaneResolution?.profile_type === 'startup'
-        ? profilePlaneResolution.profile_id || ''
-        : ''
-    ).trim();
+    const startupId = linkedStartupId;
 
     if (!startupId) {
       triggerToast(
@@ -1037,6 +1220,7 @@ export default function App() {
       { id: 'docs_hub', name: 'Founder Vault', icon: FileText, desc: 'Founder inputs and evidence' },
       { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof' },
       { id: 'pitch_analyzer', name: 'Conversion Review', icon: TrendingUp, desc: 'Analyse readiness and risk' },
+      { id: 'claim_review', name: 'Accept Claims', icon: ShieldCheck, desc: 'Gap Analysis and human clarification' },
       { id: 'fundraising_intel', name: 'Fundraise Readiness', icon: Coins, desc: 'Round logic and raise ask' },
     ],
     investor: [
@@ -1732,18 +1916,30 @@ export default function App() {
                     },
                     {
                       label: 'Pitch deck evidence',
-                      value: 'Secure ingestion not connected',
-                      active: false
+                      value:
+                        conversionV2Analysis?.deck_assessment?.status
+                        || (selectedPitchDeck
+                          ? `${selectedPitchDeck.name} selected`
+                          : 'Not supplied'),
+                      active:
+                        !!selectedPitchDeck
+                        || conversionV2Analysis?.deck_assessment?.status === 'Analysed'
                     },
                     {
                       label: 'Central analysis',
-                      value: conversionReview ? 'Preview completed' : 'Not run in this session',
-                      active: !!conversionReview
+                      value: conversionV2Analysis
+                        ? 'Full Review completed'
+                        : conversionReview
+                          ? 'Preview completed'
+                          : 'Not run in this session',
+                      active: !!conversionV2Analysis || !!conversionReview
                     },
                     {
                       label: 'CRM signal',
-                      value: 'Not created by Preview',
-                      active: false
+                      value: conversionV2Analysis
+                        ? 'Versioned signal created'
+                        : 'Not created by Preview',
+                      active: !!conversionV2Analysis
                     }
                   ].map((item) => (
                     <div
@@ -1764,7 +1960,34 @@ export default function App() {
                   ))}
                 </section>
 
-                {conversionReview ? (
+                {conversionV2Analysis ? (
+                  <div className="space-y-5">
+                    <ConversionV2ResultPanel
+                      analysis={conversionV2Analysis}
+                      generatedAt={conversionV2GeneratedAt}
+                    />
+                    <div className="flex flex-wrap gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('claim_review')}
+                        className="rounded-xl border border-cyan-400/35 px-4 py-3 text-xs font-black uppercase tracking-wider text-cyan-200"
+                      >
+                        Open Accept Claims
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void openDealDeskWorkspace()}
+                        className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950"
+                      >
+                        Continue to Execution
+                      </button>
+                      <p className="w-full text-xs leading-5 text-slate-500">
+                        Profile Verification is optional. A red Profile Not
+                        Verified state never blocks Execution.
+                      </p>
+                    </div>
+                  </div>
+                ) : conversionReview ? (
                   <section className="space-y-6 rounded-3xl border border-[#D4FF00]/25 bg-slate-950/70 p-6">
                     <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <div>
@@ -1874,6 +2097,7 @@ export default function App() {
                   </section>
                 )}
 
+                {!conversionV2Analysis && (
                 <section className="rounded-3xl border border-slate-800 bg-[#080D1A] p-6">
                   <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-cyan-300">
                     Diamond Index framework
@@ -1908,6 +2132,7 @@ export default function App() {
                     ))}
                   </div>
                 </section>
+                )}
               </div>
             )}
 
@@ -1936,7 +2161,64 @@ export default function App() {
             )}
 
             {activeTab === 'gdocs_hub' && <GoogleDocsTab addLog={addLog} triggerToast={triggerToast} />}
-            {activeTab === 'gslides_hub' && <GoogleSlidesTab addLog={addLog} triggerToast={triggerToast} />}
+            {activeTab === 'gslides_hub' && role === 'founder' && (
+              <div className="space-y-6">
+                <PitchDeckEvidencePanel
+                  file={selectedPitchDeck}
+                  disabled={isConversionReviewRunning}
+                  onChange={(file) => {
+                    if (file && file.size > 8 * 1024 * 1024) {
+                      triggerToast(
+                        'Pitch deck must be no larger than 8 MB.',
+                        'warn'
+                      );
+                      return;
+                    }
+                    setSelectedPitchDeck(file);
+                  }}
+                />
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => void runFullConversionReview()}
+                    disabled={isConversionReviewRunning}
+                    className="rounded-xl bg-[#D4FF00] px-5 py-3 text-xs font-black uppercase tracking-wider text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isConversionReviewRunning
+                      ? 'Analysing founder evidence…'
+                      : 'Run Full Conversion Review'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('docs_hub')}
+                    className="rounded-xl border border-slate-700 px-5 py-3 text-xs font-black uppercase tracking-wider text-slate-200"
+                  >
+                    Review Founder Vault
+                  </button>
+                </div>
+              </div>
+            )}
+            {activeTab === 'gslides_hub' && role !== 'founder' && (
+              <GoogleSlidesTab
+                addLog={addLog}
+                triggerToast={triggerToast}
+              />
+            )}
+            {activeTab === 'claim_review' && (
+              <AcceptClaimsPanel
+                analysis={conversionV2Analysis}
+                review={conversionClaimReview}
+                responses={claimInterviewResponses}
+                saving={savingClaimInterview}
+                onResponseChange={(claimKey, value) => {
+                  setClaimInterviewResponses((current) => ({
+                    ...current,
+                    [claimKey]: value
+                  }));
+                }}
+                onSubmit={() => void saveClaimInterview()}
+              />
+            )}
             {activeTab === 'linkedin_intel' && <LinkedInIntelTab addLog={addLog} triggerToast={triggerToast} />}
             {activeTab === 'fundraising_intel' && <FundraisingIntelTab addLog={addLog} triggerToast={triggerToast} />}
             {activeTab === 'validation' && <StartupValidationTab addLog={addLog} triggerToast={triggerToast} />}
@@ -1955,7 +2237,7 @@ export default function App() {
                       <label className='space-y-2'><span className='text-xs font-bold text-slate-300 uppercase'>Startup name</span><input className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.startupName} onChange={(e) => updateConversionProfile('startupName', e.target.value)} placeholder='Example: InspectZero' /></label>
                       <label className='space-y-2'><span className='text-xs font-bold text-slate-300 uppercase'>Sector</span><input className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.sector} onChange={(e) => updateConversionProfile('sector', e.target.value)} placeholder='AI, SaaS, Climate, Fintech...' /></label>
                       <label className='space-y-2'><span className='text-xs font-bold text-slate-300 uppercase'>Stage</span><select className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.stage} onChange={(e) => updateConversionProfile('stage', e.target.value)}><option>Idea</option><option>MVP</option><option>Pre-seed</option><option>Seed</option><option>Series A</option></select></label>
-                      <label className='space-y-2'><span className='text-xs font-bold text-slate-300 uppercase'>Raise amount</span><input className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.raiseAmount} onChange={(e) => updateConversionProfile('raiseAmount', e.target.value)} placeholder='INR 1 Cr / USD 250K / etc.' /></label>
+                      <label className='space-y-2'><span className='text-xs font-bold text-slate-300 uppercase'>Raise amount (USD)</span><input className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.raiseAmount} onChange={(e) => updateConversionProfile('raiseAmount', e.target.value)} placeholder='USD 500000' /></label>
                     </div>
 
                     <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Pitch summary</span><textarea className='w-full min-h-[110px] rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.pitchSummary} onChange={(e) => updateConversionProfile('pitchSummary', e.target.value)} placeholder='What does the startup do, for whom, and why now?' /></label>
@@ -1981,6 +2263,15 @@ export default function App() {
                       {isConversionReviewRunning
                         ? 'Running Preview Analysis…'
                         : 'Run Preview Analysis'}
+                    </button>
+                    <button
+                      onClick={() => void runFullConversionReview()}
+                      disabled={isConversionReviewRunning}
+                      className='w-full px-4 py-3 rounded-xl border border-[#D4FF00]/50 bg-[#D4FF00]/5 text-[#D4FF00] text-sm font-black hover:bg-[#D4FF00]/10 disabled:cursor-not-allowed disabled:opacity-60'
+                    >
+                      {isConversionReviewRunning
+                        ? 'Running Full Review…'
+                        : 'Run Full Conversion Review'}
                     </button>
                     <button onClick={() => setActiveTab('dashboard')} className='w-full px-4 py-3 rounded-xl border border-slate-800 text-slate-300 text-sm font-bold hover:bg-slate-900'>Back to Conversion Terminal</button>
                   </div>
