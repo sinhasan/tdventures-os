@@ -327,6 +327,7 @@ export type ConversionV2ContextResponse = {
     city: string;
     country: string;
     ask_usd: string | null;
+    pitch_summary?: string | null;
   };
   evidence: {
     id: string;
@@ -337,6 +338,7 @@ export type ConversionV2ContextResponse = {
     evidence_count: number;
     founder_claim_score: number;
     facts: Record<string, unknown>;
+    profile_draft: Record<string, unknown>;
     claims: Array<{
       key: string;
       label: string;

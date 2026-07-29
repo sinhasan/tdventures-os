@@ -58,6 +58,10 @@ import {
   ConversionV2ResultPanel,
   PitchDeckEvidencePanel
 } from './components/ConversionV2Panels';
+import {
+  FounderEvidenceRecord,
+  FounderSignalDashboard
+} from './components/FounderSignalWorkspace';
 
 import { 
   FundraisingIntelTab, 
@@ -97,12 +101,44 @@ import { SEOOptimizedSuite, DueDiligenceReport, DealFlowItem } from './types';
 import type {
   ConversionClaimReview,
   ConversionV2Analysis,
+  ConversionV2ContextResponse,
   TdventureCurrentUser,
   ProfilePlaneResolution
 } from './lib/conversionApi';
 import { 
   COMPONENT_ROLES
 } from './data';
+
+function firstText(
+  source: Record<string, unknown> | null | undefined,
+  keys: string[]
+) {
+  for (const key of keys) {
+    const value = String(source?.[key] || '').trim();
+    if (value) return value;
+  }
+  return '';
+}
+
+function evidenceSummary(
+  context: ConversionV2ContextResponse,
+  keys: string[],
+  options?: { lowFirst?: boolean }
+) {
+  const selected = context.evidence.claims
+    .filter((claim) => keys.includes(claim.key) && claim.evidence.trim())
+    .sort((left, right) => {
+      if (!options?.lowFirst) return 0;
+      return left.rating - right.rating;
+    });
+
+  return selected
+    .map(
+      (claim) =>
+        `${claim.label} (${claim.rating}/5): ${claim.evidence.trim()}`
+    )
+    .join('\n');
+}
 
 // Email capture banner component (inline for simplicity)
 
@@ -123,7 +159,7 @@ function ConversionReviewProgressModal() {
           id="conversion-review-progress-title"
           className="mt-3 text-2xl font-black text-white"
         >
-          Your Conversion Review is in progress
+          Applying AI Intelligence
         </h2>
         <p className="mt-3 text-sm leading-6 text-slate-300">
           We are interpreting your founder record and the evidence you have supplied.
@@ -451,8 +487,10 @@ export default function App() {
     try {
       const savedRole = localStorage.getItem('venture_ai_role');
       const savedTab = localStorage.getItem('venture_ai_tab');
-      if (savedTab) return savedTab;
       if (savedRole === 'admin') return 'user_management';
+      if (savedRole && savedRole !== 'founder' && savedTab) {
+        return savedTab;
+      }
     } catch {}
     return 'dashboard';
   });
@@ -714,6 +752,8 @@ export default function App() {
 
   const [conversionV2Analysis, setConversionV2Analysis] =
     useState<ConversionV2Analysis | null>(null);
+  const [conversionV2Context, setConversionV2Context] =
+    useState<ConversionV2ContextResponse | null>(null);
   const [conversionV2GeneratedAt, setConversionV2GeneratedAt] =
     useState('');
   const [conversionClaimReview, setConversionClaimReview] =
@@ -756,6 +796,49 @@ export default function App() {
           return;
         }
 
+        setConversionV2Context(context);
+
+        const draft = context.evidence.profile_draft || {};
+        const carriedPitch =
+          firstText(draft, [
+            'pitch_summary',
+            'one_paragraph_pitch',
+            'company_description',
+            'description'
+          ]) ||
+          String(context.profile.pitch_summary || '').trim();
+        const carriedTraction = evidenceSummary(
+          context,
+          [
+            'revenue',
+            'third_year_projection',
+            'traction',
+            'profitability',
+            'business_model',
+            'scalability',
+            'funding_history'
+          ]
+        );
+        const carriedRisk = evidenceSummary(
+          context,
+          [
+            'durability',
+            'regulatory_readiness',
+            'profitability',
+            'ownership_and_team',
+            'funding_instrument',
+            'investor_exit',
+            'secret_sauce'
+          ],
+          { lowFirst: true }
+        );
+        const investorTarget = [
+          String(context.profile.sector || '').trim(),
+          String(context.profile.stage || '').trim()
+        ]
+          .filter(Boolean)
+          .join(' ');
+
         setConversionProfile((current) => ({
           ...current,
           startupName:
@@ -770,7 +853,14 @@ export default function App() {
           raiseAmount:
             context.profile.ask_usd
               ? `USD ${context.profile.ask_usd}`
-              : current.raiseAmount
+              : current.raiseAmount,
+          pitchSummary: current.pitchSummary || carriedPitch,
+          tractionProof: current.tractionProof || carriedTraction,
+          riskNotes: current.riskNotes || carriedRisk,
+          targetInvestor:
+            current.targetInvestor === 'Sector-focused seed funds'
+              ? `${investorTarget || 'Sector-focused seed'} investors`
+              : current.targetInvestor
         }));
 
         const resolvedReview =
@@ -792,6 +882,7 @@ export default function App() {
       })
       .catch((error) => {
         if (!cancelled) {
+          setConversionV2Context(null);
           console.warn('Conversion V2 context unavailable', error);
         }
       });
@@ -831,6 +922,11 @@ export default function App() {
       });
 
       setConversionV2Analysis(response.analysis);
+      setConversionV2Context((current) =>
+        current
+          ? { ...current, current_analysis: response.analysis }
+          : current
+      );
       setConversionV2GeneratedAt(
         new Date(response.generated_at).toLocaleString()
       );
@@ -870,7 +966,7 @@ export default function App() {
 
   const saveClaimInterview = async () => {
     if (!conversionClaimReview?.id) {
-      triggerToast('Run Conversion Review before Accept Claims.', 'warn');
+      triggerToast('Apply AI Intelligence before optional verification.', 'warn');
       return;
     }
 
@@ -1216,12 +1312,11 @@ export default function App() {
 
   const ROLE_TABS = {
     founder: [
-      { id: 'dashboard', name: 'Conversion Terminal', icon: LayoutDashboard, desc: 'Readiness, signals and next action' },
-      { id: 'docs_hub', name: 'Founder Vault', icon: FileText, desc: 'Founder inputs and evidence' },
-      { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof' },
-      { id: 'pitch_analyzer', name: 'Conversion Review', icon: TrendingUp, desc: 'Analyse readiness and risk' },
-      { id: 'claim_review', name: 'Accept Claims', icon: ShieldCheck, desc: 'Gap Analysis and human clarification' },
-      { id: 'fundraising_intel', name: 'Fundraise Readiness', icon: Coins, desc: 'Round logic and raise ask' },
+      { id: 'docs_hub', name: '01 · Collect', icon: FileText, desc: 'Application evidence and pitch deck' },
+      { id: 'pitch_analyzer', name: '02 · Apply AI Intelligence', icon: TrendingUp, desc: 'Analyse evidence independently' },
+      { id: 'dashboard', name: '03 · Conversion Terminal', icon: LayoutDashboard, desc: 'Present scores, signals and next action' },
+      { id: 'claim_review', name: '04 · Verify', icon: ShieldCheck, desc: 'Optional Gap Analysis and verification' },
+      { id: 'deal_desk_handoff', name: '05 · Deal Desk', icon: ArrowUpRight, desc: 'Send the signal to Execution' },
     ],
     investor: [
       { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, desc: 'Active deal queue & ROI counters' },
@@ -1370,6 +1465,7 @@ export default function App() {
         onAuthenticated={(accountUser) => {
           setTdventureUser(accountUser);
           setTdventureSessionError('');
+          setActiveTab('dashboard');
 
           setFeedbackMsg({
             text: 'TD Venture session connected.',
@@ -1410,7 +1506,7 @@ export default function App() {
       <div className="flex h-screen relative z-10 overflow-hidden">
         
         {/* Dynamic Sidebar navigation */}
-        <aside className="w-80 border-r border-slate-800/80 bg-[#0F172A]/90 backdrop-blur-3xl flex flex-col justify-between overflow-y-auto hidden md:flex">
+        <aside className="w-72 border-r border-slate-800/80 bg-[#0F172A]/90 backdrop-blur-3xl flex flex-col justify-between overflow-y-auto hidden md:flex">
           <div>
             {/* Branding Header matching screenshot style */}
             <div className="h-20 flex items-center px-6 border-b border-slate-800/50 justify-between">
@@ -1537,7 +1633,7 @@ export default function App() {
                 </h2>
               </div>
               <span className="text-[10px] text-slate-500 font-mono hidden sm:inline">
-                | Visibility → Conversion → Execution
+                | Collect → Apply AI Intelligence → Present → Verify → Deal Desk
               </span>
 
               {/* Quick Model Orchestrator switch */}
@@ -1644,10 +1740,22 @@ export default function App() {
           </header>
 
           {/* Dynamic Scrollable Main Panel Workspace viewport */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-5 space-y-5">
             
             {/* 1. ROLE BOUNDARIES CONDITIONAL RENDERING */}
-            {activeTab === 'dashboard' && (
+            {activeTab === 'dashboard' && role === 'founder' && (
+              <FounderSignalDashboard
+                context={conversionV2Context}
+                analysis={conversionV2Analysis}
+                deckFile={selectedPitchDeck}
+                onCollect={() => setActiveTab('docs_hub')}
+                onAnalyse={() => setActiveTab('pitch_analyzer')}
+                onVerify={() => setActiveTab('claim_review')}
+                onDealDesk={() => void openDealDeskWorkspace()}
+              />
+            )}
+
+            {activeTab === 'dashboard' && role !== 'founder' && (
               <div className="space-y-6 animate-fade-in">
                 {/* Mega Banner Hero statements */}
                 <div className="p-6 rounded-3xl border border-white/10 bg-gradient-to-br from-[#111821] via-[#0B1118] to-[#070A0E] relative overflow-hidden group shadow-2xl">
@@ -1892,13 +2000,13 @@ export default function App() {
             {/* 2. THE PITCH DECK ANALYZER COMPONENT */}
             {activeTab === 'pitch_analyzer' && (
               <div className="space-y-6 animate-fade-in">
-                <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-[#0B1220] p-6 shadow-2xl">
+                <section className="relative overflow-hidden rounded-2xl border border-slate-800 bg-[#0B1220] p-5 shadow-2xl">
                   <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#D4FF00] via-cyan-400 to-indigo-500" />
                   <p className="text-[10px] font-mono font-black uppercase tracking-[0.32em] text-[#D4FF00]">
-                    Evidence-backed intelligence
+                    02 · Applying AI Intelligence
                   </p>
-                  <h2 className="mt-2 text-3xl font-black text-white">
-                    Conversion Review
+                  <h2 className="mt-1.5 text-2xl font-black text-white">
+                    Independent Conversion Analysis
                   </h2>
                   <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
                     Founder truth remains the record. Central analysis interprets only the evidence
@@ -1972,7 +2080,7 @@ export default function App() {
                         onClick={() => setActiveTab('claim_review')}
                         className="rounded-xl border border-cyan-400/35 px-4 py-3 text-xs font-black uppercase tracking-wider text-cyan-200"
                       >
-                        Open Accept Claims
+                        Open Verify
                       </button>
                       <button
                         type="button"
@@ -2080,83 +2188,86 @@ export default function App() {
                       Current state
                     </p>
                     <h3 className="mt-2 text-2xl font-black text-white">
-                      No Conversion analysis has run in this session
+                      Founder evidence is ready for AI intelligence
                     </h3>
                     <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
-                      Add founder evidence in Founder Vault and run the guarded Preview there.
-                      Pitch-deck files will be interpreted only after secure evidence ingestion is
-                      connected; selecting a filename alone will never produce a score.
+                      The completed application provides a founder claim score of{' '}
+                      <strong className="text-white">
+                        {conversionV2Context?.evidence.founder_claim_score ?? '—'}/100
+                      </strong>{' '}
+                      across{' '}
+                      <strong className="text-white">
+                        {conversionV2Context?.evidence.completion_count ?? 0}/20
+                      </strong>{' '}
+                      dimensions. Applying AI Intelligence independently assesses
+                      those claims and any supplied pitch deck before calculating
+                      the final Conversion Score.
                     </p>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('docs_hub')}
-                      className="mt-5 rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950"
-                    >
-                      Open Founder Vault
-                    </button>
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('docs_hub')}
+                        className="rounded-xl border border-slate-700 px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-200"
+                      >
+                        Review collected data
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void runFullConversionReview()}
+                        disabled={isConversionReviewRunning}
+                        className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950 disabled:opacity-60"
+                      >
+                        Apply AI Intelligence
+                      </button>
+                    </div>
                   </section>
                 )}
 
                 {!conversionV2Analysis && (
-                <section className="rounded-3xl border border-slate-800 bg-[#080D1A] p-6">
-                  <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-cyan-300">
-                    Diamond Index framework
-                  </p>
-                  <h3 className="mt-2 text-xl font-black text-white">
-                    Assessment not yet run
-                  </h3>
-                  <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-                    The evidence-backed Diamond Index will score ten dimensions without using the
-                    founder’s self-score as the official result.
-                  </p>
-                  <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-5">
-                    {[
-                      'Idea',
-                      'Innovation',
-                      'Solution',
-                      'Timing',
-                      'Market wedge',
-                      'TAM',
-                      'Durability',
-                      'Team',
-                      'Distribution',
-                      'Secret sauce'
-                    ].map((criterion, index) => (
-                      <div key={criterion} className="rounded-xl border border-slate-800 bg-slate-950/70 p-3">
-                        <p className="text-[9px] font-mono text-slate-600">
-                          {String(index + 1).padStart(2, '0')}
-                        </p>
-                        <p className="mt-1 text-xs font-bold text-slate-300">{criterion}</p>
-                        <p className="mt-2 text-[10px] text-slate-600">Awaiting evidence</p>
-                      </div>
-                    ))}
-                  </div>
-                </section>
+                  <FounderEvidenceRecord
+                    context={conversionV2Context}
+                    compact
+                  />
                 )}
               </div>
             )}
 
             {/* 3. CONDITIONAL TABS REDIRECT FOR OTHER PAGES */}
             {activeTab === 'deal_desk_handoff' && (
-              <section className="rounded-3xl border border-slate-800 bg-[#0B1220] p-6 shadow-2xl">
+              <section className="rounded-2xl border border-slate-800 bg-[#0B1220] p-5 shadow-2xl">
                 <p className="text-[10px] font-mono font-black uppercase tracking-[0.32em] text-[#D4FF00]">
-                  Deal Desk handoff
+                  05 · Deal Desk
                 </p>
-                <h2 className="mt-2 text-3xl font-black text-white">
-                  No CRM handoff has been created
+                <h2 className="mt-1.5 text-2xl font-black text-white">
+                  {conversionV2Analysis
+                    ? 'Conversion signal ready for Execution'
+                    : 'Apply AI Intelligence before handoff'}
                 </h2>
                 <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
-                  A Founder Signal Preview is non-persistent and cannot create a CRM signal.
-                  Deal Desk will receive data only after the full Conversion Review creates a
-                  versioned, evidence-backed signal.
+                  {conversionV2Analysis
+                    ? `The versioned ${conversionV2Analysis.conversion_score}/100 Conversion Score, Gap Analysis, evidence status and verification state can now move to Deal Desk. A Profile Not Verified label does not block Execution.`
+                    : 'Founder-declared application data is already visible in the Conversion Terminal, but Deal Desk receives the versioned signal only after independent analysis creates it.'}
                 </p>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('pitch_analyzer')}
-                  className="mt-5 rounded-xl border border-slate-700 px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-200 hover:border-slate-500"
-                >
-                  Back to Conversion Review
-                </button>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('pitch_analyzer')}
+                    className="rounded-xl border border-slate-700 px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-200 hover:border-slate-500"
+                  >
+                    {conversionV2Analysis
+                      ? 'Review analysis'
+                      : 'Apply AI Intelligence'}
+                  </button>
+                  {conversionV2Analysis && (
+                    <button
+                      type="button"
+                      onClick={() => void openDealDeskWorkspace()}
+                      className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950"
+                    >
+                      Open Deal Desk →
+                    </button>
+                  )}
+                </div>
               </section>
             )}
 
@@ -2193,7 +2304,7 @@ export default function App() {
                     onClick={() => setActiveTab('docs_hub')}
                     className="rounded-xl border border-slate-700 px-5 py-3 text-xs font-black uppercase tracking-wider text-slate-200"
                   >
-                    Review Founder Vault
+                    Review collected data
                   </button>
                 </div>
               </div>
@@ -2225,11 +2336,28 @@ export default function App() {
             {activeTab === 'matchmaking' && <InvestorMatchmakingTab triggerToast={triggerToast} addLog={addLog} />}
             {activeTab === 'docs_hub' && (
               <div className='space-y-6 animate-in fade-in duration-500'>
-                <div className='p-6 rounded-3xl border border-slate-800 bg-[#0c1222]/90 shadow-2xl'>
-                  <span className='text-[10px] font-mono uppercase tracking-[0.28em] text-[#D4FF00] font-bold'>Founder Vault</span>
-                  <h2 className='text-2xl md:text-3xl font-black text-white mt-2'>Build the Founder Signal</h2>
-                  <p className='text-sm text-slate-400 mt-2 max-w-3xl'>Capture the evidence Conversion needs: startup story, traction, raise, risk and investor target.</p>
+                <div className='p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/90 shadow-2xl'>
+                  <span className='text-[10px] font-mono uppercase tracking-[0.24em] text-[#D4FF00] font-bold'>01 · Collect</span>
+                  <h2 className='text-2xl font-black text-white mt-1.5'>Application Evidence & Pitch Deck</h2>
+                  <p className='text-sm text-slate-400 mt-2 max-w-3xl'>Review the submitted 20-question record, add a pitch deck, and supplement only what has changed since the application.</p>
                 </div>
+
+                <FounderEvidenceRecord context={conversionV2Context} />
+
+                <PitchDeckEvidencePanel
+                  file={selectedPitchDeck}
+                  disabled={isConversionReviewRunning}
+                  onChange={(file) => {
+                    if (file && file.size > 8 * 1024 * 1024) {
+                      triggerToast(
+                        'Pitch deck must be no larger than 8 MB.',
+                        'warn'
+                      );
+                      return;
+                    }
+                    setSelectedPitchDeck(file);
+                  }}
+                />
 
                 <div className='grid grid-cols-1 xl:grid-cols-3 gap-6'>
                   <div className='xl:col-span-2 p-6 rounded-3xl border border-slate-800 bg-slate-950/60 space-y-5'>
@@ -2241,8 +2369,8 @@ export default function App() {
                     </div>
 
                     <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Pitch summary</span><textarea className='w-full min-h-[110px] rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.pitchSummary} onChange={(e) => updateConversionProfile('pitchSummary', e.target.value)} placeholder='What does the startup do, for whom, and why now?' /></label>
-                    <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Traction proof</span><textarea className='w-full min-h-[90px] rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.tractionProof} onChange={(e) => updateConversionProfile('tractionProof', e.target.value)} placeholder='Revenue, pilots, users, LOIs, demos, partnerships, growth signals...' /></label>
-                    <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Risk notes</span><textarea className='w-full min-h-[90px] rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.riskNotes} onChange={(e) => updateConversionProfile('riskNotes', e.target.value)} placeholder='Missing proof, weak GTM, pricing risk, founder gaps, compliance, competition...' /></label>
+                    <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Traction evidence carried from Apply</span><textarea className='w-full min-h-[90px] rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.tractionProof} onChange={(e) => updateConversionProfile('tractionProof', e.target.value)} placeholder='Revenue, pilots, users, LOIs, demos, partnerships, growth signals...' /><span className='block text-[10px] text-slate-500'>Automatically assembled from Revenue, Projection, Traction, Profitability, Business Model and Funding History. Edit only to add current context.</span></label>
+                    <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Risk and mitigation evidence carried from Apply</span><textarea className='w-full min-h-[90px] rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.riskNotes} onChange={(e) => updateConversionProfile('riskNotes', e.target.value)} placeholder='Durability, regulation, profitability, ownership, funding instrument...' /><span className='block text-[10px] text-slate-500'>Automatically assembled from risk-relevant questionnaire answers. A low founder rating is prioritised for independent review.</span></label>
                     <label className='space-y-2 block'><span className='text-xs font-bold text-slate-300 uppercase'>Target investor type</span><input className='w-full rounded-xl bg-[#080d1a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#D4FF00]' value={conversionProfile.targetInvestor} onChange={(e) => updateConversionProfile('targetInvestor', e.target.value)} placeholder='Sector-focused seed funds, angels, family offices...' /></label>
                   </div>
 
@@ -2256,22 +2384,10 @@ export default function App() {
                       ['Investor', conversionProfile.targetInvestor || 'Not set']
                     ].map(([label, value]) => (<div key={label} className='p-3 rounded-xl border border-slate-800 bg-slate-950/70'><div className='text-[10px] uppercase text-slate-500 font-bold'>{label}</div><div className='text-sm text-white font-semibold mt-1'>{value}</div></div>))}
                     <button
-                      onClick={() => void runConversionPreview()}
-                      disabled={isConversionReviewRunning}
+                      onClick={() => setActiveTab('pitch_analyzer')}
                       className='w-full px-4 py-3 rounded-xl bg-[#D4FF00] text-slate-950 text-sm font-black hover:scale-[1.01] transition-transform disabled:cursor-not-allowed disabled:opacity-60'
                     >
-                      {isConversionReviewRunning
-                        ? 'Running Preview Analysis…'
-                        : 'Run Preview Analysis'}
-                    </button>
-                    <button
-                      onClick={() => void runFullConversionReview()}
-                      disabled={isConversionReviewRunning}
-                      className='w-full px-4 py-3 rounded-xl border border-[#D4FF00]/50 bg-[#D4FF00]/5 text-[#D4FF00] text-sm font-black hover:bg-[#D4FF00]/10 disabled:cursor-not-allowed disabled:opacity-60'
-                    >
-                      {isConversionReviewRunning
-                        ? 'Running Full Review…'
-                        : 'Run Full Conversion Review'}
+                      Continue to Apply AI Intelligence
                     </button>
                     <button onClick={() => setActiveTab('dashboard')} className='w-full px-4 py-3 rounded-xl border border-slate-800 text-slate-300 text-sm font-bold hover:bg-slate-900'>Back to Conversion Terminal</button>
                   </div>
@@ -2379,6 +2495,7 @@ export default function App() {
             )}
 
             {/* Core systemic Telemetry logs dashboard terminal */}
+            {role !== 'founder' && (
             <div className="p-4 rounded-xl border border-slate-800/80 bg-black/80 font-mono text-[10px] space-y-2 select-all">
               <div className="flex items-center justify-between border-b border-slate-900 pb-2">
                 <span className="text-slate-400 flex items-center gap-1.5"><Cpu className="text-purple-400 w-3.5 h-3.5" /> SYSTEM WATCHDOG TELEMETRY logs</span>
@@ -2394,11 +2511,12 @@ export default function App() {
                 ))}
               </div>
             </div>
+            )}
 
           </div>
 
           <footer className="h-14 border-t border-slate-800/60 bg-[#020205] flex items-center justify-between px-6 text-[11px] text-slate-500 relative z-20">
-           <span>Built For TD Conversion OS Law-Builder Ecosystem v5.0</span>
+	           <span>TD Conversion OS · Collect → Apply AI Intelligence → Present → Verify → Deal Desk</span>
             <a
              href="https://tdventure.vc/contribute.html"
              target="_blank"
@@ -2419,14 +2537,14 @@ export default function App() {
           className={`flex flex-col items-center gap-1 text-[10px] ${activeTab === 'dashboard' ? 'text-purple-400' : 'text-slate-400'}`}
         >
           <LayoutDashboard className="w-4.5 h-4.5" />
-          <span>Dashboard</span>
+          <span>Terminal</span>
         </button>
         <button 
           onClick={() => { setActiveTab('pitch_analyzer'); triggerToast('Switched to Conversion Review', 'info'); }}
           className={`flex flex-col items-center gap-1 text-[10px] ${activeTab === 'pitch_analyzer' ? 'text-purple-400' : 'text-slate-400'}`}
         >
          <span className="text-[#D4AF37] text-xl">🎯</span>
-          <span>Conversion review</span>
+          <span>AI Intelligence</span>
         </button>
         <select 
           value={

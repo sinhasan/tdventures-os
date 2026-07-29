@@ -166,7 +166,7 @@ export function ConversionV2ResultPanel({
             <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-[#D4FF00]">
               Evidence-backed Conversion Review
             </p>
-            <h2 className="mt-2 text-3xl font-black text-white">
+          <h2 className="mt-2 text-2xl font-black text-white">
               Conversion Score {analysis.conversion_score}/100
             </h2>
             <p className="mt-2 text-xs text-slate-500">
@@ -286,7 +286,7 @@ export function ConversionV2ResultPanel({
             <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-cyan-300">
               Diamond Index + Investability
             </p>
-            <h3 className="mt-2 text-2xl font-black text-white">
+            <h3 className="mt-2 text-xl font-black text-white">
               20-dimension evidence baseline
             </h3>
           </div>
@@ -359,16 +359,16 @@ export function AcceptClaimsPanel({
 }: AcceptClaimsPanelProps) {
   if (!analysis || !review) {
     return (
-      <section className="rounded-3xl border border-slate-800 bg-[#0c1222]/90 p-6">
+      <section className="rounded-2xl border border-slate-800 bg-[#0c1222]/90 p-5">
         <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-[#D4FF00]">
-          Accept Claims
+          04 · Verify
         </p>
         <h2 className="mt-2 text-2xl font-black text-white">
-          Run the full Conversion Review first
+          Apply AI Intelligence first
         </h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
-          Accept Claims opens the founder interview created from material
-          evidence gaps, contradictions and rating anomalies.
+          Optional verification begins with the Gap Analysis questions created
+          from material evidence gaps, contradictions and rating anomalies.
         </p>
       </section>
     );
@@ -378,12 +378,12 @@ export function AcceptClaimsPanel({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-slate-800 bg-[#0c1222]/90 p-6">
+      <section className="rounded-2xl border border-slate-800 bg-[#0c1222]/90 p-5">
         <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-[#D4FF00]">
-          Accept Claims
+          04 · Verify
         </p>
-        <h2 className="mt-2 text-3xl font-black text-white">
-          Human clarification checkpoint
+        <h2 className="mt-2 text-2xl font-black text-white">
+          Gap Analysis & optional verification
         </h2>
         <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-400">
           Respond to the questions generated from the Gap Analysis. Answers
