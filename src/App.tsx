@@ -62,6 +62,10 @@ import {
   FounderEvidenceRecord,
   FounderSignalDashboard
 } from './components/FounderSignalWorkspace';
+import {
+  InvestorDecisionWorkspace,
+  type InvestorDecisionView
+} from './components/InvestorDecisionWorkspace';
 
 import { 
   FundraisingIntelTab, 
@@ -85,11 +89,6 @@ import {
   SecurityCenterTab, 
   RolePermissionsTab 
 } from './components/AdminTabs';
-
-import { 
-  BusinessAutomationTab,
-  SupplyChainIntelTab
-} from './components/SMBTabs';
 
 import { 
   AIChatAssistantWidget, 
@@ -627,10 +626,10 @@ const INITIAL_DEAL_FLOW: DealFlowItem[] = [];
 
 export default function App() {
   const [themeMode] = useState<'light' | 'dark'>('dark');
-  const [role, setRole] = useState<'founder' | 'investor' | 'smb' | 'admin'>(() => {
+  const [role, setRole] = useState<'founder' | 'investor' | 'admin'>(() => {
     try {
       const saved = localStorage.getItem('venture_ai_role');
-      if (saved === 'founder' || saved === 'investor' || saved === 'smb' || saved === 'admin') {
+      if (saved === 'founder' || saved === 'investor' || saved === 'admin') {
         return saved;
       }
     } catch {}
@@ -641,7 +640,10 @@ export default function App() {
       const savedRole = localStorage.getItem('venture_ai_role');
       const savedTab = localStorage.getItem('venture_ai_tab');
       if (savedRole === 'admin') return 'user_management';
-      if (savedRole && savedRole !== 'founder' && savedTab) {
+      if (
+        (savedRole === 'investor' || savedRole === 'admin') &&
+        savedTab
+      ) {
         return savedTab;
       }
     } catch {}
@@ -723,6 +725,42 @@ export default function App() {
             setTdventureUser(accountUser);
             setProfilePlaneResolution(profilePlane);
             setTdventureSessionError('');
+
+            const canonicalAccountRole =
+              String(accountUser.role || '').trim().toLowerCase();
+
+            if (
+              profilePlane.profile_type === 'investor' ||
+              canonicalAccountRole === 'investor'
+            ) {
+              setRole('investor');
+              setActiveTab((current) =>
+                current.startsWith('investor_') || current === 'dashboard'
+                  ? current
+                  : 'dashboard'
+              );
+            } else if (canonicalAccountRole === 'admin') {
+              setRole('admin');
+              setActiveTab((current) =>
+                current === 'user_management' ||
+                current === 'ai_monitoring' ||
+                current === 'security' ||
+                current === 'role_permissions'
+                  ? current
+                  : 'user_management'
+              );
+            } else {
+              setRole('founder');
+              setActiveTab((current) =>
+                current === 'docs_hub' ||
+                current === 'pitch_analyzer' ||
+                current === 'dashboard' ||
+                current === 'claim_review' ||
+                current === 'deal_desk_handoff'
+                  ? current
+                  : 'dashboard'
+              );
+            }
 
             const profile = profilePlane.profile;
 
@@ -1131,7 +1169,11 @@ export default function App() {
       if (access.mode === 'pricing_required') {
         setIsConversionReviewRunning(false);
         setConversionRunProgress(IDLE_CONVERSION_RUN);
-        setShowPricingModal(true);
+        openCanonicalPricing();
+        triggerToast(
+          'Opening TD Venture pricing in the Private Marketplace.',
+          'info'
+        );
         return;
       }
 
@@ -1286,7 +1328,11 @@ export default function App() {
 
       if (isConversionPricingRequiredError(error)) {
         setConversionRunProgress(IDLE_CONVERSION_RUN);
-        setShowPricingModal(true);
+        openCanonicalPricing();
+        triggerToast(
+          'Opening TD Venture pricing in the Private Marketplace.',
+          'info'
+        );
         return;
       }
 
@@ -1340,26 +1386,15 @@ export default function App() {
     }
   ]);
 
-  const [showPricingModal, setShowPricingModal] = useState<boolean>(false);
-  const [paymentRedirecting, setPaymentRedirecting] = useState<boolean>(false);
+  const openCanonicalPricing = () => {
+    const pricingWindow = window.open(
+      'https://staging.tdventure.vc/pricing',
+      '_blank',
+      'noopener,noreferrer'
+    );
 
-  const openFounderPassCheckout = async () => {
-    if (paymentRedirecting) {
-      return;
-    }
-
-    setPaymentRedirecting(true);
-
-    try {
-      const { startConversionFounderCheckout } = await import('./lib/conversionApi');
-      await startConversionFounderCheckout();
-    } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : 'Could not open TD Venture secure checkout.';
-
-      triggerToast(message, 'error');
-      setPaymentRedirecting(false);
+    if (!pricingWindow) {
+      window.location.assign('https://staging.tdventure.vc/pricing');
     }
   };
 
@@ -1533,10 +1568,9 @@ export default function App() {
   };
 
   const handleRoleChange = (selectedVal: string) => {
-    let mappedRole: 'founder' | 'investor' | 'smb' | 'admin' = 'founder';
+    let mappedRole: 'founder' | 'investor' | 'admin' = 'founder';
     if (selectedVal === 'Startup Founder') mappedRole = 'founder';
     else if (selectedVal === 'Investor / VC' || selectedVal === 'Investor/VC') mappedRole = 'investor';
-    else if (selectedVal === 'SMB Business') mappedRole = 'smb';
     else if (selectedVal === 'Admin') mappedRole = 'admin';
 
     setRole(mappedRole);
@@ -1559,27 +1593,11 @@ export default function App() {
       { id: 'deal_desk_handoff', name: '05 · Deal Desk', icon: ArrowUpRight, desc: 'Send the signal to Execution' },
     ],
     investor: [
-      { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, desc: 'Active deal queue & ROI counters' },
-      { id: 'deal_flow', name: 'Deal Flow Intelligence', icon: Workflow, desc: 'Pipelines Kanban deal matrix' },
-      { id: 'gdocs_hub', name: 'Founder Briefs', icon: FileText, desc: 'Founder notes and CRM handoff' },
-      { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof room' },
-      { id: 'linkedin_intel', name: 'Investor Signal Research', icon: Linkedin, desc: 'Market and investor context' },
-      { id: 'due_diligence', name: 'Due Diligence Center', icon: ShieldAlert, desc: 'Conversion signal reporter' },
-      { id: 'pitch_analyzer', name: 'Conversion Review', icon: TrendingUp, desc: 'Signal review to investor-ready action' },
-      { id: 'forensic_ai', name: 'Forensic AI', icon: Search, desc: 'Fake data meters & anomalies scan' },
-      { id: 'prescriptive_ai', name: 'Prescriptive AI', icon: Flame, desc: 'TD Conversion OS smart recommendation lists' },
-      { id: 'maritime_intel', name: 'Maritime Intelligence', icon: Anchor, desc: 'MarineTraffic API vessel tracks' }
-    ],
-    smb: [
-      { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, desc: 'Supply logistics health & alert cues' },
-      { id: 'automation', name: 'Business Automation', icon: Cpu, desc: 'Invoice scans & vendor scorecards' },
-      { id: 'gdocs_hub', name: 'Founder Briefs', icon: FileText, desc: 'Founder notes and CRM handoff' },
-      { id: 'gslides_hub', name: 'Pitch Deck Workspace', icon: Presentation, desc: 'Deck story and proof room' },
-      { id: 'linkedin_intel', name: 'Investor Signal Research', icon: Linkedin, desc: 'Market and investor context' },
-      { id: 'supply_chain', name: 'Supply Chain Intelligence', icon: Globe2, desc: 'Shipment latencies and port logs' },
-      { id: 'maritime_intel', name: 'Maritime Intelligence', icon: Anchor, desc: 'Real-time cargo vessel metrics' },
-      { id: 'forecasting', name: 'Forecasting', icon: BarChart3, desc: 'Demand curves & shipment metrics' },
-      { id: 'docs_hub', name: 'Documents Hub', icon: FileText, desc: 'Symmetric folder storage vault' }
+      { id: 'dashboard', name: 'Investor Terminal', icon: LayoutDashboard, desc: 'Decision intelligence and next action' },
+      { id: 'investor_discover', name: '01 · Discover Startups', icon: Search, desc: 'Open the canonical startup universe' },
+      { id: 'investor_matches', name: '02 · Compare Matches', icon: Network, desc: 'Move from fit to focused conviction' },
+      { id: 'investor_framework', name: '03 · Evaluate', icon: ShieldCheck, desc: 'Four diligence pillars plus independent AI' },
+      { id: 'investor_execution', name: '04 · Deal Desk', icon: ArrowUpRight, desc: 'Start and manage execution' }
     ],
     admin: [
       { id: 'user_management', name: 'User Management', icon: Users, desc: 'Invitation list & permissions seats' },
@@ -1798,8 +1816,7 @@ export default function App() {
                   id="role_switch_select"
                   value={
                     role === 'founder' ? 'Startup Founder' :
-                    role === 'investor' ? 'Investor / VC' :
-                    role === 'smb' ? 'SMB Business' : 'Admin'
+                    role === 'investor' ? 'Investor / VC' : 'Admin'
                   }
                   onChange={(e) => handleRoleChange(e.target.value)}
                   className="w-full bg-[#111122] border border-slate-700 text-white rounded-xl py-2 px-3 text-xs font-medium cursor-pointer shadow-sm focus:outline-none focus:ring-1 focus:ring-purple-500 appearance-none bg-no-repeat"
@@ -1811,7 +1828,6 @@ export default function App() {
                 >
                   <option value="Startup Founder">Startup Founder</option>
                   <option value="Investor / VC">Investor/VC</option>
-                  <option value="SMB Business">SMB Business</option>
                   <option value="Admin">Admin</option>
                 </select>
               </div>
@@ -1851,11 +1867,10 @@ export default function App() {
           <div className="p-4 border-t border-slate-800/60 bg-slate-950/40">
             <button
               type="button"
-              onClick={openFounderPassCheckout}
-              disabled={paymentRedirecting}
-              className="w-full text-center py-2 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500          text-[11px] font-bold text-white shadow-lg shadow-purple-500/10 block disabled:cursor-wait disabled:opacity-60"
+              onClick={openCanonicalPricing}
+              className="w-full rounded-xl bg-[#D4FF00] px-3 py-2 text-center text-[11px] font-black text-slate-950 shadow-[0_0_22px_rgba(212,255,0,0.2)] transition hover:brightness-110"
             >
-              {paymentRedirecting ? 'Opening Secure Checkout…' : 'View Pricing Plans'}
+              View Pricing Plans
             </button>
           </div>
         </aside>
@@ -1995,7 +2010,29 @@ export default function App() {
               />
             )}
 
-            {activeTab === 'dashboard' && role !== 'founder' && (
+            {role === 'investor' &&
+              (
+                [
+                  'dashboard',
+                  'investor_discover',
+                  'investor_matches',
+                  'investor_framework',
+                  'investor_execution'
+                ] as string[]
+              ).includes(activeTab) && (
+                <InvestorDecisionWorkspace
+                  view={activeTab as InvestorDecisionView}
+                  accountName={tdventureAccountName}
+                  investorProfileLinked={
+                    profilePlaneResolution?.state === 'linked' &&
+                    profilePlaneResolution?.profile_type === 'investor'
+                  }
+                  onOpenDealDesk={() => void openDealDeskWorkspace()}
+                  onOpenPricing={openCanonicalPricing}
+                />
+              )}
+
+            {activeTab === 'dashboard' && role === 'admin' && (
               <div className="space-y-6 animate-fade-in">
                 {/* Mega Banner Hero statements */}
                 <div className="p-6 rounded-3xl border border-white/10 bg-gradient-to-br from-[#111821] via-[#0B1118] to-[#070A0E] relative overflow-hidden group shadow-2xl">
@@ -2044,11 +2081,10 @@ export default function App() {
                       </button>
                       <button
                         type="button"
-                        onClick={openFounderPassCheckout}
-                        disabled={paymentRedirecting}
-                        className="px-4 py-2 border border-slate-750 bg-slate-900/60 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl inline-block disabled:cursor-wait disabled:opacity-60"
+                        onClick={openCanonicalPricing}
+                        className="inline-block rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-2 text-xs font-bold text-slate-200 hover:border-[#D4FF00]/60 hover:text-[#D4FF00]"
                       >
-                        {paymentRedirecting ? 'Opening Secure Checkout…' : 'Unlock Founder Pass'}
+                        View Pricing Plans
                       </button>
                     </div>
                   </div>
@@ -2169,46 +2205,6 @@ export default function App() {
                         <div key={idx} className="p-4 rounded-xl border border-slate-800 bg-[#0c1222]/70 space-y-1.5 hover:border-slate-700 transition-colors">
                           <span className="text-[9px] text-slate-400 block font-bold leading-none">{item.title}</span>
                           <span className={`text-xl font-extrabold block tracking-tight ${item.color}`}>{item.val}</span>
-                          <span className="text-[8px] text-slate-500 block font-mono">{item.text}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {role === 'investor' && (
-                  <div className="space-y-4">
-                    <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider font-bold block">Portfolio Deal Indices</span>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {[
-                        { title: 'Active Investment Deals', val: '18 Active Sourcing', text: '3 Seed Buy pipelines', color: 'text-purple-400' },
-                        { title: 'Portfolio Value', val: '$245.8M Cap', text: 'Pristine assets verified', color: 'text-[#22C55E]' },
-                        { title: 'Average OS Score', val: '91.5/100', text: 'Top quartile targets', color: 'text-cyan-400' },
-                        { title: 'Due Diligence Queue', val: '4 Pipelines', text: 'Awaiting founder proof review', color: 'text-[#F59E0B]' }
-                      ].map((item, idx) => (
-                        <div key={idx} className="p-5 rounded-xl border border-slate-800 bg-[#0c1222]/70 space-y-1 hover:border-slate-700 transition-colors">
-                          <span className="text-[10px] text-slate-400 block font-bold leading-none">{item.title}</span>
-                          <span className={`text-2xl font-extrabold block tracking-tight ${item.color}`}>{item.val}</span>
-                          <span className="text-[8px] text-slate-500 block font-mono">{item.text}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {role === 'smb' && (
-                  <div className="space-y-4">
-                    <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider font-bold block">Logistics Sourcing Widgets</span>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {[
-                        { title: 'Logistics Latency Score', val: '96% Optimal', text: 'Shanghai bypass verified', color: 'text-[#22C55E]' },
-                        { title: 'Freight Cargo Valuation', val: '$4.2M Assets', text: 'Secured via AES Hash', color: 'text-purple-400' },
-                        { title: 'Supplier Trust Factor', val: '94% Certified', text: 'No metrics manipulation', color: 'text-cyan-400' },
-                        { title: 'Core Revenue Optimizing Rate', val: '+14.2% Boost', text: 'Spliced ad converters', color: 'text-[#F59E0B]' }
-                      ].map((item, idx) => (
-                        <div key={idx} className="p-5 rounded-xl border border-slate-800 bg-[#0c1222]/70 space-y-1">
-                          <span className="text-[10px] text-slate-400 block font-bold leading-none">{item.title}</span>
-                          <span className={`text-2xl font-extrabold block tracking-tight ${item.color}`}>{item.val}</span>
                           <span className="text-[8px] text-slate-500 block font-mono">{item.text}</span>
                         </div>
                       ))}
@@ -2438,10 +2434,10 @@ export default function App() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setShowPricingModal(true)}
+                        onClick={openCanonicalPricing}
                         className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950"
                       >
-                        View Founder Pass
+                        View Pricing Plans
                       </button>
                     </div>
                   </section>
@@ -2492,7 +2488,16 @@ export default function App() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => void runFullConversionReview()}
+                        onClick={() => {
+                          if (
+                            conversionV2Context?.analysis_access?.mode ===
+                            'pricing_required'
+                          ) {
+                            openCanonicalPricing();
+                            return;
+                          }
+                          void runFullConversionReview();
+                        }}
                         disabled={isConversionReviewRunning}
                         className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950 disabled:opacity-60"
                       >
@@ -2679,8 +2684,6 @@ export default function App() {
             )}
             {activeTab === 'forecasting' && <FinancialForecastingTab addLog={addLog} />}
             {activeTab === 'deal_flow' && <DealFlowTab dealFlow={dealFlow} setDealFlow={setDealFlow} addLog={addLog} triggerToast={triggerToast} />}
-            {activeTab === 'automation' && <BusinessAutomationTab addLog={addLog} triggerToast={triggerToast} />}
-            {activeTab === 'supply_chain' && <SupplyChainIntelTab addLog={addLog} triggerToast={triggerToast} />}
             {activeTab === 'due_diligence' && (
               <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 space-y-6">
                 <div>
@@ -2832,89 +2835,16 @@ export default function App() {
         <select 
           value={
             role === 'founder' ? 'Startup Founder' :
-            role === 'investor' ? 'Investor / VC' :
-            role === 'smb' ? 'SMB Business' : 'Admin'
+            role === 'investor' ? 'Investor / VC' : 'Admin'
           }
           onChange={(e) => handleRoleChange(e.target.value)}
           className="bg-slate-900 text-white rounded text-[11px] py-1 px-2 border border-slate-800"
         >
           <option value="Startup Founder">Founder</option>
           <option value="Investor / VC">Investor</option>
-          <option value="SMB Business">SMB</option>
           <option value="Admin">Admin</option>
         </select>
       </div>
-
-      {/* PRICING MODAL WINDOW */}
-      {showPricingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="w-full max-w-4xl bg-slate-950 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl relative">
-            <button 
-              onClick={() => setShowPricingModal(false)}
-              className="absolute top-6 right-6 p-2 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="text-center space-y-2">
-              <span className="text-[9px] font-mono tracking-widest uppercase bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2.5 py-1 rounded-full font-bold">
-                Unified Venture Engine Scale
-              </span>
-              <h3 className="text-2xl font-extrabold text-white tracking-tight">Flexible SaaS Business Pricing Plans</h3>
-              <p className="text-xs text-slate-400 max-w-lg mx-auto">Select the operational velocity required to run spatial due diligence queries, targeted lead generation pipelines, and localized SAFE notes builds.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800 space-y-4 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <span className="text-xs text-slate-400 uppercase tracking-widest block font-mono">Founders Tier</span>
-                  <span className="text-xl font-bold text-white block font-mono">$49<span className="text-xs text-slate-500">/mo</span></span>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">Optimized for starting teams analyzing initial pitch files and positioning ads on search networks.</p>
-                </div>
-                <button 
-                  onClick={() => { triggerToast("Subscribed successfully on the sandbox environment!", "success"); setShowPricingModal(false); }}
-                  className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-lg"
-                >
-                  Choose Tier
-                </button>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-gradient-to-b from-[#1C1145]/30 to-[#0F172A]/30 border border-purple-500/30 space-y-4 flex flex-col justify-between relative overflow-hidden">
-                <div className="absolute top-2 right-2 bg-purple-600 text-white text-[8px] font-mono font-extrabold uppercase px-2 py-0.5 rounded-full animate-pulse">
-                  Popular
-                </div>
-                <div className="space-y-2">
-                  <span className="text-xs text-purple-400 uppercase tracking-widest block font-mono">Professional Allocator</span>
-                  <span className="text-xl font-bold text-white block font-mono">$149<span className="text-xs text-slate-500">/mo</span></span>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">Our core blueprint layer suitable for active angel investors, family allocators, and VC scouts.</p>
-                </div>
-                <button 
-                  onClick={() => { triggerToast("Subscribed successfully on the sandbox environment!", "success"); setShowPricingModal(false); }}
-                  className="w-full py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-lg"
-                >
-                  Acquire Access
-                </button>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800 space-y-4 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <span className="text-xs text-slate-400 uppercase tracking-widest block font-mono">Consortium Enterprise</span>
-                  <span className="text-xl font-bold text-[#ffd700] block">Specialized<span className="text-xs text-slate-500">/Custom</span></span>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">Structured custom schemas, private cloud storage nodes, and fully private SOC2 network monitoring channels.</p>
-                </div>
-                <button 
-                  onClick={() => { triggerToast("Contact metrics forwarded to TD Conversion OS successfully!", "success"); setShowPricingModal(false); }}
-                  className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-lg"
-                >
-                  Contact TD Conversion OS
-                </button>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* PITCH ANALYZER GLOBAL MODALS */}
       {activePitchModal && (
