@@ -295,6 +295,50 @@ export type ConversionV2Analysis = {
   deal_desk_recommendation: string;
 };
 
+export type ConversionV2PreviewAnalysis = Pick<
+  ConversionV2Analysis,
+  | 'founder_claim_score'
+  | 'ai_evidence_score'
+  | 'weighted_base_score'
+  | 'sector_adjustment_points'
+  | 'is_hot_sector'
+  | 'conversion_score'
+  | 'gap_classification'
+  | 'score_formula'
+  | 'profile_verification'
+  | 'pitch_deck_quality'
+  | 'deck_assessment'
+  | 'narrative_clarity'
+  | 'fundraise_readiness'
+  | 'risk_level'
+  | 'risk_flags'
+  | 'next_best_action'
+>;
+
+export type ConversionCredits = {
+  total: number;
+  reserved: number;
+  consumed: number;
+  remaining: number;
+  status: string;
+  expires_at?: string | null;
+};
+
+export type ConversionAnalysisAccess = {
+  mode: 'paid' | 'preview' | 'pricing_required';
+  label: string;
+  reason: string;
+  credits: ConversionCredits | null;
+};
+
+export type ConversionStoredPreview = {
+  analysis: ConversionV2PreviewAnalysis;
+  analysis_version: 'conversion-preview-v2';
+  generated_at: string;
+  model: string;
+  credits: ConversionCredits;
+};
+
 export type ConversionClaimReview = {
   id: string;
   startup_id: string;
@@ -348,34 +392,45 @@ export type ConversionV2ContextResponse = {
     updated_at: string;
   };
   current_analysis: ConversionV2Analysis | null;
+  latest_preview: ConversionStoredPreview | null;
+  analysis_access: ConversionAnalysisAccess;
   generated_at: string | null;
   claim_review: ConversionClaimReview | null;
 };
 
-export type ConversionV2Response = {
+type ConversionV2ResponseBase = {
   ok: boolean;
-  usage_type: 'preview' | 'paid';
   provider: string;
   model: string;
   analysis_version: string;
   generated_at: string;
-  analysis: ConversionV2Analysis;
-  signal: unknown | null;
-  claim_review: ConversionClaimReview | null;
-  credits: {
-    total: number;
-    reserved: number;
-    consumed: number;
-    remaining: number;
-    status: string;
-    expires_at?: string | null;
-  };
+  credits: ConversionCredits;
   storage_rule: {
     raw_file_stored: false;
     raw_extracted_text_stored: false;
     conversion_signal_saved: boolean;
   };
 };
+
+export type ConversionV2PaidResponse = ConversionV2ResponseBase & {
+  usage_type: 'paid';
+  analysis_version: 'conversion-v2';
+  analysis: ConversionV2Analysis;
+  signal: unknown;
+  claim_review: ConversionClaimReview;
+};
+
+export type ConversionV2PreviewResponse = ConversionV2ResponseBase & {
+  usage_type: 'preview';
+  analysis_version: 'conversion-preview-v2';
+  analysis: ConversionV2PreviewAnalysis;
+  signal: null;
+  claim_review: null;
+};
+
+export type ConversionV2Response =
+  | ConversionV2PaidResponse
+  | ConversionV2PreviewResponse;
 
 export type ConversionV2Params = {
   startupId: string;
@@ -711,10 +766,25 @@ async function conversionRequest<T>(
   });
 
   if (!response.ok) {
-    const body = await response.text();
-    const detail = body.trim() ? `: ${body}` : '';
-    throw new Error(
-      `Conversion API error ${response.status} ${response.statusText}${detail}`
+    const rawBody = await response.text();
+    let detail = rawBody.trim();
+
+    if (detail) {
+      try {
+        const parsed = JSON.parse(detail) as {
+          detail?: string;
+          message?: string;
+        };
+        detail = parsed.detail || parsed.message || detail;
+      } catch {
+        // Preserve a non-JSON backend response.
+      }
+    }
+
+    throw new ConversionApiError(
+      response.status,
+      detail
+        || `Conversion API error ${response.status} ${response.statusText}`
     );
   }
 
@@ -723,6 +793,38 @@ async function conversionRequest<T>(
   }
 
   return response.json() as Promise<T>;
+}
+
+export class ConversionApiError extends Error {
+  readonly status: number;
+  readonly detail: string;
+
+  constructor(status: number, detail: string) {
+    super(detail);
+    this.name = 'ConversionApiError';
+    this.status = status;
+    this.detail = detail;
+  }
+}
+
+export function isConversionPricingRequiredError(
+  error: unknown
+): boolean {
+  if (!(error instanceof ConversionApiError)) {
+    return false;
+  }
+
+  if (error.status !== 402 && error.status !== 403) {
+    return false;
+  }
+
+  const detail = error.detail.toLowerCase();
+  return (
+    detail.includes('active conversion founder pass is required')
+    || detail.includes('no conversion analysis credits remain')
+    || detail.includes('founder signal preview has already been used')
+    || detail.includes('conversion entitlement is not active')
+  );
 }
 
 export async function checkConversionHealth(): Promise<ConversionHealth> {

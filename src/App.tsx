@@ -100,8 +100,10 @@ import {
 import { SEOOptimizedSuite, DueDiligenceReport, DealFlowItem } from './types';
 import type {
   ConversionClaimReview,
+  ConversionCredits,
   ConversionV2Analysis,
   ConversionV2ContextResponse,
+  ConversionV2PreviewAnalysis,
   TdventureCurrentUser,
   ProfilePlaneResolution
 } from './lib/conversionApi';
@@ -140,9 +142,57 @@ function evidenceSummary(
     .join('\n');
 }
 
-// Email capture banner component (inline for simplicity)
+type ConversionRunPhase =
+  | 'idle'
+  | 'checking_access'
+  | 'preparing_evidence'
+  | 'applying_ai'
+  | 'finalising'
+  | 'complete'
+  | 'error';
 
-function ConversionReviewProgressModal() {
+type ConversionRunProgress = {
+  phase: ConversionRunPhase;
+  mode: 'paid' | 'preview' | null;
+  error: string;
+  score: number | null;
+  analysisVersion: string;
+  generatedAt: string;
+};
+
+const IDLE_CONVERSION_RUN: ConversionRunProgress = {
+  phase: 'idle',
+  mode: null,
+  error: '',
+  score: null,
+  analysisVersion: '',
+  generatedAt: ''
+};
+
+function ConversionReviewProgressModal({
+  progress,
+  onRetry,
+  onClose
+}: {
+  progress: ConversionRunProgress;
+  onRetry: () => void;
+  onClose: () => void;
+}) {
+  const steps: Array<{
+    phase: ConversionRunPhase;
+    label: string;
+  }> = [
+    { phase: 'checking_access', label: 'Checking access' },
+    { phase: 'preparing_evidence', label: 'Preparing evidence' },
+    { phase: 'applying_ai', label: 'Applying AI Intelligence' },
+    { phase: 'finalising', label: 'Recording result' }
+  ];
+  const activeIndex = steps.findIndex(
+    (step) => step.phase === progress.phase
+  );
+  const isComplete = progress.phase === 'complete';
+  const isError = progress.phase === 'error';
+
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/85 px-5 backdrop-blur-sm"
@@ -150,8 +200,7 @@ function ConversionReviewProgressModal() {
       aria-modal="true"
       aria-labelledby="conversion-review-progress-title"
     >
-      <div className="w-full max-w-md rounded-3xl border border-[#D4FF00]/35 bg-[#0c1222] p-8 text-center shadow-2xl">
-        <div className="mx-auto mb-5 h-12 w-12 animate-spin rounded-full border-4 border-[#D4FF00]/25 border-t-[#D4FF00]" />
+      <div className="w-full max-w-lg rounded-3xl border border-[#D4FF00]/35 bg-[#0c1222] p-7 shadow-2xl">
         <p className="text-[10px] font-mono font-bold uppercase tracking-[0.28em] text-[#D4FF00]">
           TD Conversion OS
         </p>
@@ -159,15 +208,119 @@ function ConversionReviewProgressModal() {
           id="conversion-review-progress-title"
           className="mt-3 text-2xl font-black text-white"
         >
-          Applying AI Intelligence
+          {isComplete
+            ? 'AI score recorded'
+            : isError
+              ? 'Analysis was not completed'
+              : 'Applying AI Intelligence'}
         </h2>
-        <p className="mt-3 text-sm leading-6 text-slate-300">
-          We are interpreting your founder record and the evidence you have supplied.
-          Please keep this window open.
-        </p>
-        <p className="mt-4 text-xs text-slate-500">
-          This usually takes less than a minute.
-        </p>
+
+        {isComplete ? (
+          <>
+            <div className="mt-6 rounded-2xl border border-[#D4FF00]/35 bg-[#D4FF00]/5 p-5">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500">
+                    {progress.mode === 'paid'
+                      ? 'Versioned Conversion Score'
+                      : 'Founder Signal Preview Score'}
+                  </p>
+                  <p className="mt-2 text-4xl font-black text-[#D4FF00]">
+                    {progress.score ?? '—'}
+                    <span className="text-base text-slate-500">/100</span>
+                  </p>
+                </div>
+                <CheckCircle2 className="h-9 w-9 text-[#D4FF00]" />
+              </div>
+              <p className="mt-4 text-xs leading-5 text-slate-400">
+                {progress.mode === 'paid'
+                  ? 'The result and its versioned Deal Desk signal have been saved.'
+                  : 'The preview is saved for return visits. It does not create a Deal Desk signal.'}
+              </p>
+              <p className="mt-2 text-[10px] font-mono text-slate-600">
+                {progress.analysisVersion} · {progress.generatedAt}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-5 w-full rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950"
+            >
+              View AI results
+            </button>
+          </>
+        ) : isError ? (
+          <>
+            <div className="mt-5 rounded-2xl border border-red-400/30 bg-red-950/15 p-4">
+              <p className="text-sm leading-6 text-red-100">
+                {progress.error}
+              </p>
+              <p className="mt-2 text-xs leading-5 text-slate-500">
+                No credit was consumed. You can retry without leaving this page.
+              </p>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-xl border border-slate-700 px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-300"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={onRetry}
+                className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950"
+              >
+                Retry analysis
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="mt-3 text-sm leading-6 text-slate-300">
+              We are interpreting your founder record and supplied evidence.
+              Keep this window open while the request completes.
+            </p>
+            <div className="mt-6 space-y-3">
+              {steps.map((step, index) => {
+                const completed = activeIndex > index;
+                const active = activeIndex === index;
+                return (
+                  <div
+                    key={step.phase}
+                    className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${
+                      active
+                        ? 'border-[#D4FF00]/40 bg-[#D4FF00]/5'
+                        : 'border-slate-800 bg-slate-950/40'
+                    }`}
+                  >
+                    <span
+                      className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-black ${
+                        completed
+                          ? 'bg-[#D4FF00] text-slate-950'
+                          : active
+                            ? 'border border-[#D4FF00] text-[#D4FF00]'
+                            : 'border border-slate-700 text-slate-600'
+                      }`}
+                    >
+                      {completed ? '✓' : index + 1}
+                    </span>
+                    <span className={active ? 'text-sm font-bold text-white' : 'text-sm text-slate-500'}>
+                      {step.label}
+                    </span>
+                    {active && (
+                      <span className="ml-auto h-4 w-4 animate-spin rounded-full border-2 border-[#D4FF00]/25 border-t-[#D4FF00]" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-4 text-xs text-slate-500">
+              This usually takes less than a minute.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -737,13 +890,19 @@ export default function App() {
 
 
   type ConversionReviewResult = {
-    pitchDeckQuality: number;
+    founderClaimScore: number;
+    aiEvidenceScore: number;
+    conversionScore: number;
+    pitchDeckQuality: number | null;
     fundraiseReadiness: number;
     narrativeClarity: number;
     riskLevel: 'Low' | 'Moderate' | 'High';
     riskFlags: string[];
     nextBestAction: string;
     generatedAt: string;
+    analysisVersion: string;
+    model: string;
+    credits: ConversionCredits;
     limitations: Record<string, string>;
   };
 
@@ -767,6 +926,8 @@ export default function App() {
 
   const [isConversionReviewRunning, setIsConversionReviewRunning] =
     useState(false);
+  const [conversionRunProgress, setConversionRunProgress] =
+    useState<ConversionRunProgress>(IDLE_CONVERSION_RUN);
 
   const linkedStartupId = String(
     profilePlaneResolution?.state === 'linked' &&
@@ -774,6 +935,38 @@ export default function App() {
       ? profilePlaneResolution.profile_id || ''
       : ''
   ).trim();
+
+  const presentConversionPreview = (
+    analysis: ConversionV2PreviewAnalysis,
+    generatedAt: string,
+    analysisVersion: string,
+    model: string,
+    credits: ConversionCredits
+  ) => {
+    setConversionReview({
+      founderClaimScore: analysis.founder_claim_score,
+      aiEvidenceScore: analysis.ai_evidence_score,
+      conversionScore: analysis.conversion_score,
+      pitchDeckQuality: analysis.pitch_deck_quality,
+      fundraiseReadiness: analysis.fundraise_readiness,
+      narrativeClarity: analysis.narrative_clarity,
+      riskLevel: analysis.risk_level,
+      riskFlags: analysis.risk_flags,
+      nextBestAction: analysis.next_best_action,
+      generatedAt: new Date(generatedAt).toLocaleString(),
+      analysisVersion,
+      model,
+      credits,
+      limitations: {
+        investor_fit:
+          'Investor Fit is available in the full Founder Pass analysis.',
+        deal_desk:
+          'A preview is saved for return visits but does not create a Deal Desk signal.',
+        verification:
+          'Optional Profile Verification begins after a full analysis.'
+      }
+    });
+  };
 
   useEffect(() => {
     if (!linkedStartupId) {
@@ -878,6 +1071,15 @@ export default function App() {
               ? new Date(context.generated_at).toLocaleString()
               : ''
           );
+          setConversionReview(null);
+        } else if (context.latest_preview) {
+          presentConversionPreview(
+            context.latest_preview.analysis,
+            context.latest_preview.generated_at,
+            context.latest_preview.analysis_version,
+            context.latest_preview.model,
+            context.latest_preview.credits
+          );
         }
       })
       .catch((error) => {
@@ -902,14 +1104,58 @@ export default function App() {
     }
 
     setIsConversionReviewRunning(true);
+    setConversionRunProgress({
+      ...IDLE_CONVERSION_RUN,
+      phase: 'checking_access'
+    });
 
     try {
-      const { runConversionV2 } =
+      const {
+        getConversionV2Context,
+        runConversionV2
+      } =
         await import('./lib/conversionApi');
+
+      const freshContext =
+        await getConversionV2Context(linkedStartupId);
+
+      setConversionV2Context(freshContext);
+
+      const access = freshContext.analysis_access;
+      if (!access) {
+        throw new Error(
+          'Conversion access could not be verified. Please retry.'
+        );
+      }
+
+      if (access.mode === 'pricing_required') {
+        setIsConversionReviewRunning(false);
+        setConversionRunProgress(IDLE_CONVERSION_RUN);
+        setShowPricingModal(true);
+        return;
+      }
+
+      setConversionRunProgress({
+        ...IDLE_CONVERSION_RUN,
+        phase: 'preparing_evidence',
+        mode: access.mode
+      });
+
+      if (conversionProfile.pitchSummary.trim().length < 40) {
+        throw new Error(
+          'Add a short founder pitch summary before applying AI Intelligence.'
+        );
+      }
+
+      setConversionRunProgress({
+        ...IDLE_CONVERSION_RUN,
+        phase: 'applying_ai',
+        mode: access.mode
+      });
 
       const response = await runConversionV2({
         startupId: linkedStartupId,
-        usageType: 'paid',
+        usageType: access.mode,
         idempotencyKey:
           `conversion-v2-${Date.now()}-${Math.random()
             .toString(36)
@@ -921,29 +1167,110 @@ export default function App() {
         deckFile: selectedPitchDeck
       });
 
-      setConversionV2Analysis(response.analysis);
-      setConversionV2Context((current) =>
-        current
-          ? { ...current, current_analysis: response.analysis }
-          : current
-      );
-      setConversionV2GeneratedAt(
-        new Date(response.generated_at).toLocaleString()
-      );
-      setConversionClaimReview(response.claim_review);
-      setClaimInterviewResponses(
-        response.claim_review?.interview_responses || {}
-      );
+      setConversionRunProgress({
+        ...IDLE_CONVERSION_RUN,
+        phase: 'finalising',
+        mode: response.usage_type
+      });
+
+      if (response.usage_type === 'paid') {
+        setConversionV2Analysis(response.analysis);
+        setConversionReview(null);
+        setConversionV2Context((current) =>
+          current
+            ? {
+                ...current,
+                current_analysis: response.analysis,
+                generated_at: response.generated_at,
+                claim_review: response.claim_review,
+                analysis_access: {
+                  ...current.analysis_access,
+                  credits: response.credits
+                }
+              }
+            : current
+        );
+        setConversionV2GeneratedAt(
+          new Date(response.generated_at).toLocaleString()
+        );
+        setConversionClaimReview(response.claim_review);
+        setClaimInterviewResponses(
+          response.claim_review?.interview_responses || {}
+        );
+
+        addLog(
+          'OpenAI Evidence Engine',
+          `Created Conversion V2 signal for ${
+            conversionProfile.startupName || 'the founder'
+          } with score ${response.analysis.conversion_score}/100.`
+        );
+      } else {
+        setConversionV2Analysis(null);
+        presentConversionPreview(
+          response.analysis,
+          response.generated_at,
+          response.analysis_version,
+          response.model,
+          response.credits
+        );
+        setConversionV2Context((current) =>
+          current
+            ? {
+                ...current,
+                latest_preview: {
+                  analysis: response.analysis,
+                  analysis_version: response.analysis_version,
+                  generated_at: response.generated_at,
+                  model: response.model,
+                  credits: response.credits
+                },
+                analysis_access: {
+                  mode: 'pricing_required',
+                  label: 'Founder Pass required',
+                  reason:
+                    'Your free preview has been used and no paid analysis credit is currently available.',
+                  credits: response.credits
+                }
+              }
+            : current
+        );
+
+        addLog(
+          'OpenAI Evidence Engine',
+          `Recorded Founder Signal Preview for ${
+            conversionProfile.startupName || 'the founder'
+          } with score ${response.analysis.conversion_score}/100.`
+        );
+      }
+
       setActiveTab('pitch_analyzer');
 
-      addLog(
-        'OpenAI Evidence Engine',
-        `Created Conversion V2 signal for ${
-          conversionProfile.startupName || 'the founder'
-        } with score ${response.analysis.conversion_score}/100.`
-      );
+      try {
+        const recordedContext =
+          await getConversionV2Context(linkedStartupId);
+        setConversionV2Context(recordedContext);
+      } catch (contextError) {
+        console.warn(
+          'Recorded analysis could not be reloaded immediately',
+          contextError
+        );
+      }
+
+      setIsConversionReviewRunning(false);
+      setConversionRunProgress({
+        phase: 'complete',
+        mode: response.usage_type,
+        error: '',
+        score: response.analysis.conversion_score,
+        analysisVersion: response.analysis_version,
+        generatedAt: new Date(
+          response.generated_at
+        ).toLocaleString()
+      });
       triggerToast(
-        'Full evidence-backed Conversion Review is ready.',
+        response.usage_type === 'paid'
+          ? 'Full evidence-backed Conversion Review is ready.'
+          : 'Your Founder Signal Preview is ready and recorded.',
         'success'
       );
     } catch (error) {
@@ -951,16 +1278,24 @@ export default function App() {
         error instanceof Error
           ? error.message
           : 'Conversion Review could not be completed.';
-      triggerToast(message, 'warn');
 
-      if (
-        message.toLowerCase().includes('entitlement')
-        || message.toLowerCase().includes('credit')
-      ) {
-        setShowPricingModal(true);
-      }
-    } finally {
+      const { isConversionPricingRequiredError } =
+        await import('./lib/conversionApi');
+
       setIsConversionReviewRunning(false);
+
+      if (isConversionPricingRequiredError(error)) {
+        setConversionRunProgress(IDLE_CONVERSION_RUN);
+        setShowPricingModal(true);
+        return;
+      }
+
+      setConversionRunProgress({
+        ...IDLE_CONVERSION_RUN,
+        phase: 'error',
+        error: message
+      });
+      triggerToast(message, 'warn');
     }
   };
 
@@ -989,101 +1324,6 @@ export default function App() {
       );
     } finally {
       setSavingClaimInterview(false);
-    }
-  };
-
-  const runConversionPreview = async () => {
-    const startupId = linkedStartupId;
-
-    if (!startupId) {
-      triggerToast(
-        'Link a verified Startup profile before running Preview Analysis.',
-        'warn'
-      );
-      return;
-    }
-
-    if (conversionProfile.pitchSummary.trim().length < 40) {
-      triggerToast(
-        'Add at least a short founder pitch summary before running Preview Analysis.',
-        'warn'
-      );
-      return;
-    }
-
-    setIsConversionReviewRunning(true);
-    setConversionReview(null);
-
-    try {
-      const { runConversionPreview: requestPreview } =
-        await import('./lib/conversionApi');
-
-      const response = await requestPreview({
-        startupId,
-        idempotencyKey:
-          `conversion-preview-${Date.now()}-${Math.random()
-            .toString(36)
-            .slice(2)}`,
-        startupName: conversionProfile.startupName,
-        sector: conversionProfile.sector,
-        stage: conversionProfile.stage,
-        raiseAmount: conversionProfile.raiseAmount,
-        pitchSummary: conversionProfile.pitchSummary,
-        tractionProof: conversionProfile.tractionProof,
-        riskNotes: conversionProfile.riskNotes,
-        targetInvestor: conversionProfile.targetInvestor
-      });
-
-      const analysis = response.analysis;
-
-      setConversionReview({
-        pitchDeckQuality: analysis.pitch_deck_quality,
-        fundraiseReadiness: analysis.fundraise_readiness,
-        narrativeClarity: analysis.narrative_clarity,
-        riskLevel: analysis.risk_level,
-        riskFlags: analysis.risk_flags,
-        nextBestAction: analysis.next_best_action,
-        generatedAt: new Date(response.generated_at).toLocaleString(),
-        limitations: response.preview_limitations
-      });
-
-      setActiveTab('pitch_analyzer');
-      setFeedbackMsg({
-        text: 'Founder Signal Preview generated from central TD Venture analysis.',
-        type: 'success'
-      });
-      triggerToast(
-        'Founder Signal Preview is ready.',
-        'success'
-      );
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Preview Analysis could not be completed.';
-
-      const previewAlreadyUsed =
-        message.includes('Conversion entitlement is not active');
-
-      const displayMessage = previewAlreadyUsed
-        ? (
-            'Your Founder Signal Preview is complete. To continue with the '
-            + 'Conversion Founder Pass for full analysis, reruns, investor '
-            + 'fit & CRM handoff, go to our payment plan to unlock.'
-          )
-        : message;
-
-      setFeedbackMsg({
-        text: displayMessage,
-        type: 'warn'
-      });
-      triggerToast(displayMessage, 'warn');
-
-      if (previewAlreadyUsed) {
-        setShowPricingModal(true);
-      }
-    } finally {
-      setIsConversionReviewRunning(false);
     }
   };
 
@@ -2113,7 +2353,15 @@ export default function App() {
 
                     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                       {[
-                        ['Pitch Deck Quality', `${conversionReview.pitchDeckQuality}/100`],
+                        ['AI Evidence Score', `${conversionReview.aiEvidenceScore}/100`],
+                        ['Preview Conversion Score', `${conversionReview.conversionScore}/100`],
+                        ['Founder Claim Score', `${conversionReview.founderClaimScore}/100`],
+                        [
+                          'Pitch Deck Quality',
+                          conversionReview.pitchDeckQuality == null
+                            ? 'Not supplied'
+                            : `${conversionReview.pitchDeckQuality}/100`
+                        ],
                         ['Narrative Clarity', `${conversionReview.narrativeClarity}/100`],
                         ['Fundraise Readiness', `${conversionReview.fundraiseReadiness}/100`],
                         ['Risk Level', conversionReview.riskLevel]
@@ -2165,6 +2413,21 @@ export default function App() {
                       </div>
                     </div>
 
+                    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-2xl border border-slate-800 bg-[#080D1A] px-5 py-4 text-xs text-slate-500">
+                      <span>
+                        Version <strong className="text-slate-300">{conversionReview.analysisVersion}</strong>
+                      </span>
+                      <span>
+                        Model <strong className="text-slate-300">{conversionReview.model}</strong>
+                      </span>
+                      <span>
+                        Credits remaining <strong className="text-slate-300">{conversionReview.credits.remaining}</strong>
+                      </span>
+                      <span>
+                        Recorded <strong className="text-slate-300">{conversionReview.generatedAt}</strong>
+                      </span>
+                    </div>
+
                     <div className="flex flex-wrap gap-3">
                       <button
                         type="button"
@@ -2203,6 +2466,22 @@ export default function App() {
                       those claims and any supplied pitch deck before calculating
                       the final Conversion Score.
                     </p>
+                    {conversionV2Context?.analysis_access && (
+                      <div
+                        className={`mt-5 rounded-2xl border px-4 py-3 ${
+                          conversionV2Context.analysis_access.mode === 'pricing_required'
+                            ? 'border-amber-400/30 bg-amber-950/10'
+                            : 'border-[#D4FF00]/30 bg-[#D4FF00]/5'
+                        }`}
+                      >
+                        <p className="text-xs font-black text-white">
+                          {conversionV2Context.analysis_access.label}
+                        </p>
+                        <p className="mt-1 text-xs leading-5 text-slate-400">
+                          {conversionV2Context.analysis_access.reason}
+                        </p>
+                      </div>
+                    )}
                     <div className="mt-5 flex flex-wrap gap-3">
                       <button
                         type="button"
@@ -2217,7 +2496,11 @@ export default function App() {
                         disabled={isConversionReviewRunning}
                         className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950 disabled:opacity-60"
                       >
-                        Apply AI Intelligence
+                        {conversionV2Context?.analysis_access?.mode === 'preview'
+                          ? 'Use Free AI Preview'
+                          : conversionV2Context?.analysis_access?.mode === 'pricing_required'
+                            ? 'View Pricing Plans'
+                            : 'Apply AI Intelligence'}
                       </button>
                     </div>
                   </section>
@@ -2653,7 +2936,15 @@ export default function App() {
       )}
 
       {/* Email capture banner */}
-      {isConversionReviewRunning && <ConversionReviewProgressModal />}
+      {conversionRunProgress.phase !== 'idle' && (
+        <ConversionReviewProgressModal
+          progress={conversionRunProgress}
+          onRetry={() => void runFullConversionReview()}
+          onClose={() =>
+            setConversionRunProgress(IDLE_CONVERSION_RUN)
+          }
+        />
+      )}
       <EmailCaptureBanner />
 
     </div>
