@@ -361,7 +361,7 @@ export function AcceptClaimsPanel({
     return (
       <section className="rounded-2xl border border-slate-800 bg-[#0c1222]/90 p-5">
         <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-[#D4FF00]">
-          04 · Verify
+          05 · Verify
         </p>
         <h2 className="mt-2 text-2xl font-black text-white">
           Apply AI Intelligence first
@@ -380,7 +380,7 @@ export function AcceptClaimsPanel({
     <div className="space-y-6">
       <section className="rounded-2xl border border-slate-800 bg-[#0c1222]/90 p-5">
         <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-[#D4FF00]">
-          04 · Verify
+          05 · Verify
         </p>
         <h2 className="mt-2 text-2xl font-black text-white">
           Gap Analysis & optional verification

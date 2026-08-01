@@ -62,6 +62,7 @@ import {
   FounderEvidenceRecord,
   FounderSignalDashboard
 } from './components/FounderSignalWorkspace';
+import { ImprovementPlanPanel } from './components/ImprovementPlanPanel';
 import {
   InvestorDecisionWorkspace,
   type InvestorDecisionView
@@ -755,6 +756,7 @@ export default function App() {
                 current === 'docs_hub' ||
                 current === 'pitch_analyzer' ||
                 current === 'dashboard' ||
+                current === 'improvement_plan' ||
                 current === 'claim_review' ||
                 current === 'deal_desk_handoff'
                   ? current
@@ -1617,8 +1619,9 @@ export default function App() {
       { id: 'docs_hub', name: '01 · Collect', icon: FileText, desc: 'Application evidence and pitch deck' },
       { id: 'pitch_analyzer', name: '02 · Apply AI Intelligence', icon: TrendingUp, desc: 'Analyse evidence independently' },
       { id: 'dashboard', name: '03 · Conversion Terminal', icon: LayoutDashboard, desc: 'Present scores, signals and next action' },
-      { id: 'claim_review', name: '04 · Verify', icon: ShieldCheck, desc: 'Optional Gap Analysis and verification' },
-      { id: 'deal_desk_handoff', name: '05 · Deal Desk', icon: ArrowUpRight, desc: 'Send the signal to Execution' },
+      { id: 'improvement_plan', name: '04 · Improvement Plan', icon: Target, desc: 'Prioritised actions and evidence to strengthen' },
+      { id: 'claim_review', name: '05 · Verify', icon: ShieldCheck, desc: 'Optional Gap Analysis and verification' },
+      { id: 'deal_desk_handoff', name: '06 · Deal Desk', icon: ArrowUpRight, desc: 'Send the signal to Execution' },
     ],
     investor: [
       { id: 'dashboard', name: 'Investor Terminal', icon: LayoutDashboard, desc: 'Decision intelligence and next action' },
@@ -1916,7 +1919,7 @@ export default function App() {
                 </h2>
               </div>
               <span className="text-[10px] text-slate-500 font-mono hidden sm:inline">
-                | Collect → Apply AI Intelligence → Present → Verify → Deal Desk
+                | Collect → Apply AI Intelligence → Present → Improve → Verify → Deal Desk
               </span>
 
               {/* Quick Model Orchestrator switch */}
@@ -2033,6 +2036,7 @@ export default function App() {
                 deckFile={selectedPitchDeck}
                 onCollect={() => setActiveTab('docs_hub')}
                 onAnalyse={() => setActiveTab('pitch_analyzer')}
+                onImprove={() => setActiveTab('improvement_plan')}
                 onVerify={() => setActiveTab('claim_review')}
                 onDealDesk={() => void openDealDeskWorkspace()}
               />
@@ -2341,6 +2345,13 @@ export default function App() {
                     <div className="flex flex-wrap gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
                       <button
                         type="button"
+                        onClick={() => setActiveTab('improvement_plan')}
+                        className="rounded-xl border border-[#D4FF00]/35 px-4 py-3 text-xs font-black uppercase tracking-wider text-[#D4FF00]"
+                      >
+                        Open Improvement Plan
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => setActiveTab('claim_review')}
                         className="rounded-xl border border-cyan-400/35 px-4 py-3 text-xs font-black uppercase tracking-wider text-cyan-200"
                       >
@@ -2595,10 +2606,21 @@ export default function App() {
             )}
 
             {/* 3. CONDITIONAL TABS REDIRECT FOR OTHER PAGES */}
+            {activeTab === 'improvement_plan' && (
+              <ImprovementPlanPanel
+                analysis={conversionV2Analysis}
+                context={conversionV2Context}
+                onCollect={() => setActiveTab('docs_hub')}
+                onAnalyse={() => setActiveTab('pitch_analyzer')}
+                onVerify={() => setActiveTab('claim_review')}
+                onDealDesk={() => void openDealDeskWorkspace()}
+              />
+            )}
+
             {activeTab === 'deal_desk_handoff' && (
               <section className="rounded-2xl border border-slate-800 bg-[#0B1220] p-5 shadow-2xl">
                 <p className="text-[10px] font-mono font-black uppercase tracking-[0.32em] text-[#D4FF00]">
-                  05 · Deal Desk
+                  06 · Deal Desk
                 </p>
                 <h2 className="mt-1.5 text-2xl font-black text-white">
                   {conversionV2Analysis
@@ -2876,7 +2898,7 @@ export default function App() {
           </div>
 
           <footer className="h-14 border-t border-slate-800/60 bg-[#020205] flex items-center justify-between px-6 text-[11px] text-slate-500 relative z-20">
-	           <span>TD Conversion OS · Collect → Apply AI Intelligence → Present → Verify → Deal Desk</span>
+		           <span>TD Conversion OS · Collect → Apply AI Intelligence → Present → Improve → Verify → Deal Desk</span>
             <a
              href="https://tdventure.vc/contribute.html"
              target="_blank"

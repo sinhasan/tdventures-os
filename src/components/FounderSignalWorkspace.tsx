@@ -20,6 +20,7 @@ type FounderSignalDashboardProps = {
   deckFile: File | null;
   onCollect: WorkspaceAction;
   onAnalyse: WorkspaceAction;
+  onImprove: WorkspaceAction;
   onVerify: WorkspaceAction;
   onDealDesk: WorkspaceAction;
 };
@@ -142,6 +143,7 @@ export function FounderSignalDashboard({
   deckFile,
   onCollect,
   onAnalyse,
+  onImprove,
   onVerify,
   onDealDesk
 }: FounderSignalDashboardProps) {
@@ -211,13 +213,14 @@ export function FounderSignalDashboard({
           </div>
         </div>
 
-        <div className="mt-5 grid gap-2 sm:grid-cols-5">
+        <div className="mt-5 grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
           {[
             ['01', 'Collect', completed === 20 ? 'Complete' : `${completed}/20`],
             ['02', 'Apply AI Intelligence', analysis ? 'Complete' : 'Ready'],
             ['03', 'Present', 'Current'],
-            ['04', 'Verify', verified ? 'Verified' : 'Optional'],
-            ['05', 'Deal Desk', analysis ? 'Ready' : 'After analysis']
+            ['04', 'Improvement Plan', analysis ? 'Ready' : 'After analysis'],
+            ['05', 'Verify', verified ? 'Verified' : 'Optional'],
+            ['06', 'Deal Desk', analysis ? 'Ready' : 'After analysis']
           ].map(([number, label, state]) => (
             <div
               key={label}
@@ -365,6 +368,15 @@ export function FounderSignalDashboard({
                 className="rounded-lg border border-cyan-400/35 px-3 py-2 text-[11px] font-black text-cyan-200"
               >
                 Request verification
+              </button>
+            )}
+            {analysis && (
+              <button
+                type="button"
+                onClick={onImprove}
+                className="rounded-lg border border-[#D4FF00]/35 px-3 py-2 text-[11px] font-black text-[#D4FF00]"
+              >
+                View improvement plan
               </button>
             )}
           </div>
