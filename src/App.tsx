@@ -928,12 +928,12 @@ export default function App() {
 
 
   type ConversionReviewResult = {
-    founderClaimScore: number;
-    aiEvidenceScore: number;
-    conversionScore: number;
+    founderClaimScore: number | null;
+    aiEvidenceScore: number | null;
+    conversionScore: number | null;
     pitchDeckQuality: number | null;
-    fundraiseReadiness: number;
-    narrativeClarity: number;
+    fundraiseReadiness: number | null;
+    narrativeClarity: number | null;
     riskLevel: 'Low' | 'Moderate' | 'High';
     riskFlags: string[];
     nextBestAction: string;
@@ -974,6 +974,22 @@ export default function App() {
       : ''
   ).trim();
 
+  const normaliseRecordedPreviewScore = (
+    value: unknown
+  ): number | null => {
+    if (value === null || value === undefined || value === '') {
+      return null;
+    }
+
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : null;
+  };
+
+  const formatRecordedPreviewScore = (
+    value: number | null
+  ): string =>
+    value == null ? 'Not recorded in V1' : `${value}/100`;
+
   const presentConversionPreview = (
     analysis: ConversionV2PreviewAnalysis,
     generatedAt: string,
@@ -982,12 +998,24 @@ export default function App() {
     credits: ConversionCredits
   ) => {
     setConversionReview({
-      founderClaimScore: analysis.founder_claim_score,
-      aiEvidenceScore: analysis.ai_evidence_score,
-      conversionScore: analysis.conversion_score,
-      pitchDeckQuality: analysis.pitch_deck_quality,
-      fundraiseReadiness: analysis.fundraise_readiness,
-      narrativeClarity: analysis.narrative_clarity,
+      founderClaimScore: normaliseRecordedPreviewScore(
+        analysis.founder_claim_score
+      ),
+      aiEvidenceScore: normaliseRecordedPreviewScore(
+        analysis.ai_evidence_score
+      ),
+      conversionScore: normaliseRecordedPreviewScore(
+        analysis.conversion_score
+      ),
+      pitchDeckQuality: normaliseRecordedPreviewScore(
+        analysis.pitch_deck_quality
+      ),
+      fundraiseReadiness: normaliseRecordedPreviewScore(
+        analysis.fundraise_readiness
+      ),
+      narrativeClarity: normaliseRecordedPreviewScore(
+        analysis.narrative_clarity
+      ),
       riskLevel: analysis.risk_level,
       riskFlags: analysis.risk_flags,
       nextBestAction: analysis.next_best_action,
@@ -2349,17 +2377,42 @@ export default function App() {
 
                     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                       {[
-                        ['AI Evidence Score', `${conversionReview.aiEvidenceScore}/100`],
-                        ['Preview Conversion Score', `${conversionReview.conversionScore}/100`],
-                        ['Founder Claim Score', `${conversionReview.founderClaimScore}/100`],
+                        [
+                          'AI Evidence Score',
+                          formatRecordedPreviewScore(
+                            conversionReview.aiEvidenceScore
+                          )
+                        ],
+                        [
+                          'Preview Conversion Score',
+                          formatRecordedPreviewScore(
+                            conversionReview.conversionScore
+                          )
+                        ],
+                        [
+                          'Founder Claim Score',
+                          formatRecordedPreviewScore(
+                            conversionReview.founderClaimScore
+                          )
+                        ],
                         [
                           'Pitch Deck Quality',
                           conversionReview.pitchDeckQuality == null
                             ? 'Not supplied'
                             : `${conversionReview.pitchDeckQuality}/100`
                         ],
-                        ['Narrative Clarity', `${conversionReview.narrativeClarity}/100`],
-                        ['Fundraise Readiness', `${conversionReview.fundraiseReadiness}/100`],
+                        [
+                          'Narrative Clarity',
+                          formatRecordedPreviewScore(
+                            conversionReview.narrativeClarity
+                          )
+                        ],
+                        [
+                          'Fundraise Readiness',
+                          formatRecordedPreviewScore(
+                            conversionReview.fundraiseReadiness
+                          )
+                        ],
                         ['Risk Level', conversionReview.riskLevel]
                       ].map(([label, value]) => (
                         <div key={label} className="rounded-2xl border border-slate-800 bg-[#080D1A] p-4">
@@ -2434,10 +2487,27 @@ export default function App() {
                       </button>
                       <button
                         type="button"
-                        onClick={openCanonicalPricing}
-                        className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950"
+                        onClick={() => {
+                          if (
+                            conversionV2Context?.analysis_access?.mode ===
+                            'paid'
+                          ) {
+                            void runFullConversionReview();
+                            return;
+                          }
+                          openCanonicalPricing();
+                        }}
+                        disabled={isConversionReviewRunning}
+                        className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950 disabled:opacity-60"
                       >
-                        View Pricing Plans
+                        {conversionV2Context?.analysis_access?.mode ===
+                          'paid'
+                          ? conversionV2Context.analysis_access.label
+                              .toLowerCase()
+                              .includes('admin qa')
+                            ? 'Run Admin QA Full Review'
+                            : 'Run Full Conversion Review'
+                          : 'View Pricing Plans'}
                       </button>
                     </div>
                   </section>
@@ -2505,7 +2575,11 @@ export default function App() {
                           ? 'Use Free AI Preview'
                           : conversionV2Context?.analysis_access?.mode === 'pricing_required'
                             ? 'View Pricing Plans'
-                            : 'Apply AI Intelligence'}
+                            : conversionV2Context?.analysis_access?.label
+                                ?.toLowerCase()
+                                .includes('admin qa')
+                              ? 'Run Admin QA Full Review'
+                              : 'Apply AI Intelligence'}
                       </button>
                     </div>
                   </section>
