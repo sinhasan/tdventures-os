@@ -62,6 +62,7 @@ import {
   FounderEvidenceRecord,
   FounderSignalDashboard
 } from './components/FounderSignalWorkspace';
+import { AdminVerificationWorkspace } from './components/TDAdminVerificationWorkspace';
 import { ImprovementPlanPanel } from './components/ImprovementPlanPanel';
 import {
   InvestorDecisionWorkspace,
@@ -746,7 +747,8 @@ export default function App() {
                 current === 'user_management' ||
                 current === 'ai_monitoring' ||
                 current === 'security' ||
-                current === 'role_permissions'
+                current === 'role_permissions' ||
+                current === 'verification_admin'
                   ? current
                   : 'user_management'
               );
@@ -1631,6 +1633,7 @@ export default function App() {
       { id: 'investor_execution', name: '04 · Deal Desk', icon: ArrowUpRight, desc: 'Start and manage execution' }
     ],
     admin: [
+      { id: 'verification_admin', name: 'Verification Queue', icon: ShieldCheck, desc: 'Compare and freeze 20 parallel assessments' },
       { id: 'user_management', name: 'User Management', icon: Users, desc: 'Invitation list & permissions seats' },
       { id: 'ai_monitoring', name: 'AI Monitoring', icon: Cpu, desc: 'OpenRouter token wave logs' },
       { id: 'security', name: 'Security Center', icon: Lock, desc: 'JWT key indicators & secure files' },
@@ -2705,6 +2708,7 @@ export default function App() {
                 review={conversionClaimReview}
                 responses={claimInterviewResponses}
                 saving={savingClaimInterview}
+                founderClaims={conversionV2Context?.evidence.claims}
                 onResponseChange={(claimKey, value) => {
                   setClaimInterviewResponses((current) => ({
                     ...current,
@@ -2713,6 +2717,9 @@ export default function App() {
                 }}
                 onSubmit={() => void saveClaimInterview()}
               />
+            )}
+            {activeTab === 'verification_admin' && role === 'admin' && (
+              <AdminVerificationWorkspace />
             )}
             {activeTab === 'linkedin_intel' && <LinkedInIntelTab addLog={addLog} triggerToast={triggerToast} />}
             {activeTab === 'fundraising_intel' && <FundraisingIntelTab addLog={addLog} triggerToast={triggerToast} />}

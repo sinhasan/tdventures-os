@@ -8,9 +8,11 @@ import {
 } from 'lucide-react';
 import type {
   ConversionClaimReview,
+  FounderAssessmentClaim,
   ConversionProfileVerification,
   ConversionV2Analysis
 } from '../lib/conversionApi';
+import { ParallelAssessmentRecord } from './TDAdminVerificationWorkspace';
 
 type PitchDeckEvidencePanelProps = {
   file: File | null;
@@ -345,6 +347,7 @@ type AcceptClaimsPanelProps = {
   review: ConversionClaimReview | null;
   responses: Record<string, string>;
   saving: boolean;
+  founderClaims?: FounderAssessmentClaim[];
   onResponseChange: (claimKey: string, value: string) => void;
   onSubmit: () => void;
 };
@@ -354,6 +357,7 @@ export function AcceptClaimsPanel({
   review,
   responses,
   saving,
+  founderClaims,
   onResponseChange,
   onSubmit
 }: AcceptClaimsPanelProps) {
@@ -395,6 +399,27 @@ export function AcceptClaimsPanel({
             verification={analysis.profile_verification}
           />
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <div className="rounded-2xl border border-slate-800 bg-[#0c1222]/90 p-5">
+          <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-cyan-300">
+            Parallel assessment record
+          </p>
+          <h3 className="mt-2 text-xl font-black text-white">
+            Founder declaration and TD Admin verification
+          </h3>
+          <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">
+            Your submitted ratings are muted and immutable in this review.
+            TD Admin fields remain blank until optional verification is
+            performed; once frozen, neither record can be edited for this
+            evidence revision.
+          </p>
+        </div>
+        <ParallelAssessmentRecord
+          review={review}
+          founderClaims={founderClaims}
+        />
       </section>
 
       <section className="space-y-4 rounded-3xl border border-slate-800 bg-[#080D1A] p-6">

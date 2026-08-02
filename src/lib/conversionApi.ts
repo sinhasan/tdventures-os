@@ -343,6 +343,8 @@ export type ConversionClaimReview = {
   id: string;
   startup_id: string;
   conversion_signal_id: string;
+  founder_evidence_id?: string | null;
+  founder_evidence_revision?: number | null;
   review_status:
     | 'analysis_complete'
     | 'interview_required'
@@ -356,8 +358,48 @@ export type ConversionClaimReview = {
   accepted_claim_keys: string[];
   verified_claim_count: number;
   verified_at: string | null;
+  startup_name?: string | null;
+  sector?: string | null;
+  stage?: string | null;
+  founder_email?: string | null;
+  founder_claims?: FounderAssessmentClaim[];
+  td_admin_assessments: Record<string, TDAdminDimensionAssessment>;
+  td_admin_assessment_status: 'not_started' | 'in_progress' | 'frozen';
+  td_admin_assessment_scope: string | null;
+  td_admin_assessment_version: number;
+  td_admin_score?: number | null;
+  td_admin_frozen_at: string | null;
+  td_admin_frozen_by?: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type FounderAssessmentClaim = {
+  key: string;
+  label: string;
+  rating: number | null;
+  evidence: string;
+};
+
+export type TDAdminDimensionAssessment = {
+  rating: number | null;
+  notes: string;
+  evidence_status:
+    | 'not_reviewed'
+    | 'confirmed'
+    | 'adjusted'
+    | 'insufficient_evidence';
+};
+
+export type ConversionAdminReviewQueue = {
+  ok: boolean;
+  items: ConversionClaimReview[];
+  summary: {
+    total: number;
+    not_started: number;
+    in_progress: number;
+    frozen: number;
+  };
 };
 
 export type ConversionV2ContextResponse = {
@@ -999,6 +1041,70 @@ export async function saveConversionInterview(
     {
       method: 'PUT',
       body: JSON.stringify({ responses })
+    }
+  );
+  return result.claim_review;
+}
+
+export async function getConversionAdminReviewQueue(): Promise<
+  ConversionAdminReviewQueue
+> {
+  return conversionRequest<ConversionAdminReviewQueue>(
+    '/admin/claim-reviews',
+    { method: 'GET' }
+  );
+}
+
+export async function getConversionAdminReview(
+  reviewId: string
+): Promise<ConversionClaimReview> {
+  const result = await conversionRequest<{
+    ok: boolean;
+    claim_review: ConversionClaimReview;
+  }>(
+    `/admin/claim-reviews/${encodeURIComponent(reviewId)}`,
+    { method: 'GET' }
+  );
+  return result.claim_review;
+}
+
+export async function saveTDAdminAssessment(
+  reviewId: string,
+  assessments: Record<string, TDAdminDimensionAssessment>,
+  verificationScope: string
+): Promise<ConversionClaimReview> {
+  const result = await conversionRequest<{
+    ok: boolean;
+    claim_review: ConversionClaimReview;
+  }>(
+    `/admin/claim-reviews/${encodeURIComponent(reviewId)}/assessment`,
+    {
+      method: 'PUT',
+      body: JSON.stringify({
+        assessments,
+        verification_scope: verificationScope
+      })
+    }
+  );
+  return result.claim_review;
+}
+
+export async function freezeTDAdminAssessment(
+  reviewId: string,
+  assessments: Record<string, TDAdminDimensionAssessment>,
+  verificationScope: string
+): Promise<ConversionClaimReview> {
+  const result = await conversionRequest<{
+    ok: boolean;
+    claim_review: ConversionClaimReview;
+  }>(
+    `/admin/claim-reviews/${encodeURIComponent(reviewId)}/freeze`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        assessments,
+        verification_scope: verificationScope
+      })
     }
   );
   return result.claim_review;
