@@ -662,6 +662,33 @@ export default function App() {
   const [tdventureSessionError, setTdventureSessionError] =
     useState('');
 
+  const workspaceScrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const previousScrollRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'manual';
+
+    return () => {
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
+  }, []);
+
+  useEffect(() => {
+    const resetWorkspacePosition = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      workspaceScrollRef.current?.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'auto'
+      });
+    };
+
+    resetWorkspacePosition();
+    const frame = window.requestAnimationFrame(resetWorkspacePosition);
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeTab, role, tdventureUser?.id]);
+
   const [profilePlaneResolution, setProfilePlaneResolution] =
     useState<ProfilePlaneResolution | null>(null);
 
@@ -1773,7 +1800,7 @@ export default function App() {
   const activeThemeObj = PREMIUM_THEMES.find(t => t.id === selectedTheme) || PREMIUM_THEMES[0];
 
   return (
-    <div className={`min-h-screen font-sans overflow-x-hidden selection:bg-[#D4FF00]/30 pb-14 md:pb-0 transition-colors duration-300 ${
+    <div className={`h-screen font-sans overflow-hidden selection:bg-[#D4FF00]/30 pb-14 md:pb-0 transition-colors duration-300 ${
       themeMode === 'light' 
         ? 'light-theme bg-[#F8FAFC] text-[#0F172A]' 
         : 'dark-theme bg-[#020205] text-slate-200'
@@ -2031,7 +2058,7 @@ export default function App() {
           </header>
 
           {/* Dynamic Scrollable Main Panel Workspace viewport */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-5">
+          <div ref={workspaceScrollRef} className="min-h-0 flex-1 overflow-y-auto p-5 space-y-5">
             
             {/* 1. ROLE BOUNDARIES CONDITIONAL RENDERING */}
             {activeTab === 'dashboard' && role === 'founder' && (
@@ -2909,7 +2936,7 @@ export default function App() {
 
           </div>
 
-          <footer className="h-14 border-t border-slate-800/60 bg-[#020205] flex items-center justify-between px-6 text-[11px] text-slate-500 relative z-20">
+          <footer className="h-14 shrink-0 border-t border-slate-800/60 bg-[#020205] flex items-center justify-between px-6 text-[11px] text-slate-500 relative z-20">
 		           <span>TD Conversion OS · Collect → Apply AI Intelligence → Present → Improve → Verify → Deal Desk</span>
             <a
              href="https://tdventure.vc/contribute.html"
