@@ -663,6 +663,7 @@ export default function App() {
     useState('');
 
   const workspaceScrollRef = useRef<HTMLDivElement | null>(null);
+  const sidebarScrollRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const previousScrollRestoration = window.history.scrollRestoration;
@@ -681,12 +682,21 @@ export default function App() {
         left: 0,
         behavior: 'auto'
       });
+      sidebarScrollRef.current?.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'auto'
+      });
     };
 
     resetWorkspacePosition();
     const frame = window.requestAnimationFrame(resetWorkspacePosition);
+    const delayedReset = window.setTimeout(resetWorkspacePosition, 180);
 
-    return () => window.cancelAnimationFrame(frame);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(delayedReset);
+    };
   }, [activeTab, role, tdventureUser?.id]);
 
   const [profilePlaneResolution, setProfilePlaneResolution] =
@@ -1800,7 +1810,7 @@ export default function App() {
   const activeThemeObj = PREMIUM_THEMES.find(t => t.id === selectedTheme) || PREMIUM_THEMES[0];
 
   return (
-    <div className={`h-screen font-sans overflow-hidden selection:bg-[#D4FF00]/30 pb-14 md:pb-0 transition-colors duration-300 ${
+    <div className={`fixed inset-0 h-[100dvh] w-screen font-sans overflow-hidden overscroll-none selection:bg-[#D4FF00]/30 pb-14 md:pb-0 transition-colors duration-300 ${
       themeMode === 'light' 
         ? 'light-theme bg-[#F8FAFC] text-[#0F172A]' 
         : 'dark-theme bg-[#020205] text-slate-200'
@@ -1824,10 +1834,10 @@ export default function App() {
         </div>
       )}
 
-      <div className="flex h-screen relative z-10 overflow-hidden">
+      <div className="relative z-10 flex h-full overflow-hidden">
         
         {/* Dynamic Sidebar navigation */}
-        <aside className="w-72 border-r border-slate-800/80 bg-[#0F172A]/90 backdrop-blur-3xl flex flex-col justify-between overflow-y-auto hidden md:flex">
+        <aside ref={sidebarScrollRef} className="hidden min-h-0 w-72 flex-col justify-between overflow-y-auto overscroll-contain border-r border-slate-800/80 bg-[#0F172A]/90 backdrop-blur-3xl md:flex">
           <div>
             {/* Branding Header matching screenshot style */}
             <div className="h-20 flex items-center px-6 border-b border-slate-800/50 justify-between">
@@ -1939,7 +1949,7 @@ export default function App() {
         </aside>
 
         {/* Core workspace container */}
-        <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#030308]/60">
+        <main className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-[#030308]/60">
           
           {/* Top header telemetry panel */}
           <header className="h-20 border-b border-slate-800/50 bg-[#0F172A]/30 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-20">
