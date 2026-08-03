@@ -1431,7 +1431,9 @@ export default function App() {
   };
 
 
-  const openDealDeskWorkspace = async () => {
+  const openDealDeskWorkspace = async (
+    destination: 'dashboard' | 'discover_startups' = 'dashboard'
+  ) => {
     const launchWindow =
       window.open('', '_blank');
 
@@ -1449,7 +1451,7 @@ export default function App() {
       );
 
       const launch =
-        await createDealDeskWorkspaceLaunch();
+        await createDealDeskWorkspaceLaunch(destination);
 
       if (
         launchWindow &&
@@ -2061,6 +2063,9 @@ export default function App() {
                   investorProfileLinked={
                     profilePlaneResolution?.state === 'linked' &&
                     profilePlaneResolution?.profile_type === 'investor'
+                  }
+                  onDiscoverStartups={() =>
+                    void openDealDeskWorkspace('discover_startups')
                   }
                   onOpenDealDesk={() => void openDealDeskWorkspace()}
                   onOpenPricing={openCanonicalPricing}

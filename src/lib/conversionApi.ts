@@ -214,6 +214,20 @@ export type ConversionProfileVerification = {
   accepted_claim_keys?: string[];
   scope: string | null;
   disclaimer: string;
+  frozen?: boolean;
+  founder_claim_score?: number | null;
+  td_admin_score?: number | null;
+  td_verified_score?: number | null;
+  dimension_comparison?: Array<{
+    key: string;
+    label: string;
+    founder_rating: number | null;
+    td_verified_rating: number;
+    td_evidence_status?: string | null;
+    td_notes?: string | null;
+  }>;
+  snapshot_hash?: string | null;
+  parallel_assessments_never_merged?: true;
 };
 
 export type ConversionV2Analysis = {
@@ -1204,11 +1218,18 @@ export type DealDeskWorkspaceLaunchResponse = {
   ok: boolean;
   workspace: 'deal_desk';
   launch_url: string;
+  destination_path: '/' | '/discover/startups';
   expires_in_seconds: number;
   expires_at: string;
 };
 
-export async function createDealDeskWorkspaceLaunch():
+export type DealDeskWorkspaceDestination =
+  | 'dashboard'
+  | 'discover_startups';
+
+export async function createDealDeskWorkspaceLaunch(
+  destination: DealDeskWorkspaceDestination = 'dashboard'
+):
   Promise<DealDeskWorkspaceLaunchResponse> {
   const session =
     await initializeTdventureSessionFromLaunch();
@@ -1229,7 +1250,7 @@ export async function createDealDeskWorkspaceLaunch():
     );
 
   const response = await fetch(
-    `${canonicalApiRoot}/deal-desk/launch`,
+    `${canonicalApiRoot}/deal-desk/launch?destination=${encodeURIComponent(destination)}`,
     {
       method: 'POST',
       headers: {

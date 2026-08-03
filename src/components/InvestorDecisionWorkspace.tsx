@@ -25,12 +25,11 @@ type InvestorDecisionWorkspaceProps = {
   view: InvestorDecisionView;
   accountName: string;
   investorProfileLinked: boolean;
+  onDiscoverStartups: () => void;
   onOpenDealDesk: () => void;
   onOpenPricing: () => void;
 };
 
-const DEAL_DESK_STARTUPS_URL =
-  'https://crm.tdventure.vc/discover/startups';
 const MARKETPLACE_URL =
   'https://staging.tdventure.vc/app';
 const INVESTOR_APPLY_URL =
@@ -133,6 +132,7 @@ export function InvestorDecisionWorkspace({
   view,
   accountName,
   investorProfileLinked,
+  onDiscoverStartups,
   onOpenDealDesk,
   onOpenPricing
 }: InvestorDecisionWorkspaceProps) {
@@ -154,9 +154,14 @@ export function InvestorDecisionWorkspace({
               {copy.body}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <ExternalLink href={DEAL_DESK_STARTUPS_URL} primary>
+              <button
+                type="button"
+                onClick={onDiscoverStartups}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#D4FF00] px-5 text-xs font-black uppercase tracking-wider text-slate-950 shadow-[0_0_24px_rgba(212,255,0,0.22)] transition hover:brightness-110"
+              >
                 Discover Startups
-              </ExternalLink>
+                <ArrowUpRight className="h-4 w-4" />
+              </button>
               <button
                 type="button"
                 onClick={onOpenDealDesk}
