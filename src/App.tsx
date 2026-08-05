@@ -201,7 +201,7 @@ function ConversionReviewProgressModal({
       aria-modal="true"
       aria-labelledby="conversion-review-progress-title"
     >
-      <div className="w-full max-w-lg rounded-3xl border border-[#D4FF00]/35 bg-[#0c1222] p-7 shadow-2xl">
+      <div className="w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-3xl border border-[#D4FF00]/35 bg-[#0c1222] p-7 shadow-2xl">
         <p className="text-[10px] font-mono font-bold uppercase tracking-[0.28em] text-[#D4FF00]">
           TD Conversion OS
         </p>
