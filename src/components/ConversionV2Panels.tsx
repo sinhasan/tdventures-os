@@ -52,6 +52,16 @@ export function PitchDeckEvidencePanel({
             onChange={(event) => {
               onChange(event.target.files?.[0] || null);
               event.currentTarget.value = '';
+              event.currentTarget.blur();
+              requestAnimationFrame(() => {
+                document
+                  .querySelectorAll(
+                    '.relative.z-10.flex.h-full.overflow-hidden, main .overflow-y-auto'
+                  )
+                  .forEach((el) => {
+                    (el as HTMLElement).scrollTop = 0;
+                  });
+              });
             }}
           />
         </label>
