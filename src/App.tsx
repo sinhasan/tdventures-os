@@ -1471,80 +1471,38 @@ export default function App() {
   const openDealDeskWorkspace = async (
     destination: 'dashboard' | 'discover_startups' = 'dashboard'
   ) => {
-    const launchWindow =
-      window.open('', '_blank');
-
-    if (launchWindow) {
-      launchWindow.opener = null;
-      launchWindow.document.title =
-        'Opening Deal Desk…';
-    }
-
     try {
       const {
         createDealDeskWorkspaceLaunch
       } = await import(
         './lib/conversionApi'
       );
-
       const launch =
         await createDealDeskWorkspaceLaunch(destination);
-
-      if (
-        launchWindow &&
-        !launchWindow.closed
-      ) {
-        launchWindow.location.replace(
-          launch.launch_url
-        );
-      } else {
-        window.location.assign(
-          launch.launch_url
-        );
-      }
+      window.location.assign(
+        launch.launch_url
+      );
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
           : 'Could not open Deal Desk securely.';
-
       const authenticationFailed =
         /session|credential|token|unauthori[sz]ed|forbidden|401|403/i.test(
           message
         );
-
       if (authenticationFailed) {
         const dealDeskLoginUrl =
           'https://crm.tdventure.vc/login';
-
-        if (
-          launchWindow &&
-          !launchWindow.closed
-        ) {
-          launchWindow.location.replace(
-            dealDeskLoginUrl
-          );
-        } else {
-          window.location.assign(
-            dealDeskLoginUrl
-          );
-        }
-
+        window.location.assign(
+          dealDeskLoginUrl
+        );
         triggerToast(
           'TD Venture session could not be validated. Opening Deal Desk login.',
           'warn'
         );
-
         return;
       }
-
-      if (
-        launchWindow &&
-        !launchWindow.closed
-      ) {
-        launchWindow.close();
-      }
-
       triggerToast(message, 'warn');
     }
   };
