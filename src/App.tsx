@@ -1468,6 +1468,22 @@ export default function App() {
   };
 
 
+  useEffect(() => {
+    const forceShellRepaint = () => {
+      const root = document.getElementById('application_root');
+      if (!root) return;
+      root.style.display = 'none';
+      void root.offsetHeight;
+      root.style.display = '';
+    };
+    window.addEventListener('focus', forceShellRepaint);
+    document.addEventListener('visibilitychange', forceShellRepaint);
+    return () => {
+      window.removeEventListener('focus', forceShellRepaint);
+      document.removeEventListener('visibilitychange', forceShellRepaint);
+    };
+  }, []);
+
   const openDealDeskWorkspace = async (
     destination: 'dashboard' | 'discover_startups' = 'dashboard'
   ) => {
