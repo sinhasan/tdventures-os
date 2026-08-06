@@ -1495,9 +1495,7 @@ export default function App() {
       );
       const launch =
         await createDealDeskWorkspaceLaunch(destination);
-      window.location.assign(
-        launch.launch_url
-      );
+      window.open(launch.launch_url, '_blank', 'noopener,noreferrer');
     } catch (error) {
       const message =
         error instanceof Error
