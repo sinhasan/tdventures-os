@@ -2031,7 +2031,7 @@ export default function App() {
 
                   <button
                     type="button"
-                    onClick={openDealDeskWorkspace}
+                    onClick={() => void openDealDeskWorkspace()}
                     title="Continue securely to Deal Desk"
                     className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex h-10 w-[150px] shrink-0 items-center justify-center rounded-md border border-[#D4FF00]/70 bg-[#D4FF00]/10 px-3 text-[10px] font-black text-[#D4FF00] shadow-[0_0_22px_rgba(212,255,0,0.24)] transition hover:bg-[#D4FF00] hover:!text-black"
                   >
