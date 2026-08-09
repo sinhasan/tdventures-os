@@ -618,6 +618,85 @@ const ConversionEntryGate = ({
   );
 };
 
+type ConversionPassPaywallProps = {
+  mode: 'entry' | 'analysis';
+  error: string;
+  checkoutStarting: boolean;
+  onActivate: () => void;
+  onContinue?: () => void;
+};
+
+const ConversionPassPaywall = ({
+  mode,
+  error,
+  checkoutStarting,
+  onActivate,
+  onContinue
+}: ConversionPassPaywallProps) => (
+  <div className="fixed inset-0 z-[140] flex items-center justify-center overflow-y-auto bg-[#020205]/95 px-6 py-10 text-white backdrop-blur-xl">
+    <div className="w-full max-w-2xl rounded-3xl border border-[#D4FF00]/45 bg-[#070A0F] p-8 shadow-[0_0_70px_rgba(212,255,0,0.16)]">
+      <div className="text-xs font-black uppercase tracking-[0.28em] text-[#D4FF00]">
+        TD Venture Conversion
+      </div>
+      <h1 className="mt-3 text-3xl font-black text-white">
+        {mode === 'entry'
+          ? 'Your 3 free Conversion entries are complete.'
+          : 'Continue with the Conversion Founder Pass.'}
+      </h1>
+      <p className="mt-3 text-sm leading-relaxed text-slate-400">
+        {mode === 'entry'
+          ? 'Activate Conversion to continue working on founder evidence, readiness and investor fit.'
+          : 'Your guarded preview remains separate from workspace entry. Activate the paid pass for continued AI analysis and reruns.'}
+      </p>
+
+      <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <div className="text-sm font-bold text-slate-300">Conversion Founder Pass</div>
+            <div className="mt-1 text-4xl font-black text-[#D4FF00]">
+              ₹4,999 <span className="text-base text-slate-400">+ GST</span>
+            </div>
+          </div>
+          <div className="text-right text-sm text-slate-300">
+            <div className="font-bold text-white">90 days</div>
+            <div>120 successful analyses</div>
+          </div>
+        </div>
+      </div>
+
+      {error && (
+        <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          {error}
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={onActivate}
+        disabled={checkoutStarting}
+        className="mt-6 w-full rounded-xl bg-[#D4FF00] px-5 py-3.5 text-sm font-black text-black transition hover:bg-[#E7FF66] disabled:cursor-wait disabled:opacity-60"
+      >
+        {checkoutStarting ? 'Opening secure checkout…' : 'Activate Conversion'}
+      </button>
+
+      {mode === 'analysis' && onContinue && (
+        <button
+          type="button"
+          onClick={onContinue}
+          className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-900/50 px-5 py-3 text-sm font-bold text-slate-300 transition hover:border-slate-500 hover:text-white"
+        >
+          Continue without another AI analysis
+        </button>
+      )}
+
+      <div className="mt-5 flex flex-wrap justify-center gap-4 text-xs font-semibold">
+        <a href="https://staging.tdventure.vc/app" className="text-slate-500 hover:text-white">Private Marketplace</a>
+        <a href="https://crm.tdventure.vc/login" className="text-slate-500 hover:text-white">Deal Desk</a>
+      </div>
+    </div>
+  </div>
+);
+
 const PREMIUM_THEMES = [
   { id: 'enterprise-blue', name: 'Deep Enterprise Blue', bg: '#0F172A', gradientStart: '#0F172A', gradientEnd: '#090D1A', accent: '#7C3AED', glowColor: 'rgba(124, 58, 237, 0.4)' },
   { id: 'electric-purple', name: 'Electric Purple Pulse', bg: '#0F172A', gradientStart: '#1E1B4B', gradientEnd: '#090514', accent: '#7C3AED', glowColor: 'rgba(124, 58, 237, 0.4)' },
@@ -661,6 +740,14 @@ export default function App() {
 
   const [tdventureSessionError, setTdventureSessionError] =
     useState('');
+  const [workspaceEntryState, setWorkspaceEntryState] =
+    useState<'idle' | 'checking' | 'allowed' | 'paywall' | 'error'>('idle');
+  const [workspaceEntryDetail, setWorkspaceEntryDetail] =
+    useState<import('./lib/conversionApi').ConversionWorkspaceEntryAccess | null>(null);
+  const [workspaceEntryError, setWorkspaceEntryError] = useState('');
+  const [conversionPaywallMode, setConversionPaywallMode] =
+    useState<'analysis' | null>(null);
+  const [conversionCheckoutStarting, setConversionCheckoutStarting] = useState(false);
 
   const workspaceScrollRef = useRef<HTMLDivElement | null>(null);
   const sidebarScrollRef = useRef<HTMLElement | null>(null);
@@ -916,6 +1003,100 @@ export default function App() {
     tdventureSessionChecked,
     tdventureUser
   ]);
+
+  useEffect(() => {
+    if (!tdventureSessionChecked || !tdventureUser) {
+      setWorkspaceEntryState('idle');
+      return;
+    }
+
+    let cancelled = false;
+
+    setWorkspaceEntryState('checking');
+    setWorkspaceEntryError('');
+
+    void import('./lib/conversionApi')
+      .then(async ({
+        claimConversionWorkspaceEntry,
+        getCurrentProfilePlane
+      }) => {
+        const profilePlane =
+          profilePlaneResolution || await getCurrentProfilePlane();
+
+        if (cancelled) return;
+
+        if (!profilePlaneResolution) {
+          setProfilePlaneResolution(profilePlane);
+        }
+
+        // Conversion Founder Pass is a founder/startup product. Investor and
+        // global-admin workspace views remain operational and are not metered
+        // against a founder's three free entries.
+        if (profilePlane.profile_type !== 'startup') {
+          setWorkspaceEntryDetail(null);
+          setWorkspaceEntryState('allowed');
+          return;
+        }
+
+        const identityKey = String(
+          profilePlane.profile_id || tdventureUser.id || tdventureUser.email
+        ).trim().toLowerCase();
+        const sessionKey = `tdv:conversion:workspace-entry:${identityKey}`;
+
+        try {
+          const cached = sessionStorage.getItem(sessionKey);
+          if (cached) {
+            const parsed = JSON.parse(cached) as import('./lib/conversionApi').ConversionWorkspaceEntryAccess;
+            const paidCacheIsCurrent =
+              parsed.access === 'paid' &&
+              (!parsed.paid_until || new Date(parsed.paid_until).getTime() > Date.now());
+
+            if (parsed.access === 'free_pass' || paidCacheIsCurrent) {
+              setWorkspaceEntryDetail(parsed);
+              setWorkspaceEntryState('allowed');
+              return;
+            }
+          }
+        } catch {
+          // Browser storage restrictions do not override server access.
+        }
+
+        const access = await claimConversionWorkspaceEntry();
+        if (cancelled) return;
+
+        setWorkspaceEntryDetail(access);
+
+        if (access.access === 'paywall') {
+          setWorkspaceEntryState('paywall');
+          return;
+        }
+
+        if (access.access === 'free_pass' || access.access === 'paid') {
+          try {
+            sessionStorage.setItem(sessionKey, JSON.stringify(access));
+          } catch {
+            // Access remains valid if sessionStorage is unavailable.
+          }
+          setWorkspaceEntryState('allowed');
+          return;
+        }
+
+        throw new Error('Conversion returned an unknown access state.');
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setWorkspaceEntryError(
+          error instanceof Error
+            ? error.message
+            : 'Conversion workspace access could not be checked.'
+        );
+        setWorkspaceEntryState('error');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [tdventureSessionChecked, tdventureUser?.id]);
 
   useEffect(() => {
     try {
@@ -1456,14 +1637,27 @@ export default function App() {
   ]);
 
   const openCanonicalPricing = () => {
-    const pricingWindow = window.open(
-      'https://staging.tdventure.vc/pricing',
-      '_blank',
-      'noopener,noreferrer'
-    );
+    setWorkspaceEntryError('');
+    setConversionPaywallMode('analysis');
+  };
 
-    if (!pricingWindow) {
-      window.location.assign('https://staging.tdventure.vc/pricing');
+  const startConversionCheckout = async () => {
+    if (conversionCheckoutStarting) return;
+
+    setConversionCheckoutStarting(true);
+    setWorkspaceEntryError('');
+
+    try {
+      const { startConversionFounderCheckout } =
+        await import('./lib/conversionApi');
+      await startConversionFounderCheckout();
+    } catch (error) {
+      setWorkspaceEntryError(
+        error instanceof Error
+          ? error.message
+          : 'Conversion checkout could not be started.'
+      );
+      setConversionCheckoutStarting(false);
     }
   };
 
@@ -1779,6 +1973,56 @@ export default function App() {
     );
   }
 
+  if (workspaceEntryState === 'idle' || workspaceEntryState === 'checking') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#020205] text-[#D4FF00]">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[#D4FF00]/20 border-t-[#D4FF00]" />
+          <div className="text-xs font-black uppercase tracking-[0.3em]">
+            Checking Conversion access
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (workspaceEntryState === 'error') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#020205] px-6 text-white">
+        <div className="w-full max-w-lg rounded-3xl border border-red-500/30 bg-[#070A0F] p-8 text-center">
+          <div className="text-xs font-black uppercase tracking-[0.28em] text-red-300">Conversion access check</div>
+          <h1 className="mt-3 text-2xl font-black">We could not verify workspace access</h1>
+          <p className="mt-3 text-sm text-slate-400">{workspaceEntryError}</p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="mt-6 rounded-xl bg-[#D4FF00] px-5 py-3 text-sm font-black text-black"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (workspaceEntryState === 'paywall') {
+    return (
+      <ConversionPassPaywall
+        mode="entry"
+        error={workspaceEntryError}
+        checkoutStarting={conversionCheckoutStarting}
+        onActivate={() => void startConversionCheckout()}
+      />
+    );
+  }
+
+  const conversionWorkspaceAccessLabel =
+    workspaceEntryDetail?.access === 'paid'
+      ? `Conversion Active${workspaceEntryDetail.paid_until ? ` · until ${new Date(workspaceEntryDetail.paid_until).toLocaleDateString()}` : ''}`
+      : workspaceEntryDetail?.access === 'free_pass'
+        ? `Free access · ${workspaceEntryDetail.entries_remaining ?? 0} entries remaining`
+        : '';
+
   const activeThemeObj = PREMIUM_THEMES.find(t => t.id === selectedTheme) || PREMIUM_THEMES[0];
 
   return (
@@ -1804,6 +2048,19 @@ export default function App() {
           <span className="text-xs font-bold text-white">{feedbackMsg.text}</span>
           <button onClick={() => setFeedbackMsg({ text: '', type: null })} className="text-slate-500 hover:text-white ml-2 text-[10px]">✕</button>
         </div>
+      )}
+
+      {conversionPaywallMode === 'analysis' && (
+        <ConversionPassPaywall
+          mode="analysis"
+          error={workspaceEntryError}
+          checkoutStarting={conversionCheckoutStarting}
+          onActivate={() => void startConversionCheckout()}
+          onContinue={() => {
+            setConversionPaywallMode(null);
+            setWorkspaceEntryError('');
+          }}
+        />
       )}
 
       <div className="relative z-10 flex h-full overflow-hidden">
@@ -1852,6 +2109,12 @@ export default function App() {
                   </span>
                 </div>
               </div>
+
+              {conversionWorkspaceAccessLabel && (
+                <div className="mx-4 mt-2 rounded-xl border border-[#D4FF00]/20 bg-[#D4FF00]/[0.05] px-3 py-2 text-[9px] font-bold text-[#D4FF00]">
+                  {conversionWorkspaceAccessLabel}
+                </div>
+              )}
 
             {/* Switch Role Dropdown (Exactly same features as screenshot dropdown) */}
             <div className="p-4 mx-4 mt-2 border-b border-slate-800/40">

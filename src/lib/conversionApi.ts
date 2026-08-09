@@ -110,6 +110,15 @@ export type ConversionWorkspaceAccess = {
   profile_id: string | null;
 };
 
+export type ConversionWorkspaceEntryAccess = {
+  access: 'free_pass' | 'paid' | 'paywall';
+  entries_used?: number;
+  entries_remaining?: number;
+  paid_until?: string;
+  pricing_url?: string;
+  source?: string;
+};
+
 export type ProfilePlaneStartupProfile = {
   id: string;
   email: string;
@@ -1124,6 +1133,13 @@ export async function freezeTDAdminAssessment(
   return result.claim_review;
 }
 
+export async function claimConversionWorkspaceEntry(): Promise<ConversionWorkspaceEntryAccess> {
+  return tdventureRequest<ConversionWorkspaceEntryAccess>(
+    '/conversion/access-check',
+    { method: 'GET' }
+  );
+}
+
 function createPaymentIdempotencyKey(): string {
   const randomPart = (
     typeof window !== 'undefined'
@@ -1199,7 +1215,7 @@ export async function startConversionFounderCheckout(): Promise<void> {
     {
       method: 'POST',
       body: JSON.stringify({
-        plan_code: 'conversion_founder_2999',
+        plan_code: 'conversion_founder_4999',
         subject_id: startupId,
         idempotency_key: createPaymentIdempotencyKey(),
         return_url: workspaceReturnUrl
