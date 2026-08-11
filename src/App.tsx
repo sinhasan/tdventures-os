@@ -1,3 +1,4 @@
+import { DealDeskGate0Pack } from './components/DealDeskGate0Pack';
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Activity, 
@@ -1421,7 +1422,7 @@ export default function App() {
         setConversionRunProgress(IDLE_CONVERSION_RUN);
         openCanonicalPricing();
         triggerToast(
-          'Opening TD Venture pricing in the Private Marketplace.',
+          'Opening the Conversion Founder Pass.',
           'info'
         );
         return;
@@ -1580,7 +1581,7 @@ export default function App() {
         setConversionRunProgress(IDLE_CONVERSION_RUN);
         openCanonicalPricing();
         triggerToast(
-          'Opening TD Venture pricing in the Private Marketplace.',
+          'Opening the Conversion Founder Pass.',
           'info'
         );
         return;
@@ -2798,7 +2799,7 @@ export default function App() {
                               .includes('admin qa')
                             ? 'Run Admin QA Full Review'
                             : 'Run Full Conversion Review'
-                          : 'View Pricing Plans'}
+                          : 'Activate Founder Pass'}
                       </button>
                     </div>
                   </section>
@@ -2865,7 +2866,7 @@ export default function App() {
                         {conversionV2Context?.analysis_access?.mode === 'preview'
                           ? 'Use Free AI Preview'
                           : conversionV2Context?.analysis_access?.mode === 'pricing_required'
-                            ? 'View Pricing Plans'
+                            ? 'Activate Founder Pass'
                             : conversionV2Context?.analysis_access?.label
                                 ?.toLowerCase()
                                 .includes('admin qa')
@@ -2932,7 +2933,8 @@ export default function App() {
                     </button>
                   )}
                 </div>
-              </section>
+                <DealDeskGate0Pack />
+</section>
             )}
 
             {activeTab === 'gdocs_hub' && <GoogleDocsTab addLog={addLog} triggerToast={triggerToast} />}

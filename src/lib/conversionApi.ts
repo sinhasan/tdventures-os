@@ -658,6 +658,19 @@ async function exchangeWorkspaceLaunchToken(rawLaunchToken: string): Promise<str
   }
 
   window.localStorage.setItem('tdventure_token', accessToken);
+
+  const launchContext = (data as any).launch_context || null;
+
+  if (launchContext) {
+    window.sessionStorage.setItem(
+      'tdventure_conversion_launch_context',
+      JSON.stringify(launchContext)
+    );
+  } else {
+    window.sessionStorage.removeItem(
+      'tdventure_conversion_launch_context'
+    );
+  }
   return accessToken;
 }
 
