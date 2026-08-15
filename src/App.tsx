@@ -807,6 +807,11 @@ export default function App() {
       ? 'Public workspace'
       : 'Session check';
 
+  const canSwitchWorkspaceRole =
+    String(tdventureUser?.role || '')
+      .trim()
+      .toLowerCase() === 'admin';
+
   const tdventureAccountInitials =
     tdventureAccountName
       .split(' ')
@@ -1806,6 +1811,7 @@ export default function App() {
   };
 
   const handleRoleChange = (selectedVal: string) => {
+    if (!canSwitchWorkspaceRole) return;
     let mappedRole: 'founder' | 'investor' | 'admin' = 'founder';
     if (selectedVal === 'Startup Founder') mappedRole = 'founder';
     else if (selectedVal === 'Investor / VC' || selectedVal === 'Investor/VC') mappedRole = 'investor';
@@ -2117,29 +2123,34 @@ export default function App() {
                 </div>
               )}
 
-            {/* Switch Role Dropdown (Exactly same features as screenshot dropdown) */}
+            {/* Common Auth owns the user's role. Admins retain a QA-only workspace switcher. */}
             <div className="p-4 mx-4 mt-2 border-b border-slate-800/40">
               <label className="text-[10px] font-mono tracking-widest uppercase text-slate-400 block mb-1.5 font-bold">Workspace View</label>
-              <div className="relative">
-                <select 
-                  id="role_switch_select"
-                  value={
-                    role === 'founder' ? 'Startup Founder' :
-                    role === 'investor' ? 'Investor / VC' : 'Admin'
-                  }
-                  onChange={(e) => handleRoleChange(e.target.value)}
-                  className="w-full bg-[#111122] border border-slate-700 text-white rounded-xl py-2 px-3 text-xs font-medium cursor-pointer shadow-sm focus:outline-none focus:ring-1 focus:ring-purple-500 appearance-none bg-no-repeat"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>")`,
-                    backgroundPosition: 'calc(100% - 10px) center',
-                    backgroundSize: '16px'
-                  }}
-                >
-                  <option value="Startup Founder">Startup Founder</option>
-                  <option value="Investor / VC">Investor/VC</option>
-                  <option value="Admin">Admin</option>
-                </select>
-              </div>
+              {canSwitchWorkspaceRole ? (
+                <div className="relative">
+                  <select
+                    id="role_switch_select"
+                    value={
+                      role === 'founder' ? 'Startup Founder' :
+                      role === 'investor' ? 'Investor / VC' : 'Admin'
+                    }
+                    onChange={(e) => handleRoleChange(e.target.value)}
+                    className="w-full bg-[#111122] border border-slate-700 text-white rounded-xl py-2 px-3 text-xs font-medium cursor-pointer shadow-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  >
+                    <option value="Startup Founder">Startup Founder</option>
+                    <option value="Investor / VC">Investor/VC</option>
+                    <option value="Admin">Admin</option>
+                  </select>
+                </div>
+              ) : (
+                <div className="w-full rounded-xl border border-slate-800 bg-[#0B1020] px-3 py-2 text-xs font-semibold text-slate-300">
+                  {role === 'founder'
+                    ? 'Startup Founder'
+                    : role === 'investor'
+                      ? 'Investor / VC'
+                      : 'Admin'}
+                </div>
+              )}
             </div>
 
             {/* Dynamic tabs list */}
@@ -3214,18 +3225,28 @@ export default function App() {
          <span className="text-[#D4AF37] text-xl">🎯</span>
           <span>AI Intelligence</span>
         </button>
-        <select 
-          value={
-            role === 'founder' ? 'Startup Founder' :
-            role === 'investor' ? 'Investor / VC' : 'Admin'
-          }
-          onChange={(e) => handleRoleChange(e.target.value)}
-          className="bg-slate-900 text-white rounded text-[11px] py-1 px-2 border border-slate-800"
-        >
-          <option value="Startup Founder">Founder</option>
-          <option value="Investor / VC">Investor</option>
-          <option value="Admin">Admin</option>
-        </select>
+        {canSwitchWorkspaceRole ? (
+          <select
+            value={
+              role === 'founder' ? 'Startup Founder' :
+              role === 'investor' ? 'Investor / VC' : 'Admin'
+            }
+            onChange={(e) => handleRoleChange(e.target.value)}
+            className="bg-slate-900 text-white rounded text-[11px] py-1 px-2 border border-slate-800"
+          >
+            <option value="Startup Founder">Founder</option>
+            <option value="Investor / VC">Investor</option>
+            <option value="Admin">Admin</option>
+          </select>
+        ) : (
+          <div className="rounded border border-slate-800 bg-slate-900 px-2 py-1 text-[11px] font-semibold text-slate-300">
+            {role === 'founder'
+              ? 'Founder'
+              : role === 'investor'
+                ? 'Investor'
+                : 'Admin'}
+          </div>
+        )}
       </div>
 
       {/* PITCH ANALYZER GLOBAL MODALS */}
