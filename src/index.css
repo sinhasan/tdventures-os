@@ -416,3 +416,83 @@ button,
   background: var(--tdv-lime);
   color: var(--tdv-ink);
 }
+
+
+/* TDV CONVERSION AWAITING SIGNAL NUDGE */
+.tdv-awaiting-ticker {
+  position: relative;
+  z-index: 25;
+  flex: 0 0 auto;
+  width: 100%;
+  overflow: hidden;
+  border-bottom:
+    1px solid rgba(251, 191, 36, 0.28);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(120, 53, 15, 0.18),
+      rgba(245, 158, 11, 0.09),
+      rgba(120, 53, 15, 0.18)
+    );
+  color: #fde68a;
+}
+
+.tdv-awaiting-ticker-track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  animation:
+    tdv-awaiting-marquee 22s linear infinite;
+  will-change: transform;
+}
+
+.tdv-awaiting-ticker-item {
+  display: inline-block;
+  padding: 7px 5rem 7px 1rem;
+  font-family:
+    "JetBrains Mono",
+    ui-monospace,
+    monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.tdv-awaiting-pulse {
+  color: #fbbf24 !important;
+  animation:
+    tdv-awaiting-soft-pulse
+    1.35s ease-in-out infinite;
+}
+
+@keyframes tdv-awaiting-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes tdv-awaiting-soft-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    text-shadow:
+      0 0 8px rgba(251, 191, 36, 0.7);
+  }
+
+  50% {
+    opacity: 0.35;
+    text-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tdv-awaiting-ticker-track,
+  .tdv-awaiting-pulse {
+    animation: none !important;
+  }
+}

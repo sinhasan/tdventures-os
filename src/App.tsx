@@ -2198,6 +2198,26 @@ export default function App() {
         {/* Core workspace container */}
         <main className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-[#030308]/60">
           
+          {/* TDV CONVERSION AWAITING SIGNAL NUDGE */}
+          <div
+            className="tdv-awaiting-ticker"
+            role="status"
+            aria-label="Complete APPLY to strengthen your leading signals"
+          >
+            <div className="tdv-awaiting-ticker-track">
+              <span className="tdv-awaiting-ticker-item">
+                Change Leading Signals that are <strong className="tdv-awaiting-pulse">“Awaiting”</strong> your input — complete the APPLY form on the TD Venture homepage.
+              </span>
+
+              <span
+                className="tdv-awaiting-ticker-item"
+                aria-hidden="true"
+              >
+                Change Leading Signals that are <strong className="tdv-awaiting-pulse">“Awaiting”</strong> your input — complete the APPLY form on the TD Venture homepage.
+              </span>
+            </div>
+          </div>
+
           {/* Top header telemetry panel */}
           <header className="h-20 border-b border-slate-800/50 bg-[#0F172A]/30 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-20">
             <div className="flex items-center gap-4">
@@ -2529,7 +2549,7 @@ export default function App() {
                       ].map((item, idx) => (
                         <div key={idx} className="p-4 rounded-xl border border-slate-800 bg-[#0c1222]/70 space-y-1.5 hover:border-slate-700 transition-colors">
                           <span className="text-[9px] text-slate-400 block font-bold leading-none">{item.title}</span>
-                          <span className={`text-xl font-extrabold block tracking-tight ${item.color}`}>{item.val}</span>
+                          <span className={`text-xl font-extrabold block tracking-tight ${item.color} ${String(item.val).toLowerCase().includes('awaiting') ? 'tdv-awaiting-pulse' : ''}`}>{item.val}</span>
                           <span className="text-[8px] text-slate-500 block font-mono">{item.text}</span>
                         </div>
                       ))}
