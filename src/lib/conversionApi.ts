@@ -919,6 +919,185 @@ export async function checkConversionHealth(): Promise<ConversionHealth> {
   return response.json() as Promise<ConversionHealth>;
 }
 
+
+
+
+export type InvestorConversionStartup = {
+  startup_id: string;
+  startup_name?: string | null;
+  sector?: string | null;
+  stage?: string | null;
+  city?: string | null;
+  country?: string | null;
+  match_score?: number | null;
+  status?: string | null;
+  revealed: boolean;
+};
+
+export type InvestorSafeConversionSignal = {
+  id: string;
+  startup_id: string;
+  signal_version: number;
+  confidence_level?: string | null;
+  risk_level?: string | null;
+
+  scores?: Record<string, unknown> | null;
+
+  leading_signals?: Array<{
+    signal?: string;
+    strength?: string;
+    evidence_status?: string;
+    [key: string]: unknown;
+  }> | null;
+
+  risk_flags?: string[] | null;
+
+  contradictions?: Array<
+    Record<string, unknown>
+  > | null;
+
+  missing_evidence?: Array<
+    Record<string, unknown>
+  > | null;
+
+  investment_thesis?: string | null;
+  investor_summary?: string | null;
+  next_best_action?: string | null;
+  deal_desk_recommendation?: string | null;
+
+  created_at?: string | null;
+  updated_at?: string | null;
+};
+
+export type InvestorSafeSignalResponse = {
+  ok: boolean;
+  startup_id: string;
+
+  match: {
+    match_score?: number | null;
+    status?: string | null;
+  } | null;
+
+  signal: InvestorSafeConversionSignal | null;
+
+  privacy: {
+    founder_private_workspace_exposed: false;
+    raw_evidence_exposed: false;
+    contact_details_exposed: false;
+  };
+};
+
+export function getInvestorConversionStartups():
+  Promise<{
+    ok: boolean;
+    startups: InvestorConversionStartup[];
+    count: number;
+  }> {
+
+  return conversionRequest<{
+    ok: boolean;
+    startups: InvestorConversionStartup[];
+    count: number;
+  }>(
+    '/investor/startups',
+    { method: 'GET' }
+  );
+}
+
+export function getInvestorStartupSignal(
+  startupId: string
+): Promise<InvestorSafeSignalResponse> {
+
+  return conversionRequest<InvestorSafeSignalResponse>(
+    `/investor/startups/${encodeURIComponent(
+      startupId
+    )}/signal`,
+    { method: 'GET' }
+  );
+}
+
+
+export type InvestorConversionContextResponse = {
+  ok: boolean;
+
+  profile: {
+    id: string;
+    user_id?: string | null;
+    full_name?: string | null;
+    email?: string | null;
+    firm?: string | null;
+    website?: string | null;
+    linkedin_profile?: string | null;
+    city?: string | null;
+    country?: string | null;
+
+    sector?: string | null;
+    stage?: string | null;
+    geography?: string | null;
+    investment_thesis?: string | null;
+
+    ticket_min_usd?: string | number | null;
+    ticket_max_usd?: string | number | null;
+    check_size_range?: string | null;
+
+    investor_type?: string | null;
+    investor_category?: string | null;
+
+    is_verified?: boolean | null;
+    verified_at?: string | null;
+  };
+
+  evidence: {
+    id?: string | null;
+    rubric_version?: string | null;
+    revision?: number | null;
+    source?: string | null;
+
+    answers?: Record<string, string>;
+
+    completion_count?: number;
+    current_card?: number;
+    status?: string | null;
+    submitted_at?: string | null;
+    updated_at?: string | null;
+  };
+};
+
+export function getInvestorConversionContext():
+  Promise<InvestorConversionContextResponse> {
+
+  return conversionRequest<InvestorConversionContextResponse>(
+    '/investor/context',
+    { method: 'GET' }
+  );
+}
+
+
+export type CanonicalAdminUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  email_verified: string;
+};
+
+export function getCanonicalAdminUsers():
+  Promise<{
+    ok: boolean;
+    admins: CanonicalAdminUser[];
+    count: number;
+  }> {
+  return conversionRequest<{
+    ok: boolean;
+    admins: CanonicalAdminUser[];
+    count: number;
+  }>(
+    '/admin/users',
+    { method: 'GET' }
+  );
+}
+
+
 export function getCurrentConversionSignal(
   startupId: string
 ): Promise<ConversionSignalResponse> {

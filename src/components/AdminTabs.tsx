@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Users, 
   Cpu, 
@@ -14,128 +14,158 @@ import {
   Database
 } from 'lucide-react';
 import { ROLE_PERMISSIONS_TABLE, SOC2_RULES } from '../data';
+import {
+  getCanonicalAdminUsers,
+  type CanonicalAdminUser
+} from '../lib/conversionApi';
 
 // 1. USER SEATS MANAGEMENT
-export function UserManagementTab({ triggerToast, addLog }: { triggerToast: Function, addLog: Function }) {
-  const [operators, setOperators] = useState([
-    { id: '1', email: 'vx@tdventures.in', name: 'Venture X TD Ventures', access: 'Super-User', seats: 'Root Owner', state: 'Active' },
-    { id: '2', email: 'invest@tdventures.in', name: 'Investor TD Ventures', access: 'Read/Write', seats: 'Invest TD Ventures Seat', state: 'Active' },
-    { id: '3', email: 'pitch@tdventures.in', name: 'Pitch TD Ventures', access: 'Read Only', seats: 'Pitch TD Ventures Seat', state: 'Active' }
-  ]);
-  const [newEmail, setNewEmail] = useState('');
-  const [newName, setNewName] = useState('');
+export function UserManagementTab({
+  triggerToast: _triggerToast,
+  addLog: _addLog
+}: {
+  triggerToast: Function;
+  addLog: Function;
+}) {
+  const [admins, setAdmins] =
+    useState<CanonicalAdminUser[]>([]);
 
-  const handleAddSeat = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newEmail || !newName) return;
-    const item = {
-      id: Date.now().toString(),
-      email: newEmail,
-      name: newName,
-      access: 'Read/Write',
-      seats: 'Standard Team Seat',
-      state: 'Active'
-    };
-    setOperators(prev => [...prev, item]);
-    addLog('Orchestrator', `Provisioned standard seat subscription permission for: ${newEmail}`);
-    triggerToast(`Provisioned team seat for ${newName}!`, 'success');
-    setNewEmail('');
-    setNewName('');
-  };
+  const [loading, setLoading] =
+    useState(true);
 
-  const handleRevokeSeat = (id: string, name: string) => {
-    if (id === '1') {
-      triggerToast('Root Workspace privileges cannot be revoked!', 'warn');
-      return;
+  const [error, setError] =
+    useState('');
+
+  async function loadAdmins() {
+    setLoading(true);
+    setError('');
+
+    try {
+      const result =
+        await getCanonicalAdminUsers();
+
+      setAdmins(
+        Array.isArray(result.admins)
+          ? result.admins
+          : []
+      );
+    } catch (loadError) {
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : 'Canonical administrators could not be loaded.'
+      );
+    } finally {
+      setLoading(false);
     }
-    setOperators(prev => prev.filter(x => x.id !== id));
-    addLog('Orchestrator', `Revoked workspace access seat for developer ID ${id}`);
-    triggerToast(`Revoked access privileges for ${name}`, 'info');
-  };
+  }
+
+  useEffect(() => {
+    void loadAdmins();
+  }, []);
 
   return (
     <div className="space-y-6">
+
       <div className="p-6 rounded-2xl border border-slate-800 bg-[#0F172A]/70 flex justify-between items-center flex-wrap gap-4">
+
         <div>
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Users className="text-purple-400 w-5 h-5" /> Team Seat Allocator Registry
+            <Users className="text-purple-400 w-5 h-5" />
+            Canonical Administrator Registry
           </h3>
-          <p className="text-xs text-slate-400">Add or revoke workspace permission flags for team compliance scouts and VC analysts.</p>
+
+          <p className="mt-1 text-xs text-slate-400">
+            Current TD Venture administrators from Common Auth.
+            This registry is read-only.
+          </p>
         </div>
 
-        <form onSubmit={handleAddSeat} className="flex gap-2 text-xs flex-wrap">
-          <input 
-            type="text"
-            required
-            placeholder="Operator Name..."
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            className="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-purple-500"
-          />
-          <input 
-            type="email"
-            required
-            placeholder="Operator email Address..."
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-            className="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-purple-500"
-          />
-          <button 
-           type="submit"
-           style={{ backgroundColor: '#D4FF00', color: '#000000', fontWeight: 'bold' }}
-           className="px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5 hover:opacity-80"
-          >
-           <Plus className="w-3.5 h-3.5" /> Invite Analyst
-          </button>
-        </form>
+        <button
+          type="button"
+          onClick={() => void loadAdmins()}
+          disabled={loading}
+          className="rounded-lg border border-slate-700 px-4 py-2 text-xs font-bold text-slate-300 hover:border-[#D4FF00]/60 hover:text-[#D4FF00] disabled:opacity-40"
+        >
+          {loading ? 'Refreshing…' : 'Refresh'}
+        </button>
+
       </div>
 
+      {error && (
+        <div className="rounded-xl border border-rose-500/30 bg-rose-500/5 p-4 text-xs text-rose-300">
+          {error}
+        </div>
+      )}
+
       <div className="overflow-x-auto rounded-xl border border-slate-800">
+
         <table className="w-full text-left text-xs bg-[#0c1222]/80">
+
           <thead className="bg-[#0e1628] text-slate-400 uppercase font-mono text-[9px] border-b border-slate-800">
             <tr>
               <th className="p-4">Name</th>
               <th className="p-4">Email</th>
-              <th className="p-4">License Type</th>
-              <th className="p-4">Authorization Privilege</th>
-              <th className="p-4">State</th>
-              <th className="p-4 text-right">Actions</th>
+              <th className="p-4">Role</th>
+              <th className="p-4">Verification</th>
+              <th className="p-4">Source</th>
             </tr>
           </thead>
+
           <tbody className="divide-y divide-slate-800 text-slate-300">
-            {operators.map(item => (
-              <tr key={item.id} className="hover:bg-slate-900/40">
-                <td className="p-4 font-bold text-white">{item.name}</td>
-                <td className="p-4 font-mono select-all text-slate-400">{item.email}</td>
-                <td className="p-4">{item.seats}</td>
+
+            {!loading &&
+             !error &&
+             admins.length === 0 && (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="p-6 text-center text-slate-500"
+                >
+                  No canonical administrators returned.
+                </td>
+              </tr>
+            )}
+
+            {admins.map((item) => (
+              <tr
+                key={item.id}
+                className="hover:bg-slate-900/40"
+              >
+                <td className="p-4 font-bold text-white">
+                  {item.name || 'Administrator'}
+                </td>
+
+                <td className="p-4 font-mono text-slate-400">
+                  {item.email}
+                </td>
+
                 <td className="p-4">
-                  <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${
-                    item.access === 'Super-User' ? 'bg-purple-500/15 text-purple-400' : 'bg-slate-800 text-slate-400'
-                  }`}>
-                    {item.access}
+                  <span className="rounded bg-purple-500/15 px-2 py-0.5 text-[10px] font-bold uppercase text-purple-300">
+                    {item.role || 'admin'}
                   </span>
                 </td>
+
                 <td className="p-4">
-                  <span className="inline-flex items-center gap-1 text-[10px] text-green-400">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" /> {item.state}
-                  </span>
+                  {String(item.email_verified).toLowerCase() === 'true'
+                    ? 'Verified'
+                    : 'Not verified'}
                 </td>
-                <td className="p-4 text-right">
-                  <button 
-                    onClick={() => handleRevokeSeat(item.id, item.name)}
-                    className="text-rose-400 hover:text-rose-300 hover:underline font-mono text-[10px] uppercase font-bold"
-                  >
-                    Revoke privileges
-                  </button>
+
+                <td className="p-4 text-slate-400">
+                  Common Auth · tdventure_prod
                 </td>
               </tr>
             ))}
+
           </tbody>
         </table>
       </div>
+
     </div>
   );
 }
+
 
 // 2. AI MULTI-GATEWAY MONITORING
 export function AIMonitoringTab({ selectedModel }: { selectedModel: string }) {

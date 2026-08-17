@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ArrowUpRight,
   BrainCircuit,
@@ -13,6 +13,18 @@ import {
   Target,
   Workflow
 } from 'lucide-react';
+import {
+  getInvestorConversionContext,
+  getInvestorConversionStartups,
+  getInvestorStartupSignal,
+  type InvestorConversionContextResponse,
+  type InvestorConversionStartup,
+  type InvestorSafeSignalResponse
+} from '../lib/conversionApi';
+
+import type {
+  ConversionV2Analysis
+} from '../lib/conversionApi';
 
 export type InvestorDecisionView =
   | 'dashboard'
@@ -25,6 +37,7 @@ type InvestorDecisionWorkspaceProps = {
   view: InvestorDecisionView;
   accountName: string;
   investorProfileLinked: boolean;
+  analysis?: ConversionV2Analysis | null;
   onDiscoverStartups: () => void;
   onOpenDealDesk: () => void;
   onOpenPricing: () => void;
@@ -32,6 +45,7 @@ type InvestorDecisionWorkspaceProps = {
 
 const MARKETPLACE_URL =
   'https://staging.tdventure.vc/app';
+
 const INVESTOR_APPLY_URL =
   'https://staging.tdventure.vc/signup/investor';
 
@@ -68,59 +82,115 @@ const pillars = [
 
 const viewCopy: Record<
   InvestorDecisionView,
-  { eyebrow: string; title: string; body: string }
+  {
+    eyebrow: string;
+    title: string;
+    body: string;
+  }
 > = {
   dashboard: {
     eyebrow: 'Investor Decision Intelligence',
-    title: 'Move from startup discovery to evidence-backed conviction.',
+    title:
+      'Move from startup discovery to evidence-backed conviction.',
     body:
-      'Use Conversion to understand the evidence. Use Deal Desk to compare, decide and execute. Founder, AI and TD Admin assessments remain independent so your judgment stays sovereign.'
+      'Use Conversion to understand the evidence. Founder, AI and TD Admin assessments remain independent so investor judgment stays sovereign.'
   },
+
   investor_discover: {
     eyebrow: '01 · Discover',
-    title: 'Enter through real startup records—not a demo portfolio.',
+    title:
+      'Enter through real startup records — not a demo portfolio.',
     body:
-      'Open the startup universe in Deal Desk, filter the available records and select a company before going deeper into its evidence.'
+      'Discover startups through the Private Marketplace, then use Conversion to understand the evidence behind the opportunity.'
   },
+
   investor_matches: {
     eyebrow: '02 · Compare',
-    title: 'Turn broad matching into a focused decision queue.',
+    title:
+      'Turn broad matching into a focused decision queue.',
     body:
-      'Match Fit is the starting point. Conversion evidence, AI interpretation and your own judgment determine which startups deserve attention.'
+      'Match Fit is the starting point. Conversion evidence, investor fit, risk and your own judgment determine which startups deserve attention.'
   },
+
   investor_framework: {
     eyebrow: '03 · Evaluate',
-    title: 'Use consistent questions without surrendering investor instinct.',
+    title:
+      'Use consistent questions without surrendering investor instinct.',
     body:
-      'The four diligence pillars create guardrails. They do not dictate an investment decision, and they never merge Founder, AI or TD Admin opinions.'
+      'The diligence framework creates guardrails. Founder, AI and TD Admin assessments remain distinct and are never merged into an artificial investment verdict.'
   },
+
   investor_execution: {
     eyebrow: '04 · Execute',
-    title: 'Move conviction into an accountable Deal Desk workflow.',
+    title:
+      'Move conviction into an accountable Deal Desk workflow.',
     body:
-      'Start an opportunity, retain private judgment, track the next action and progress from interest through diligence to a funded outcome.'
+      'Once an opportunity deserves engagement, Deal Desk carries it through outreach, meetings, diligence, decision and funding.'
   }
 };
 
+function scoreText(
+  value: number | null | undefined
+): string {
+  return typeof value === 'number'
+    ? `${Math.round(value)} / 100`
+    : 'Awaiting signal';
+}
+
+function verificationText(
+  analysis?: ConversionV2Analysis | null
+): string {
+  const verification =
+    analysis?.profile_verification;
+
+  if (!verification) {
+    return 'Not assessed';
+  }
+
+  if (
+    verification.status ===
+    'profile_verified'
+  ) {
+    return 'TDV verified';
+  }
+
+  if (
+    verification.status ===
+    'verification_declined'
+  ) {
+    return 'Verification declined';
+  }
+
+  return 'Not verified';
+}
+
+function riskTone(
+  risk?: string | null
+): string {
+  if (risk === 'Low') {
+    return 'text-emerald-300';
+  }
+
+  if (risk === 'High') {
+    return 'text-rose-300';
+  }
+
+  return 'text-amber-300';
+}
+
 function ExternalLink({
   href,
-  children,
-  primary = false
+  children
 }: {
   href: string;
   children: React.ReactNode;
-  primary?: boolean;
 }) {
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={
-        primary
-          ? 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#D4FF00] px-5 text-xs font-black uppercase tracking-wider text-slate-950 shadow-[0_0_24px_rgba(212,255,0,0.22)] transition hover:brightness-110'
-          : 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-950/70 px-5 text-xs font-black uppercase tracking-wider text-slate-200 transition hover:border-[#D4FF00]/60 hover:text-[#D4FF00]'
-      }
+      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-950/70 px-5 text-xs font-black uppercase tracking-wider text-slate-200 transition hover:border-[#D4FF00]/60 hover:text-[#D4FF00]"
     >
       {children}
       <ArrowUpRight className="h-4 w-4" />
@@ -128,31 +198,322 @@ function ExternalLink({
   );
 }
 
+function MetricCard({
+  label,
+  value,
+  detail,
+  tone = 'text-[#D4FF00]'
+}: {
+  label: string;
+  value: string;
+  detail: string;
+  tone?: string;
+}) {
+  return (
+    <article className="rounded-2xl border border-slate-800 bg-[#0c1222]/80 p-5">
+      <p className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-slate-500">
+        {label}
+      </p>
+
+      <p
+        className={`mt-3 text-xl font-black ${tone}`}
+      >
+        {value}
+      </p>
+
+      <p className="mt-2 text-xs leading-5 text-slate-400">
+        {detail}
+      </p>
+    </article>
+  );
+}
+
 export function InvestorDecisionWorkspace({
   view,
   accountName,
   investorProfileLinked,
+  analysis,
   onDiscoverStartups,
   onOpenDealDesk,
   onOpenPricing
 }: InvestorDecisionWorkspaceProps) {
   const copy = viewCopy[view];
 
+  const [investorContext, setInvestorContext] =
+    useState<InvestorConversionContextResponse | null>(null);
+
+  const [investorContextLoading, setInvestorContextLoading] =
+    useState(true);
+
+  const [investorContextError, setInvestorContextError] =
+    useState('');
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadInvestorContext() {
+      setInvestorContextLoading(true);
+      setInvestorContextError('');
+
+      try {
+        const result =
+          await getInvestorConversionContext();
+
+        if (mounted) {
+          setInvestorContext(result);
+        }
+      } catch (error) {
+        if (mounted) {
+          setInvestorContextError(
+            error instanceof Error
+              ? error.message
+              : 'Investor mandate could not be loaded.'
+          );
+        }
+      } finally {
+        if (mounted) {
+          setInvestorContextLoading(false);
+        }
+      }
+    }
+
+    void loadInvestorContext();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const mandateProfile =
+    investorContext?.profile;
+
+  const mandateAnswers =
+    investorContext?.evidence?.answers || {};
+
+  const [investorStartups, setInvestorStartups] =
+    useState<InvestorConversionStartup[]>([]);
+
+  const [
+    investorStartupsLoading,
+    setInvestorStartupsLoading
+  ] = useState(true);
+
+  const [
+    investorStartupsError,
+    setInvestorStartupsError
+  ] = useState('');
+
+  const [
+    selectedInvestorStartupId,
+    setSelectedInvestorStartupId
+  ] = useState('');
+
+  const [
+    investorStartupSignal,
+    setInvestorStartupSignal
+  ] = useState<InvestorSafeSignalResponse | null>(null);
+
+  const [
+    investorSignalLoading,
+    setInvestorSignalLoading
+  ] = useState(false);
+
+  const [
+    investorSignalError,
+    setInvestorSignalError
+  ] = useState('');
+
+  async function loadInvestorStartups() {
+    setInvestorStartupsLoading(true);
+    setInvestorStartupsError('');
+
+    try {
+      const result =
+        await getInvestorConversionStartups();
+
+      const rows =
+        Array.isArray(result.startups)
+          ? result.startups
+          : [];
+
+      setInvestorStartups(rows);
+
+      setSelectedInvestorStartupId(
+        current => {
+          if (
+            current &&
+            rows.some(
+              item =>
+                item.startup_id === current
+            )
+          ) {
+            return current;
+          }
+
+          return rows[0]?.startup_id || '';
+        }
+      );
+    } catch (error) {
+      setInvestorStartupsError(
+        error instanceof Error
+          ? error.message
+          : 'Investor startup queue could not be loaded.'
+      );
+    } finally {
+      setInvestorStartupsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void loadInvestorStartups();
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (!selectedInvestorStartupId) {
+      setInvestorStartupSignal(null);
+      setInvestorSignalError('');
+      return;
+    }
+
+    async function loadSignal() {
+      setInvestorSignalLoading(true);
+      setInvestorSignalError('');
+
+      try {
+        const result =
+          await getInvestorStartupSignal(
+            selectedInvestorStartupId
+          );
+
+        if (mounted) {
+          setInvestorStartupSignal(result);
+        }
+      } catch (error) {
+        if (mounted) {
+          setInvestorStartupSignal(null);
+
+          setInvestorSignalError(
+            error instanceof Error
+              ? error.message
+              : 'Conversion signal could not be loaded.'
+          );
+        }
+      } finally {
+        if (mounted) {
+          setInvestorSignalLoading(false);
+        }
+      }
+    }
+
+    void loadSignal();
+
+    return () => {
+      mounted = false;
+    };
+  }, [selectedInvestorStartupId]);
+
+  const selectedInvestorStartup =
+    investorStartups.find(
+      item =>
+        item.startup_id ===
+        selectedInvestorStartupId
+    ) || null;
+
+  const currentInvestorSignal =
+    investorStartupSignal?.signal || null;
+
+  const currentInvestorScores =
+    currentInvestorSignal?.scores || {};
+
+  const decisionScore = (
+    key: string
+  ) => {
+    const value =
+      currentInvestorScores[key];
+
+    if (
+      typeof value === 'number' &&
+      Number.isFinite(value)
+    ) {
+      return `${Math.round(value)}/100`;
+    }
+
+    if (
+      typeof value === 'string' &&
+      value.trim()
+    ) {
+      return value;
+    }
+
+    return '—';
+  };
+
+  const mandateValue = (
+    key: string,
+    fallback?: string | number | null
+  ) => {
+    const value =
+      mandateAnswers[key] ??
+      fallback ??
+      '';
+
+    return String(value).trim() || 'Not provided';
+  };
+
+  const mandateUsd = (
+    value?: string | number | null
+  ) => {
+    if (
+      value === undefined ||
+      value === null ||
+      value === ''
+    ) {
+      return 'Not provided';
+    }
+
+    const numeric = Number(
+      String(value).replace(/,/g, '')
+    );
+
+    if (!Number.isFinite(numeric)) {
+      return String(value);
+    }
+
+    return `USD ${numeric.toLocaleString()}`;
+  };
+  const hasSignal = Boolean(analysis);
+
+  const tdAdminScore =
+    analysis?.profile_verification
+      ?.td_verified_score ??
+    analysis?.profile_verification
+      ?.td_admin_score ??
+    null;
+
   return (
     <div className="space-y-5 animate-fade-in">
+
+      {/* HERO */}
       <section className="relative overflow-hidden rounded-3xl border border-[#D4FF00]/30 bg-[#080d16] p-6 shadow-2xl">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_15%,rgba(212,255,0,0.11),transparent_30%),radial-gradient(circle_at_12%_85%,rgba(34,211,238,0.08),transparent_32%)]" />
+
         <div className="relative grid gap-6 xl:grid-cols-[1.4fr_0.6fr]">
+
           <div>
             <p className="text-[10px] font-mono font-black uppercase tracking-[0.32em] text-[#D4FF00]">
               {copy.eyebrow}
             </p>
+
             <h1 className="mt-3 max-w-4xl text-3xl font-black leading-tight text-white md:text-4xl">
               {copy.title}
             </h1>
+
             <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300">
               {copy.body}
             </p>
+
             <div className="mt-6 flex flex-wrap gap-3">
               <button
                 type="button"
@@ -162,6 +523,7 @@ export function InvestorDecisionWorkspace({
                 Discover Startups
                 <ArrowUpRight className="h-4 w-4" />
               </button>
+
               <button
                 type="button"
                 onClick={onOpenDealDesk}
@@ -170,41 +532,52 @@ export function InvestorDecisionWorkspace({
                 Open Deal Desk
                 <Workflow className="h-4 w-4" />
               </button>
-              <ExternalLink href={MARKETPLACE_URL}>
+
+              <ExternalLink
+                href={MARKETPLACE_URL}
+              >
                 Private Marketplace
               </ExternalLink>
             </div>
           </div>
 
+          {/* INVESTOR IDENTITY */}
           <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
             <p className="text-[10px] font-mono font-black uppercase tracking-[0.24em] text-slate-500">
               Investor access
             </p>
+
             <div className="mt-4 flex items-start gap-3">
               {investorProfileLinked ? (
                 <CheckCircle2 className="mt-0.5 h-5 w-5 text-[#D4FF00]" />
               ) : (
                 <ShieldCheck className="mt-0.5 h-5 w-5 text-amber-300" />
               )}
+
               <div>
                 <p className="font-black text-white">
                   {investorProfileLinked
                     ? 'Investor mandate linked'
                     : 'Complete your investor mandate'}
                 </p>
+
                 <p className="mt-1 text-xs leading-5 text-slate-400">
                   {investorProfileLinked
-                    ? `${accountName}, your profile can carry sector, stage, geography and ticket preferences into matching.`
+                    ? `${accountName}, your sector, stage, geography and ticket preferences can follow you into matching and evaluation.`
                     : 'A complete investor profile improves startup ranking and creates a useful decision queue.'}
                 </p>
               </div>
             </div>
+
             <div className="mt-5 flex flex-wrap gap-2">
               {!investorProfileLinked && (
-                <ExternalLink href={INVESTOR_APPLY_URL}>
+                <ExternalLink
+                  href={INVESTOR_APPLY_URL}
+                >
                   Complete Investor Profile
                 </ExternalLink>
               )}
+
               <button
                 type="button"
                 onClick={onOpenPricing}
@@ -217,72 +590,1058 @@ export function InvestorDecisionWorkspace({
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        {[
-          {
-            label: 'Independent evidence',
-            value: 'Founder · AI · TD Admin',
-            detail: 'Parallel assessments are displayed independently.',
-            icon: GitCompareArrows,
-            color: 'text-cyan-300'
-          },
-          {
-            label: 'Qualification guardrail',
-            value: '66 / 100',
-            detail: 'Automatic threshold; human judgment can still advance a match.',
-            icon: BrainCircuit,
-            color: 'text-[#D4FF00]'
-          },
-          {
-            label: 'Reveal boundary',
-            value: 'Identity protected',
-            detail: 'Use evidence first; reveal follows the platform access boundary.',
-            icon: Eye,
-            color: 'text-amber-300'
-          }
-        ].map((item) => {
-          const Icon = item.icon;
-          return (
-            <article
-              key={item.label}
-              className="rounded-2xl border border-slate-800 bg-[#0c1222]/80 p-5"
-            >
-              <div className="flex items-center justify-between">
-                <p className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-slate-500">
-                  {item.label}
-                </p>
-                <Icon className={`h-5 w-5 ${item.color}`} />
+      {/* REAL STARTUP SIGNAL */}
+      {hasSignal && analysis ? (
+        <>
+          <section>
+            <div className="mb-3">
+              <p className="text-[10px] font-mono font-black uppercase tracking-[0.28em] text-[#D4FF00]">
+                Canonical Conversion Signal
+              </p>
+
+              <h2 className="mt-2 text-2xl font-black text-white">
+                What the current evidence says.
+              </h2>
+
+              <p className="mt-2 max-w-3xl text-xs leading-5 text-slate-400">
+                These are decision-support signals,
+                not an investment recommendation.
+              </p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+
+              <MetricCard
+                label="Conversion Score"
+                value={scoreText(
+                  analysis.conversion_score
+                )}
+                detail="Evidence-backed Conversion assessment."
+              />
+
+              <MetricCard
+                label="Fundraise Readiness"
+                value={scoreText(
+                  analysis.fundraise_readiness
+                )}
+                detail="How prepared the company is to engage investors."
+                tone="text-cyan-300"
+              />
+
+              <MetricCard
+                label="Investor Fit"
+                value={scoreText(
+                  analysis.investor_fit
+                )}
+                detail="Alignment with likely investor profiles and stage."
+                tone="text-indigo-300"
+              />
+
+              <MetricCard
+                label="Risk / Confidence"
+                value={`${analysis.risk_level} risk`}
+                detail={`AI confidence: ${analysis.confidence_level}`}
+                tone={riskTone(
+                  analysis.risk_level
+                )}
+              />
+            </div>
+          </section>
+
+          {/* PARALLEL ASSESSMENTS */}
+          <section className="grid gap-4 xl:grid-cols-2">
+
+            <div className="rounded-3xl border border-slate-800 bg-[#080d16] p-6">
+              <div className="flex items-center gap-2">
+                <GitCompareArrows className="h-5 w-5 text-cyan-300" />
+
+                <div>
+                  <p className="text-[10px] font-mono font-black uppercase tracking-[0.24em] text-cyan-300">
+                    Independent assessments
+                  </p>
+
+                  <h3 className="mt-1 font-black text-white">
+                    Three views. Never merged.
+                  </h3>
+                </div>
               </div>
-              <p className={`mt-3 text-xl font-black ${item.color}`}>
-                {item.value}
+
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+
+                <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500">
+                    Founder
+                  </p>
+
+                  <p className="mt-2 text-xl font-black text-white">
+                    {scoreText(
+                      analysis.founder_claim_score
+                    )}
+                  </p>
+
+                  <p className="mt-1 text-[10px] text-slate-500">
+                    Founder-declared assessment
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500">
+                    AI evidence
+                  </p>
+
+                  <p className="mt-2 text-xl font-black text-cyan-300">
+                    {scoreText(
+                      analysis.ai_evidence_score
+                    )}
+                  </p>
+
+                  <p className="mt-1 text-[10px] text-slate-500">
+                    Independent AI interpretation
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500">
+                    TD Admin
+                  </p>
+
+                  <p className="mt-2 text-xl font-black text-[#D4FF00]">
+                    {scoreText(tdAdminScore)}
+                  </p>
+
+                  <p className="mt-1 text-[10px] text-slate-500">
+                    {verificationText(
+                      analysis
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-xl border border-cyan-400/20 bg-cyan-400/5 p-3 text-xs leading-5 text-slate-300">
+                Founder, AI and TD Admin assessments
+                remain parallel evidence tracks.
+                Investor judgment is independent.
+              </div>
+            </div>
+
+            {/* INVESTOR SUMMARY */}
+            <div className="rounded-3xl border border-slate-800 bg-[#080d16] p-6">
+              <div className="flex items-center gap-2">
+                <BrainCircuit className="h-5 w-5 text-[#D4FF00]" />
+
+                <div>
+                  <p className="text-[10px] font-mono font-black uppercase tracking-[0.24em] text-[#D4FF00]">
+                    Investor summary
+                  </p>
+
+                  <h3 className="mt-1 font-black text-white">
+                    Decision context
+                  </h3>
+                </div>
+              </div>
+
+              <p className="mt-5 text-sm leading-6 text-slate-300">
+                {analysis.investor_summary ||
+                  'Investor summary is not yet available for this startup.'}
               </p>
+
+              <div className="mt-5 border-t border-slate-800 pt-4">
+                <p className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-slate-500">
+                  Next best action
+                </p>
+
+                <p className="mt-2 text-sm font-semibold leading-6 text-white">
+                  {analysis.next_best_action ||
+                    'Continue evidence review.'}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* SIGNALS + RISK */}
+          <section className="grid gap-4 xl:grid-cols-2">
+
+            <div className="rounded-3xl border border-slate-800 bg-[#080d16] p-6">
+              <p className="text-[10px] font-mono font-black uppercase tracking-[0.24em] text-[#D4FF00]">
+                Leading signals
+              </p>
+
+              <h3 className="mt-2 text-xl font-black text-white">
+                Evidence worth noticing.
+              </h3>
+
+              <div className="mt-4 space-y-2">
+                {analysis.leading_signals?.length ? (
+                  analysis.leading_signals.map(
+                    (item, index) => (
+                      <div
+                        key={`${item.signal}-${index}`}
+                        className="rounded-xl border border-slate-800 bg-slate-950/70 p-3"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <p className="text-xs font-bold text-white">
+                            {item.signal}
+                          </p>
+
+                          <span className="rounded-md border border-cyan-400/20 bg-cyan-400/5 px-2 py-1 text-[9px] font-black uppercase text-cyan-300">
+                            {item.strength}
+                          </span>
+                        </div>
+
+                        <p className="mt-1 text-[10px] text-slate-500">
+                          Evidence status:{' '}
+                          {item.evidence_status}
+                        </p>
+                      </div>
+                    )
+                  )
+                ) : (
+                  <p className="text-xs text-slate-500">
+                    No leading signals recorded yet.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-800 bg-[#080d16] p-6">
+              <p className="text-[10px] font-mono font-black uppercase tracking-[0.24em] text-amber-300">
+                Risk flags
+              </p>
+
+              <h3 className="mt-2 text-xl font-black text-white">
+                Questions requiring investor attention.
+              </h3>
+
+              <div className="mt-4 space-y-2">
+                {analysis.risk_flags?.length ? (
+                  analysis.risk_flags.map(
+                    (flag, index) => (
+                      <div
+                        key={`${flag}-${index}`}
+                        className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs leading-5 text-amber-100"
+                      >
+                        {flag}
+                      </div>
+                    )
+                  )
+                ) : (
+                  <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-300">
+                    No current risk flags recorded.
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* HANDOFF */}
+          <section className="rounded-3xl border border-cyan-400/25 bg-cyan-400/5 p-6">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+
+              <div>
+                <p className="text-[10px] font-mono font-black uppercase tracking-[0.24em] text-cyan-300">
+                  Deal Desk handoff
+                </p>
+
+                <h3 className="mt-2 text-xl font-black text-white">
+                  Convert evidence into an accountable opportunity.
+                </h3>
+
+                <p className="mt-2 max-w-3xl text-xs leading-5 text-slate-300">
+                  {analysis.deal_desk_recommendation ||
+                    'When investor interest is established, move the opportunity into Deal Desk for engagement and execution.'}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={onOpenDealDesk}
+                className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-cyan-300 px-5 text-xs font-black uppercase tracking-wider text-slate-950 transition hover:brightness-110"
+              >
+                Open Deal Desk
+                <Workflow className="h-4 w-4" />
+              </button>
+            </div>
+          </section>
+        </>
+      ) : (
+
+        /* EMPTY CANONICAL STATE */
+        <section className="rounded-3xl border border-slate-800 bg-[#080d16] p-6">
+
+          <div className="flex items-start gap-4">
+            <Eye className="mt-1 h-6 w-6 shrink-0 text-[#D4FF00]" />
+
+            <div>
+              <p className="text-[10px] font-mono font-black uppercase tracking-[0.24em] text-[#D4FF00]">
+                Canonical startup signal
+              </p>
+
+              <h2 className="mt-2 text-2xl font-black text-white">
+                Select a startup before evaluating it.
+              </h2>
+
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+                No demo portfolio, fabricated score or
+                automatic investment verdict is shown here.
+                Once a real startup Conversion signal is
+                available, its readiness, investor fit,
+                risk, confidence and evidence signals
+                appear here.
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={onDiscoverStartups}
+                  className="rounded-xl bg-[#D4FF00] px-5 py-3 text-xs font-black uppercase tracking-wider text-slate-950"
+                >
+                  Discover Startups
+                </button>
+
+                <button
+                  type="button"
+                  onClick={onOpenDealDesk}
+                  className="rounded-xl border border-slate-700 px-5 py-3 text-xs font-black uppercase tracking-wider text-slate-300 hover:border-cyan-400/50 hover:text-cyan-300"
+                >
+                  Open Deal Desk
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* PLATFORM GUARDRAILS */}
+        <section className="rounded-3xl border border-slate-800 bg-[#080d16] p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+
+            <div>
+              <p className="text-[10px] font-mono font-black uppercase tracking-[0.28em] text-[#D4FF00]">
+                Canonical Investor Mandate
+              </p>
+
+              <h2 className="mt-2 text-2xl font-black text-white">
+                The mandate you defined in APPLY.
+              </h2>
+
+              <p className="mt-2 max-w-3xl text-xs leading-5 text-slate-400">
+                One investor profile follows you across TD Venture.
+                Conversion does not ask you to recreate your mandate.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-right">
+
+              <p className="text-[9px] font-mono uppercase tracking-wider text-slate-500">
+                APPLY evidence
+              </p>
+
+              <p className="mt-1 text-lg font-black text-[#D4FF00]">
+                {investorContext?.evidence?.completion_count || 0}/12
+              </p>
+
+            </div>
+          </div>
+
+
+          {investorContextLoading ? (
+
+            <div className="mt-5 rounded-2xl border border-slate-800 bg-slate-950/60 p-5 text-xs text-slate-400">
+              Loading your canonical investor mandate...
+            </div>
+
+          ) : investorContextError ? (
+
+            <div className="mt-5 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 text-xs text-amber-200">
+              {investorContextError}
+            </div>
+
+          ) : (
+
+            <>
+              <div className="mt-5 grid gap-4 lg:grid-cols-3">
+
+
+                <article className="rounded-2xl border border-slate-800 bg-slate-950/65 p-5">
+
+                  <p className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-cyan-300">
+                    01 · Investment mandate
+                  </p>
+
+                  <div className="mt-4 space-y-4 text-xs">
+
+                    <div>
+                      <p className="text-slate-500">
+                        Sectors
+                      </p>
+                      <p className="mt-1 font-bold text-white">
+                        {mandateValue(
+                          'sectors',
+                          mandateProfile?.sector
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-slate-500">
+                        Stages
+                      </p>
+                      <p className="mt-1 font-bold text-white">
+                        {mandateValue(
+                          'stages',
+                          mandateProfile?.stage
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-slate-500">
+                        Geographies
+                      </p>
+                      <p className="mt-1 font-bold text-white">
+                        {mandateValue(
+                          'geographies',
+                          mandateProfile?.geography
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-slate-500">
+                        Investment thesis
+                      </p>
+                      <p className="mt-1 leading-5 text-slate-300">
+                        {mandateValue(
+                          'investment_thesis',
+                          mandateProfile?.investment_thesis
+                        )}
+                      </p>
+                    </div>
+
+                  </div>
+                </article>
+
+
+                <article className="rounded-2xl border border-slate-800 bg-slate-950/65 p-5">
+
+                  <p className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-[#D4FF00]">
+                    02 · Capital capacity
+                  </p>
+
+                  <div className="mt-4 space-y-4 text-xs">
+
+                    <div className="grid grid-cols-2 gap-3">
+
+                      <div>
+                        <p className="text-slate-500">
+                          Minimum ticket
+                        </p>
+
+                        <p className="mt-1 font-bold text-white">
+                          {mandateUsd(
+                            mandateAnswers.ticket_min_usd ||
+                            mandateProfile?.ticket_min_usd
+                          )}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-slate-500">
+                          Maximum ticket
+                        </p>
+
+                        <p className="mt-1 font-bold text-white">
+                          {mandateUsd(
+                            mandateAnswers.ticket_max_usd ||
+                            mandateProfile?.ticket_max_usd
+                          )}
+                        </p>
+                      </div>
+
+                    </div>
+
+                    <div>
+                      <p className="text-slate-500">
+                        Follow-on policy
+                      </p>
+
+                      <p className="mt-1 leading-5 text-slate-300">
+                        {mandateValue(
+                          'follow_on_policy'
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-slate-500">
+                        Annual deployment capacity
+                      </p>
+
+                      <p className="mt-1 font-bold text-white">
+                        {mandateUsd(
+                          mandateAnswers.annual_deployment_usd
+                        )}
+                      </p>
+                    </div>
+
+                  </div>
+                </article>
+
+
+                <article className="rounded-2xl border border-slate-800 bg-slate-950/65 p-5">
+
+                  <p className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-purple-300">
+                    03 · Decision & engagement
+                  </p>
+
+                  <div className="mt-4 space-y-4 text-xs">
+
+                    <div>
+                      <p className="text-slate-500">
+                        Evaluation criteria
+                      </p>
+
+                      <p className="mt-1 leading-5 text-slate-300">
+                        {mandateValue(
+                          'evaluation_criteria'
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-slate-500">
+                        Evidence required
+                      </p>
+
+                      <p className="mt-1 leading-5 text-slate-300">
+                        {mandateValue(
+                          'evidence_required'
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-slate-500">
+                        Decision process timeline
+                      </p>
+
+                      <p className="mt-1 leading-5 text-slate-300">
+                        {mandateValue(
+                          'decision_process_timeline'
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-slate-500">
+                        Engagement offered
+                      </p>
+
+                      <p className="mt-1 leading-5 text-slate-300">
+                        {mandateValue(
+                          'engagement_offered'
+                        )}
+                      </p>
+                    </div>
+
+                  </div>
+                </article>
+
+              </div>
+
+
+              <div className="mt-4 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3 text-xs leading-5 text-slate-300">
+
+                <strong className="text-cyan-200">
+                  Investor context, not investor scoring.
+                </strong>{' '}
+
+                Your mandate guides fit and prioritisation.
+                Founder, AI and TD Admin assessments remain
+                independent signals.
+
+              </div>
+
+            </>
+
+          )}
+
+        </section>
+
+        <section className="rounded-3xl border border-slate-800 bg-[#080d16] p-6">
+
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+
+            <div>
+              <p className="text-[10px] font-mono font-black uppercase tracking-[0.28em] text-[#D4FF00]">
+                Startup Decision Intelligence
+              </p>
+
+              <h2 className="mt-2 text-2xl font-black text-white">
+                Read the opportunity before making the decision.
+              </h2>
+
+              <p className="mt-2 max-w-3xl text-xs leading-5 text-slate-400">
+                Select a startup already authorised for your investor
+                profile. Conversion exposes decision signals—not the
+                founder's private working workspace.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => void loadInvestorStartups()}
+              disabled={investorStartupsLoading}
+              className="rounded-xl border border-slate-700 px-4 py-2 text-xs font-bold text-slate-300 transition hover:border-[#D4FF00]/60 hover:text-[#D4FF00] disabled:opacity-40"
+            >
+              {investorStartupsLoading
+                ? 'Refreshing…'
+                : 'Refresh opportunities'}
+            </button>
+
+          </div>
+
+
+          {investorStartupsError && (
+
+            <div className="mt-5 rounded-2xl border border-rose-500/30 bg-rose-500/5 p-4 text-xs text-rose-300">
+              {investorStartupsError}
+            </div>
+
+          )}
+
+
+          {!investorStartupsLoading &&
+           !investorStartupsError &&
+           investorStartups.length === 0 && (
+
+            <div className="mt-5 rounded-2xl border border-slate-800 bg-slate-950/60 p-6">
+
+              <p className="font-bold text-white">
+                No authorised startup opportunities yet.
+              </p>
+
               <p className="mt-2 text-xs leading-5 text-slate-400">
-                {item.detail}
+                Discover startups through your existing TD Venture
+                investor workflow. Conversion will not create a
+                parallel access list.
               </p>
-            </article>
-          );
-        })}
+
+              <button
+                type="button"
+                onClick={onDiscoverStartups}
+                className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#D4FF00] px-4 py-2 text-xs font-black uppercase tracking-wider text-slate-950"
+              >
+                Discover Startups
+                <ArrowUpRight className="h-4 w-4" />
+              </button>
+
+            </div>
+
+          )}
+
+
+          {investorStartups.length > 0 && (
+
+            <>
+              <div className="mt-5 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+
+                <label className="text-[10px] font-mono font-black uppercase tracking-[0.18em] text-slate-500">
+                  Selected opportunity
+                </label>
+
+                <select
+                  value={selectedInvestorStartupId}
+                  onChange={event =>
+                    setSelectedInvestorStartupId(
+                      event.target.value
+                    )
+                  }
+                  className="mt-2 w-full rounded-xl border border-slate-700 bg-[#080d16] px-4 py-3 text-sm font-bold text-white outline-none focus:border-[#D4FF00]/70"
+                >
+                  {investorStartups.map(item => (
+
+                    <option
+                      key={item.startup_id}
+                      value={item.startup_id}
+                    >
+                      {item.startup_name || 'Startup'}
+                      {' · '}
+                      {item.sector || 'Sector not recorded'}
+                      {' · '}
+                      {item.stage || 'Stage not recorded'}
+                    </option>
+
+                  ))}
+                </select>
+
+
+                {selectedInvestorStartup && (
+
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+
+                    <div>
+                      <p className="text-[9px] uppercase tracking-wider text-slate-500">
+                        Startup
+                      </p>
+                      <p className="mt-1 text-xs font-bold text-white">
+                        {selectedInvestorStartup.startup_name || 'Startup'}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[9px] uppercase tracking-wider text-slate-500">
+                        Sector
+                      </p>
+                      <p className="mt-1 text-xs font-bold text-white">
+                        {selectedInvestorStartup.sector || '—'}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[9px] uppercase tracking-wider text-slate-500">
+                        Stage
+                      </p>
+                      <p className="mt-1 text-xs font-bold text-white">
+                        {selectedInvestorStartup.stage || '—'}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[9px] uppercase tracking-wider text-slate-500">
+                        Match Fit
+                      </p>
+                      <p className="mt-1 text-xs font-bold text-[#D4FF00]">
+                        {selectedInvestorStartup.match_score == null
+                          ? '—'
+                          : `${Math.round(
+                              selectedInvestorStartup.match_score
+                            )}/100`}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[9px] uppercase tracking-wider text-slate-500">
+                        Identity boundary
+                      </p>
+                      <p className="mt-1 text-xs font-bold text-white">
+                        {selectedInvestorStartup.revealed
+                          ? 'Revealed'
+                          : 'Protected'}
+                      </p>
+                    </div>
+
+                  </div>
+
+                )}
+
+              </div>
+
+
+              {investorSignalLoading ? (
+
+                <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-6 text-xs text-slate-400">
+                  Loading current Conversion intelligence...
+                </div>
+
+              ) : investorSignalError ? (
+
+                <div className="mt-4 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 text-xs text-amber-200">
+                  {investorSignalError}
+                </div>
+
+              ) : !currentInvestorSignal ? (
+
+                <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-6">
+
+                  <p className="font-bold text-white">
+                    No current Conversion signal for this startup.
+                  </p>
+
+                  <p className="mt-2 text-xs leading-5 text-slate-400">
+                    The match remains available, but Conversion will
+                    not invent readiness, fit, confidence or risk
+                    values until a canonical startup analysis exists.
+                  </p>
+
+                </div>
+
+              ) : (
+
+                <>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+
+                    {[
+                      [
+                        'Conversion Score',
+                        decisionScore('conversion_score')
+                      ],
+                      [
+                        'Fundraise Readiness',
+                        decisionScore('fundraise_readiness')
+                      ],
+                      [
+                        'Investor Fit',
+                        decisionScore('investor_fit')
+                      ],
+                      [
+                        'Confidence',
+                        currentInvestorSignal.confidence_level || '—'
+                      ],
+                      [
+                        'Risk',
+                        currentInvestorSignal.risk_level || '—'
+                      ]
+                    ].map(([label, value]) => (
+
+                      <div
+                        key={label}
+                        className="rounded-2xl border border-slate-800 bg-slate-950/65 p-4"
+                      >
+                        <p className="text-[9px] font-mono uppercase tracking-wider text-slate-500">
+                          {label}
+                        </p>
+
+                        <p className="mt-2 text-lg font-black text-white">
+                          {value}
+                        </p>
+                      </div>
+
+                    ))}
+
+                  </div>
+
+
+                  <div className="mt-4 grid gap-4 lg:grid-cols-2">
+
+                    <article className="rounded-2xl border border-slate-800 bg-slate-950/65 p-5">
+
+                      <p className="text-[10px] font-mono font-black uppercase tracking-[0.18em] text-cyan-300">
+                        Leading signals
+                      </p>
+
+                      <div className="mt-4 space-y-3">
+
+                        {currentInvestorSignal.leading_signals?.length ? (
+
+                          currentInvestorSignal.leading_signals.map(
+                            (item, index) => (
+
+                              <div
+                                key={`${item.signal || 'signal'}-${index}`}
+                                className="rounded-xl border border-slate-800 bg-[#080d16] p-3"
+                              >
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+
+                                  <p className="text-xs font-bold text-white">
+                                    {item.signal || 'Signal'}
+                                  </p>
+
+                                  <span className="text-[9px] font-mono uppercase text-[#D4FF00]">
+                                    {item.strength || 'Recorded'}
+                                  </span>
+
+                                </div>
+
+                                {item.evidence_status && (
+                                  <p className="mt-1 text-[10px] text-slate-500">
+                                    Evidence: {item.evidence_status}
+                                  </p>
+                                )}
+
+                              </div>
+
+                            )
+                          )
+
+                        ) : (
+
+                          <p className="text-xs text-slate-500">
+                            No leading signals recorded.
+                          </p>
+
+                        )}
+
+                      </div>
+
+                    </article>
+
+
+                    <article className="rounded-2xl border border-slate-800 bg-slate-950/65 p-5">
+
+                      <p className="text-[10px] font-mono font-black uppercase tracking-[0.18em] text-amber-300">
+                        Risk & evidence gaps
+                      </p>
+
+                      <div className="mt-4 space-y-4">
+
+                        <div>
+                          <p className="text-[10px] uppercase tracking-wider text-slate-500">
+                            Risk flags
+                          </p>
+
+                          {currentInvestorSignal.risk_flags?.length ? (
+
+                            <ul className="mt-2 space-y-1 text-xs text-slate-300">
+                              {currentInvestorSignal.risk_flags.map(
+                                (flag, index) => (
+                                  <li key={`${flag}-${index}`}>
+                                    • {flag}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+
+                          ) : (
+
+                            <p className="mt-2 text-xs text-slate-500">
+                              No current risk flags.
+                            </p>
+
+                          )}
+                        </div>
+
+
+                        <div>
+                          <p className="text-[10px] uppercase tracking-wider text-slate-500">
+                            Missing evidence
+                          </p>
+
+                          {currentInvestorSignal.missing_evidence?.length ? (
+
+                            <p className="mt-2 text-xs text-slate-300">
+                              {
+                                currentInvestorSignal
+                                  .missing_evidence.length
+                              } evidence item(s) remain open.
+                            </p>
+
+                          ) : (
+
+                            <p className="mt-2 text-xs text-slate-500">
+                              No missing-evidence items recorded.
+                            </p>
+
+                          )}
+                        </div>
+
+                      </div>
+
+                    </article>
+
+                  </div>
+
+
+                  <div className="mt-4 grid gap-4 lg:grid-cols-2">
+
+                    <article className="rounded-2xl border border-[#D4FF00]/20 bg-[#D4FF00]/5 p-5">
+
+                      <p className="text-[10px] font-mono font-black uppercase tracking-[0.18em] text-[#D4FF00]">
+                        Investor summary
+                      </p>
+
+                      <p className="mt-3 text-sm leading-6 text-slate-200">
+                        {currentInvestorSignal.investor_summary ||
+                          'No investor summary recorded.'}
+                      </p>
+
+                    </article>
+
+
+                    <article className="rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-5">
+
+                      <p className="text-[10px] font-mono font-black uppercase tracking-[0.18em] text-cyan-300">
+                        Next best action
+                      </p>
+
+                      <p className="mt-3 text-sm leading-6 text-slate-200">
+                        {currentInvestorSignal.next_best_action ||
+                          currentInvestorSignal.deal_desk_recommendation ||
+                          'Continue evidence review.'}
+                      </p>
+
+                    </article>
+
+                  </div>
+
+
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-950/65 p-4">
+
+                    <p className="max-w-3xl text-[11px] leading-5 text-slate-400">
+                      Investor-safe projection only. Founder private
+                      workspace, raw evidence, application snapshots
+                      and contact details are not exposed here.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={onOpenDealDesk}
+                      className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#D4FF00] px-4 text-xs font-black uppercase tracking-wider text-slate-950"
+                    >
+                      Open Deal Desk
+                      <Workflow className="h-4 w-4" />
+                    </button>
+
+                  </div>
+
+                </>
+
+              )}
+
+            </>
+
+          )}
+
+        </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
+
+        <MetricCard
+          label="Independent Evidence"
+          value="Founder · AI · TD Admin"
+          detail="Parallel assessments remain distinct."
+          tone="text-cyan-300"
+        />
+
+        <MetricCard
+          label="Qualification Guardrail"
+          value="Deal Desk"
+          detail="Opportunity qualification is computed from canonical Match Fit, Conversion and independent Diamond inputs — not a hard-coded investor score."
+        />
+
+        <MetricCard
+          label="Reveal Boundary"
+          value="Identity protected"
+          detail="Conversion evidence does not bypass Marketplace reveal and access rules."
+          tone="text-amber-300"
+        />
       </section>
 
+      {/* CONVICTION FRAMEWORK */}
       <section className="rounded-3xl border border-slate-800 bg-[#080d16] p-6">
+
         <div className="flex flex-col justify-between gap-3 md:flex-row md:items-end">
           <div>
             <p className="text-[10px] font-mono font-black uppercase tracking-[0.28em] text-[#D4FF00]">
               Conviction framework
             </p>
+
             <h2 className="mt-2 text-2xl font-black text-white">
               Four questions before capital moves.
             </h2>
           </div>
+
           <p className="max-w-xl text-xs leading-5 text-slate-400">
-            The fifth node is independent AI Intelligence. It interprets supplied
-            evidence but never replaces the investor’s decision.
+            Independent AI Intelligence interprets
+            supplied evidence but never replaces the
+            investor's decision.
           </p>
         </div>
 
         <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {pillars.map((pillar) => {
             const Icon = pillar.icon;
+
             return (
               <article
                 key={pillar.number}
@@ -292,9 +1651,14 @@ export function InvestorDecisionWorkspace({
                   <span className="font-mono text-xs font-black text-[#D4FF00]">
                     {pillar.number}
                   </span>
+
                   <Icon className="h-5 w-5 text-slate-500 transition group-hover:text-[#D4FF00]" />
                 </div>
-                <h3 className="mt-4 font-black text-white">{pillar.label}</h3>
+
+                <h3 className="mt-4 font-black text-white">
+                  {pillar.label}
+                </h3>
+
                 <p className="mt-2 text-xs leading-5 text-slate-400">
                   {pillar.detail}
                 </p>
@@ -305,10 +1669,12 @@ export function InvestorDecisionWorkspace({
 
         <div className="mt-4 flex items-center gap-3 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
           <Sparkles className="h-5 w-5 shrink-0 text-cyan-300" />
+
           <p className="text-xs leading-5 text-slate-300">
-            This checkpoint establishes the investor journey without inventing
-            portfolio totals or scores. Startup-level assessments will populate
-            only from canonical records and recorded evidence.
+            Startup-level assessments populate only
+            from canonical records and recorded
+            evidence. Investor decisions remain the
+            investor's own.
           </p>
         </div>
       </section>
