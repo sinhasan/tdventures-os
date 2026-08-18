@@ -486,11 +486,13 @@ export type ConversionV2PaidResponse = ConversionV2ResponseBase & {
 };
 
 export type ConversionV2PreviewResponse = ConversionV2ResponseBase & {
+  // Internal ledger classification for the one-time free AI baseline.
+  // The V2 backend still creates a real versioned Conversion Signal.
   usage_type: 'preview';
-  analysis_version: 'conversion-preview-v2';
-  analysis: ConversionV2PreviewAnalysis;
-  signal: null;
-  claim_review: null;
+  analysis_version: 'conversion-v2';
+  analysis: ConversionV2Analysis;
+  signal: unknown;
+  claim_review: ConversionClaimReview;
 };
 
 export type ConversionV2Response =

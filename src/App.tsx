@@ -1471,7 +1471,7 @@ export default function App() {
         mode: response.usage_type
       });
 
-      if (response.usage_type === 'paid') {
+      if (response.signal && response.storage_rule.conversion_signal_saved) {
         setConversionV2Analysis(response.analysis);
         setConversionReview(null);
         setConversionV2Context((current) =>
@@ -1526,7 +1526,7 @@ export default function App() {
                   mode: 'pricing_required',
                   label: 'Founder Pass required',
                   reason:
-                    'Your free preview has been used and no paid analysis credit is currently available.',
+                    'Your included AI baseline is complete. Additional analyses require a Founder Pass.',
                   credits: response.credits
                 }
               }
@@ -2591,8 +2591,8 @@ export default function App() {
                   </h2>
                   <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
                     Founder truth remains the record. Central analysis interprets only the evidence
-                    currently supplied. Preview results do not create an Investor Fit score or a
-                    Deal Desk signal.
+                    currently supplied. Apply AI Intelligence creates the versioned Conversion Signal used by
+                    Deal Desk.
                   </p>
                 </section>
 
@@ -2627,7 +2627,7 @@ export default function App() {
                       label: 'CRM signal',
                       value: conversionV2Analysis
                         ? 'Versioned signal created'
-                        : 'Not created by Preview',
+                        : 'Awaiting AI Intelligence',
                       active: !!conversionV2Analysis
                     }
                   ].map((item) => (
@@ -2896,7 +2896,7 @@ export default function App() {
                         className="rounded-xl bg-[#D4FF00] px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-950 disabled:opacity-60"
                       >
                         {conversionV2Context?.analysis_access?.mode === 'preview'
-                          ? 'Use Free AI Preview'
+                          ? 'Apply AI Intelligence'
                           : conversionV2Context?.analysis_access?.mode === 'pricing_required'
                             ? 'Activate Founder Pass'
                             : conversionV2Context?.analysis_access?.label
