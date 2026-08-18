@@ -370,6 +370,21 @@ export function FounderSignalDashboard({
             >
               View collected data
             </button>
+            {analysis &&
+              context?.analysis_access?.mode === 'paid' && (
+                <button
+                  type="button"
+                  onClick={onAnalyse}
+                  className="rounded-lg border border-cyan-400/35 px-3 py-2 text-[11px] font-black text-cyan-200"
+                >
+                  {context?.analysis_access?.label
+                    ?.toLowerCase()
+                    .includes('admin qa')
+                    ? 'Run Admin QA Full Review'
+                    : 'Run Another AI Analysis'}
+                </button>
+              )}
+
             <button
               type="button"
               onClick={analysis ? onDealDesk : onAnalyse}
