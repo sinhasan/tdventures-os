@@ -216,11 +216,11 @@ export function FounderSignalDashboard({
         <div className="mt-5 grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
           {[
             ['01', 'Collect', completed === 20 ? 'Complete' : `${completed}/20`],
-            ['02', 'Apply AI Intelligence', analysis ? 'Complete' : 'Ready'],
+            ['02', 'Apply AI Intelligence', analysis ? 'Complete' : 'Required next step'],
             ['03', 'Present', 'Current'],
             ['04', 'Improvement Plan', analysis ? 'Ready' : 'After analysis'],
             ['05', 'Verify', verified ? 'Verified' : 'Optional'],
-            ['06', 'Deal Desk', analysis ? 'Ready' : 'After analysis']
+            ['06', 'Deal Desk', analysis ? 'Graduated ✓' : 'Locked · AI review required']
           ].map(([number, label, state]) => (
             <div
               key={label}
@@ -237,6 +237,23 @@ export function FounderSignalDashboard({
           ))}
         </div>
       </section>
+
+      {!analysis && completed === 20 && (
+        <section className="rounded-2xl border border-[#D4FF00]/45 bg-[#D4FF00]/[0.06] px-5 py-4">
+          <p className="text-[10px] font-mono font-black uppercase tracking-[0.22em] text-[#D4FF00]">
+            Graduation requirement
+          </p>
+          <h2 className="mt-1.5 text-base font-black text-white">
+            20/20 Founder Evidence Complete · Independent AI Review Required
+          </h2>
+          <p className="mt-2 max-w-4xl text-xs leading-5 text-slate-400">
+            Your founder evidence is self-declared. Complete one independent AI review
+            to create the versioned Conversion Signal used by Deal Desk.
+            <strong className="text-slate-200"> Pitch deck is optional</strong>
+            {' '}— supplying one strengthens the assessment but is not required to graduate.
+          </p>
+        </section>
+      )}
 
       <section className="grid grid-cols-2 gap-3 xl:grid-cols-6">
         <MetricCard
@@ -342,7 +359,7 @@ export function FounderSignalDashboard({
             {analysis
               ? analysis.next_best_action
               : completed === 20
-                ? 'Your application is ready. Add a pitch deck if available, then run independent Conversion Analysis.'
+                ? 'Your 20/20 founder evidence is complete. Run the required independent AI review to create the Deal Desk Conversion Signal. A pitch deck is optional and strengthens the assessment when supplied.'
                 : 'Complete the Startup Apply evidence record before analysis.'}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
