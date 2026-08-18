@@ -2344,7 +2344,13 @@ export default function App() {
                 analysis={conversionV2Analysis}
                 deckFile={selectedPitchDeck}
                 onCollect={() => setActiveTab('docs_hub')}
-                onAnalyse={() => setActiveTab('pitch_analyzer')}
+                onAnalyse={() => {
+                  if (conversionV2Analysis) {
+                    void runFullConversionReview();
+                    return;
+                  }
+                  setActiveTab('pitch_analyzer');
+                }}
                 onImprove={() => setActiveTab('improvement_plan')}
                 onVerify={() => setActiveTab('claim_review')}
                 onDealDesk={() => void openDealDeskWorkspace()}
