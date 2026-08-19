@@ -1075,6 +1075,44 @@ export function InvestorDecisionWorkspace({
       ? currentSignal.missing_evidence
       : [];
 
+  const missingEvidenceText = (
+    value: unknown
+  ): string => {
+    if (
+      value &&
+      typeof value === 'object' &&
+      !Array.isArray(value)
+    ) {
+      const record =
+        value as Record<string, unknown>;
+
+      const primary =
+        record.item ??
+        record.label ??
+        record.detail ??
+        record.issue ??
+        record.field;
+
+      if (
+        primary !== undefined &&
+        primary !== null
+      ) {
+        const label = cleanText(primary);
+
+        const priority =
+          typeof record.priority === 'string'
+            ? record.priority.trim()
+            : '';
+
+        return priority
+          ? `${label} · ${priority} priority`
+          : label;
+      }
+    }
+
+    return cleanText(value);
+  };
+
 
   async function refreshOpportunityData() {
     setRefreshing(true);
@@ -1726,7 +1764,7 @@ export function InvestorDecisionWorkspace({
                             key={index}
                             className="rounded-xl border border-slate-800 bg-slate-950/65 px-3 py-2 text-xs leading-5 text-slate-300"
                           >
-                            {cleanText(item)}
+                            {missingEvidenceText(item)}
                           </div>
                         )
                       )}
@@ -1848,7 +1886,7 @@ export function InvestorDecisionWorkspace({
                     key={index}
                     className="rounded-xl border border-slate-800 bg-slate-950/65 p-3 text-xs leading-5 text-slate-300"
                   >
-                    {cleanText(item)}
+                    {missingEvidenceText(item)}
                   </div>
                 )
               )}
