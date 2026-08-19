@@ -40,6 +40,9 @@ type InvestorDecisionWorkspaceProps = {
   analysis?: ConversionV2Analysis | null;
   onDiscoverStartups: () => void;
   onOpenDealDesk: () => void;
+  onOpenSelectedStartupDealDesk: (
+    startupId: string
+  ) => void;
   onOpenPricing: () => void;
 };
 
@@ -235,6 +238,7 @@ export function InvestorDecisionWorkspace({
   analysis,
   onDiscoverStartups,
   onOpenDealDesk,
+  onOpenSelectedStartupDealDesk,
   onOpenPricing
 }: InvestorDecisionWorkspaceProps) {
   const copy = viewCopy[view];
@@ -854,7 +858,16 @@ export function InvestorDecisionWorkspace({
 
               <button
                 type="button"
-                onClick={onOpenDealDesk}
+                onClick={() => {
+                  if (selectedInvestorStartupId) {
+                    onOpenSelectedStartupDealDesk(
+                      selectedInvestorStartupId
+                    );
+                    return;
+                  }
+
+                  onOpenDealDesk();
+                }}
                 className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-cyan-300 px-5 text-xs font-black uppercase tracking-wider text-slate-950 transition hover:brightness-110"
               >
                 Open Deal Desk

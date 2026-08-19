@@ -1685,7 +1685,8 @@ export default function App() {
   }, []);
 
   const openDealDeskWorkspace = async (
-    destination: 'dashboard' | 'discover_startups' = 'dashboard'
+    destination: 'dashboard' | 'discover_startups' = 'dashboard',
+    startupId?: string
   ) => {
     try {
       const {
@@ -1695,7 +1696,24 @@ export default function App() {
       );
       const launch =
         await createDealDeskWorkspaceLaunch(destination);
-      window.open(launch.launch_url, '_blank', 'noopener,noreferrer');
+
+      const launchUrl = new URL(launch.launch_url);
+
+      if (
+        destination === 'discover_startups' &&
+        startupId
+      ) {
+        launchUrl.searchParams.set(
+          'startup_id',
+          startupId
+        );
+      }
+
+      window.open(
+        launchUrl.toString(),
+        '_blank',
+        'noopener,noreferrer'
+      );
     } catch (error) {
       const message =
         error instanceof Error
@@ -2379,6 +2397,12 @@ export default function App() {
                     void openDealDeskWorkspace('discover_startups')
                   }
                   onOpenDealDesk={() => void openDealDeskWorkspace()}
+                  onOpenSelectedStartupDealDesk={(startupId) =>
+                    void openDealDeskWorkspace(
+                      'discover_startups',
+                      startupId
+                    )
+                  }
                   onOpenPricing={openCanonicalPricing}
                 />
               )}
