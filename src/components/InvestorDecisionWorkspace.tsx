@@ -52,33 +52,87 @@ const MARKETPLACE_URL =
 const INVESTOR_APPLY_URL =
   'https://staging.tdventure.vc/signup/investor';
 
-const pillars = [
+type MandateSignalKey =
+  | 'investment_thesis'
+  | 'founder_qualities'
+  | 'pursuit_criteria'
+  | 'market_opportunity'
+  | 'moat_expectation'
+  | 'market_risks'
+  | 'traction_expectation'
+  | 'economics_expectation'
+  | 'evidence_required'
+  | 'capital_strategy'
+  | 'capital_outcomes'
+  | 'decision_engagement';
+
+type MandatePillar = {
+  number: string;
+  label: string;
+  fields: MandateSignalKey[];
+  icon: React.ComponentType<{
+    className?: string;
+  }>;
+};
+
+const mandateSignalLabels:
+  Record<MandateSignalKey, string> = {
+    investment_thesis: 'Investment thesis',
+    founder_qualities: 'Founder qualities',
+    pursuit_criteria: 'Pursuit criteria',
+
+    market_opportunity: 'Market opportunity',
+    moat_expectation: 'Moat expectation',
+    market_risks: 'Market risks',
+
+    traction_expectation: 'Traction expectation',
+    economics_expectation: 'Economics expectation',
+    evidence_required: 'Evidence required',
+
+    capital_strategy: 'Capital strategy',
+    capital_outcomes: 'Capital outcomes',
+    decision_engagement: 'Decision & engagement'
+  };
+
+const pillars: MandatePillar[] = [
   {
     number: '01',
     label: 'Thesis & Founder Fit',
-    detail:
-      'Problem, founder insight, timing, wedge and differentiation.',
+    fields: [
+      'investment_thesis',
+      'founder_qualities',
+      'pursuit_criteria'
+    ],
     icon: Target
   },
   {
     number: '02',
     label: 'Market & Moat',
-    detail:
-      'Market structure, durability, competition and regulatory exposure.',
+    fields: [
+      'market_opportunity',
+      'moat_expectation',
+      'market_risks'
+    ],
     icon: Compass
   },
   {
     number: '03',
     label: 'Operating Evidence',
-    detail:
-      'Traction, revenue quality, distribution, retention and execution proof.',
+    fields: [
+      'traction_expectation',
+      'economics_expectation',
+      'evidence_required'
+    ],
     icon: FileSearch
   },
   {
     number: '04',
     label: 'Capital & Return Readiness',
-    detail:
-      'Ownership, instrument, use of funds, milestones and investor outcomes.',
+    fields: [
+      'capital_strategy',
+      'capital_outcomes',
+      'decision_engagement'
+    ],
     icon: Scale
   }
 ];
@@ -294,6 +348,182 @@ export function InvestorDecisionWorkspace({
   const mandateAnswers =
     investorContext?.evidence?.answers || {};
 
+  const rawMandateAnswer = (
+    key: string
+  ): string => {
+    const value = mandateAnswers[key];
+
+    if (
+      value === null ||
+      value === undefined
+    ) {
+      return '';
+    }
+
+    return String(value).trim();
+  };
+
+  /*
+   * V1 historical evidence is never overwritten.
+   *
+   * Only directly compatible information is reused
+   * while an investor completes the V2 mandate.
+   * Missing V2 signals remain Awaiting.
+   */
+  const legacyDecisionEngagement = [
+    rawMandateAnswer(
+      'decision_process_timeline'
+    ),
+    rawMandateAnswer(
+      'engagement_offered'
+    )
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
+  const effectiveMandateAnswers:
+    Record<MandateSignalKey, string> = {
+
+      investment_thesis:
+        rawMandateAnswer(
+          'investment_thesis'
+        ) ||
+        String(
+          mandateProfile
+            ?.investment_thesis ||
+          ''
+        ).trim(),
+
+      founder_qualities:
+        rawMandateAnswer(
+          'founder_qualities'
+        ),
+
+      pursuit_criteria:
+        rawMandateAnswer(
+          'pursuit_criteria'
+        ),
+
+      market_opportunity:
+        rawMandateAnswer(
+          'market_opportunity'
+        ),
+
+      moat_expectation:
+        rawMandateAnswer(
+          'moat_expectation'
+        ),
+
+      market_risks:
+        rawMandateAnswer(
+          'market_risks'
+        ),
+
+      traction_expectation:
+        rawMandateAnswer(
+          'traction_expectation'
+        ),
+
+      economics_expectation:
+        rawMandateAnswer(
+          'economics_expectation'
+        ),
+
+      evidence_required:
+        rawMandateAnswer(
+          'evidence_required'
+        ),
+
+      capital_strategy:
+        rawMandateAnswer(
+          'capital_strategy'
+        ) ||
+        rawMandateAnswer(
+          'follow_on_policy'
+        ),
+
+      capital_outcomes:
+        rawMandateAnswer(
+          'capital_outcomes'
+        ),
+
+      decision_engagement:
+        rawMandateAnswer(
+          'decision_engagement'
+        ) ||
+        legacyDecisionEngagement
+    };
+
+  const mandateCompletion =
+    Object.values(
+      effectiveMandateAnswers
+    ).filter(
+      value => value.trim().length > 0
+    ).length;
+
+  const mandateAwaiting =
+    Math.max(
+      0,
+      12 - mandateCompletion
+    );
+
+  const mandateReadiness =
+    Math.round(
+      (mandateCompletion / 12) * 100
+    );
+
+  const mandateReady =
+    mandateCompletion === 12;
+
+  const mandateRibbonText =
+    mandateReady
+      ? (
+          'INVESTOR MANDATE READY · ' +
+          '12 OF 12 SIGNALS SUPPLIED · ' +
+          'FULL INVESTMENT LENS AVAILABLE ' +
+          'FOR OPPORTUNITY FIT AND ' +
+          'FOUNDER PITCH GUIDANCE'
+        )
+      : (
+          'COMPLETE YOUR INVESTOR MANDATE · ' +
+          `${mandateCompletion} OF 12 SIGNALS SUPPLIED · ` +
+          `${mandateAwaiting} AWAITING · ` +
+          'COMPLETE THE REMAINING SIGNALS ' +
+          'FOR MORE PRECISE OPPORTUNITY FIT ' +
+          'AND FOUNDER PITCH GUIDANCE'
+        );
+
+  const mandateBuckets =
+    pillars.map(pillar => {
+      const supplied =
+        pillar.fields.filter(
+          field =>
+            effectiveMandateAnswers[
+              field
+            ].trim().length > 0
+        ).length;
+
+      const awaiting =
+        3 - supplied;
+
+      const state:
+        'Supported' |
+        'Partial' |
+        'Awaiting' =
+          supplied === 3
+            ? 'Supported'
+            : supplied > 0
+              ? 'Partial'
+              : 'Awaiting';
+
+      return {
+        ...pillar,
+        supplied,
+        awaiting,
+        state
+      };
+    });
+
   const [investorStartups, setInvestorStartups] =
     useState<InvestorConversionStartup[]>([]);
 
@@ -498,6 +728,70 @@ export function InvestorDecisionWorkspace({
 
   return (
     <div className="space-y-5 animate-fade-in">
+
+      <style>{`
+        @keyframes tdvInvestorMandateMarquee {
+          0% {
+            transform: translateX(0);
+          }
+
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+
+        @media (
+          prefers-reduced-motion: reduce
+        ) {
+          .tdv-investor-mandate-ribbon {
+            animation: none !important;
+          }
+        }
+      `}</style>
+
+      {/* INVESTOR MANDATE MOVING RIBBON */}
+      <div
+        className={`overflow-hidden rounded-xl border ${
+          mandateReady
+            ? (
+                'border-[#D4FF00]/35 ' +
+                'bg-[#D4FF00]/10'
+              )
+            : (
+                'border-amber-300/30 ' +
+                'bg-amber-300/[0.07]'
+              )
+        }`}
+      >
+        <div
+          className="tdv-investor-mandate-ribbon flex w-max min-w-full items-center py-2.5"
+          style={{
+            animation:
+              'tdvInvestorMandateMarquee 24s linear infinite'
+          }}
+        >
+          <span
+            className={`shrink-0 px-8 text-[10px] font-mono font-black uppercase tracking-[0.2em] ${
+              mandateReady
+                ? 'text-[#D4FF00]'
+                : 'text-amber-200'
+            }`}
+          >
+            {mandateRibbonText}
+          </span>
+
+          <span
+            aria-hidden="true"
+            className={`shrink-0 px-8 text-[10px] font-mono font-black uppercase tracking-[0.2em] ${
+              mandateReady
+                ? 'text-[#D4FF00]'
+                : 'text-amber-200'
+            }`}
+          >
+            {mandateRibbonText}
+          </span>
+        </div>
+      </div>
 
       {/* HERO */}
       <section className="relative overflow-hidden rounded-3xl border border-[#D4FF00]/30 bg-[#080d16] p-6 shadow-2xl">
@@ -1630,67 +1924,225 @@ export function InvestorDecisionWorkspace({
         />
       </section>
 
-      {/* CONVICTION FRAMEWORK */}
+      {/* INVESTOR MANDATE FRAMEWORK */}
       <section className="rounded-3xl border border-slate-800 bg-[#080d16] p-6">
 
-        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-end">
+        <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-end">
+
           <div>
             <p className="text-[10px] font-mono font-black uppercase tracking-[0.28em] text-[#D4FF00]">
-              Conviction framework
+              Investor mandate
             </p>
 
             <h2 className="mt-2 text-2xl font-black text-white">
-              Four questions before capital moves.
+              Four decision lenses · twelve investor signals.
             </h2>
+
+            <p className="mt-2 max-w-3xl text-xs leading-5 text-slate-400">
+              Missing information stays Awaiting.
+              Awaiting is not a negative assessment and
+              never changes a startup's canonical score.
+            </p>
           </div>
 
-          <p className="max-w-xl text-xs leading-5 text-slate-400">
-            Independent AI Intelligence interprets
-            supplied evidence but never replaces the
-            investor's decision.
-          </p>
-        </div>
+          <div className="flex flex-wrap gap-3">
 
-        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {pillars.map((pillar) => {
-            const Icon = pillar.icon;
+            <div className="rounded-xl border border-[#D4FF00]/25 bg-[#D4FF00]/5 px-4 py-3">
+              <p className="text-[9px] font-mono font-black uppercase tracking-[0.18em] text-slate-500">
+                Mandate Readiness
+              </p>
 
-            return (
-              <article
-                key={pillar.number}
-                className="group rounded-2xl border border-slate-800 bg-slate-950/70 p-5 transition hover:border-[#D4FF00]/45"
+              <p className="mt-1 text-xl font-black text-[#D4FF00]">
+                {mandateCompletion}/12
+              </p>
+
+              <p className="mt-1 text-[10px] text-slate-500">
+                {mandateReadiness}% supplied
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-3">
+              <p className="text-[9px] font-mono font-black uppercase tracking-[0.18em] text-slate-500">
+                Awaiting
+              </p>
+
+              <p
+                className={`mt-1 text-xl font-black ${
+                  mandateAwaiting === 0
+                    ? 'text-emerald-300'
+                    : 'text-amber-300'
+                }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-black text-[#D4FF00]">
-                    {pillar.number}
-                  </span>
+                {mandateAwaiting}
+              </p>
 
-                  <Icon className="h-5 w-5 text-slate-500 transition group-hover:text-[#D4FF00]" />
-                </div>
+              <p className="mt-1 text-[10px] text-slate-500">
+                investor signals
+              </p>
+            </div>
 
-                <h3 className="mt-4 font-black text-white">
-                  {pillar.label}
-                </h3>
-
-                <p className="mt-2 text-xs leading-5 text-slate-400">
-                  {pillar.detail}
-                </p>
-              </article>
-            );
-          })}
+          </div>
         </div>
 
-        <div className="mt-4 flex items-center gap-3 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
-          <Sparkles className="h-5 w-5 shrink-0 text-cyan-300" />
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 
-          <p className="text-xs leading-5 text-slate-300">
-            Startup-level assessments populate only
-            from canonical records and recorded
-            evidence. Investor decisions remain the
-            investor's own.
-          </p>
+          {mandateBuckets.map(
+            bucket => {
+
+              const Icon =
+                bucket.icon;
+
+              const stateTone =
+                bucket.state ===
+                'Supported'
+                  ? 'text-emerald-300'
+                  : bucket.state ===
+                      'Partial'
+                    ? 'text-amber-300'
+                    : 'text-slate-500';
+
+              return (
+                <article
+                  key={bucket.number}
+                  className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"
+                >
+
+                  <div className="flex items-center justify-between gap-3">
+
+                    <span className="font-mono text-xs font-black text-[#D4FF00]">
+                      {bucket.number}
+                    </span>
+
+                    <Icon className="h-5 w-5 text-slate-500" />
+
+                  </div>
+
+                  <h3 className="mt-4 font-black text-white">
+                    {bucket.label}
+                  </h3>
+
+                  <div className="mt-2 flex items-center justify-between gap-2">
+
+                    <span
+                      className={`text-[10px] font-mono font-black uppercase tracking-wider ${stateTone}`}
+                    >
+                      {bucket.state}
+                    </span>
+
+                    <span className="text-[10px] font-mono text-slate-500">
+                      {bucket.supplied}/3 supplied
+                    </span>
+
+                  </div>
+
+                  <div className="mt-4 space-y-3">
+
+                    {bucket.fields.map(
+                      field => {
+
+                        const value =
+                          effectiveMandateAnswers[
+                            field
+                          ];
+
+                        const supplied =
+                          value.trim()
+                            .length > 0;
+
+                        return (
+                          <div
+                            key={field}
+                            className="rounded-xl border border-slate-800/80 bg-[#080d16] p-3"
+                          >
+
+                            <div className="flex items-start justify-between gap-2">
+
+                              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                {
+                                  mandateSignalLabels[
+                                    field
+                                  ]
+                                }
+                              </p>
+
+                              <span
+                                className={`shrink-0 text-[9px] font-mono font-black uppercase ${
+                                  supplied
+                                    ? 'text-emerald-300'
+                                    : 'text-amber-300'
+                                }`}
+                              >
+                                {supplied
+                                  ? 'Supplied'
+                                  : 'Awaiting'}
+                              </span>
+
+                            </div>
+
+                            <p
+                              className={`mt-2 max-h-16 overflow-hidden text-[11px] leading-5 ${
+                                supplied
+                                  ? 'text-slate-300'
+                                  : 'italic text-slate-600'
+                              }`}
+                            >
+                              {supplied
+                                ? value
+                                : 'Awaiting investor input'}
+                            </p>
+
+                          </div>
+                        );
+                      }
+                    )}
+
+                  </div>
+
+                </article>
+              );
+            }
+          )}
+
         </div>
+
+        <div className="mt-5 flex flex-col justify-between gap-4 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-4 md:flex-row md:items-center">
+
+          <div className="flex items-start gap-3">
+
+            <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-cyan-300" />
+
+            <div>
+              <p className="text-xs font-black text-cyan-100">
+                More evidence improves precision — not investor quality.
+              </p>
+
+              <p className="mt-1 max-w-3xl text-[11px] leading-5 text-slate-400">
+                TD Venture uses supplied mandate signals
+                to improve opportunity relevance and
+                founder pitch guidance. Missing signals
+                remain Awaiting. Investor judgment
+                remains sovereign.
+              </p>
+            </div>
+
+          </div>
+
+          {!mandateReady && (
+            <a
+              href={INVESTOR_APPLY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#D4FF00] px-4 text-[10px] font-black uppercase tracking-wider text-slate-950 transition hover:brightness-110"
+            >
+              Complete mandate
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
+          )}
+
+        </div>
+
       </section>
+
     </div>
   );
 }
