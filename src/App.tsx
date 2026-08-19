@@ -68,7 +68,7 @@ import { ImprovementPlanPanel } from './components/ImprovementPlanPanel';
 import {
   InvestorDecisionWorkspace,
   type InvestorDecisionView
-} from './components/InvestorDecisionWorkspace';
+} from './components/InvestorDecisionWorkspaceV2';
 
 import { 
   FundraisingIntelTab, 
@@ -1856,11 +1856,11 @@ export default function App() {
       { id: 'deal_desk_handoff', name: '06 · Deal Desk', icon: ArrowUpRight, desc: 'Send the signal to Execution' },
     ],
     investor: [
-      { id: 'dashboard', name: 'Investor Terminal', icon: LayoutDashboard, desc: 'Decision intelligence and next action' },
-      { id: 'investor_discover', name: '01 · Discover Startups', icon: Search, desc: 'Open the canonical startup universe' },
-      { id: 'investor_matches', name: '02 · Compare Matches', icon: Network, desc: 'Move from fit to focused conviction' },
-      { id: 'investor_framework', name: '03 · Evaluate', icon: ShieldCheck, desc: 'Four diligence pillars plus independent AI' },
-      { id: 'investor_execution', name: '04 · Deal Desk', icon: ArrowUpRight, desc: 'Start and manage execution' }
+      { id: 'dashboard', name: 'Investor Terminal', icon: LayoutDashboard, desc: 'Mandate readiness, lenses and next action' },
+      { id: 'investor_discover', name: '01 · Investment Mandate', icon: Target, desc: '12 investor questions → 4 decision lenses' },
+      { id: 'investor_matches', name: '02 · Founder Pitch Lens', icon: Sparkles, desc: 'What founders need to prove to this investor' },
+      { id: 'investor_framework', name: '03 · Startup Fit', icon: ShieldCheck, desc: 'Canonical scores, evidence, risk and fit' },
+      { id: 'investor_execution', name: '04 · Decision & Execution', icon: ArrowUpRight, desc: 'Final review and Deal Desk handoff' }
     ],
     admin: [
       { id: 'verification_admin', name: 'Verification Queue', icon: ShieldCheck, desc: 'Compare and freeze 20 parallel assessments' },
