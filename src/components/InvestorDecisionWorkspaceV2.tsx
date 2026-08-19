@@ -32,6 +32,8 @@ import type {
 } from '../lib/conversionApi';
 
 
+import InvestorDecisionIntelligencePanel from './InvestorDecisionIntelligencePanel';
+
 export type InvestorDecisionView =
   | 'dashboard'
   | 'investor_discover'
@@ -1536,6 +1538,14 @@ export function InvestorDecisionWorkspace({
 
         <StartupSelector />
 
+              <InvestorDecisionIntelligencePanel
+                intelligence={
+                  investorStartupSignal
+                    ?.decision_intelligence
+                    ?? null
+                }
+              />
+
         {investorSignalLoading ? (
           <section className="rounded-3xl border border-slate-800 bg-[#080d16] p-8 text-center">
             <p className="text-sm text-slate-400">
@@ -1929,6 +1939,14 @@ export function InvestorDecisionWorkspace({
           </div>
         </div>
       </section>
+
+        <InvestorDecisionIntelligencePanel
+          intelligence={
+            investorStartupSignal
+              ?.decision_intelligence
+              ?? null
+          }
+        />
 
       <section className="grid gap-4 md:grid-cols-3">
         <Metric

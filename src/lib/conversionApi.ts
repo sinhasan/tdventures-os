@@ -934,6 +934,12 @@ export type InvestorConversionStartup = {
   match_score?: number | null;
   status?: string | null;
   revealed: boolean;
+  canonical_conversion_available?: boolean;
+
+  decision_intelligence?:
+    | InvestorDecisionIntelligence
+    | null;
+
 };
 
 export type InvestorSafeConversionSignal = {
@@ -971,6 +977,83 @@ export type InvestorSafeConversionSignal = {
   updated_at?: string | null;
 };
 
+export type InvestorDecisionAlignment = {
+  key: string;
+  label: string;
+  state:
+    | 'aligned'
+    | 'outside_mandate'
+    | 'awaiting';
+  detail?: string | null;
+  startup_value?: unknown;
+  mandate_value?: unknown;
+};
+
+export type InvestorDecisionSignal = {
+  signal?: string | null;
+  strength?: string | null;
+  evidence_status?: string | null;
+  source?: string | null;
+};
+
+export type InvestorEvidenceCoverage = {
+  key: string;
+  label: string;
+  state:
+    | 'available'
+    | 'awaiting';
+};
+
+export type InvestorDecisionLens = {
+  key: string;
+  label: string;
+  investor_requirement?: string | null;
+  startup_evidence_state?:
+    | 'available'
+    | 'awaiting';
+};
+
+export type InvestorDecisionIntelligence = {
+  version?: string | null;
+
+  fit_state?:
+    | 'aligned'
+    | 'partially_aligned'
+    | 'mixed'
+    | 'awaiting'
+    | string;
+
+  alignment?: InvestorDecisionAlignment[];
+
+  alignment_summary?: {
+    aligned?: number;
+    outside_mandate?: number;
+    awaiting?: number;
+    dimensions?: number;
+  };
+
+  decision_signals?: InvestorDecisionSignal[];
+
+  evidence_coverage?: InvestorEvidenceCoverage[];
+
+  missing_evidence?: string[];
+
+  decision_lenses?: InvestorDecisionLens[];
+
+  canonical_conversion_state?:
+    | 'available'
+    | 'awaiting'
+    | string;
+
+  contract?: {
+    startup_score_changed?: boolean;
+    match_score_changed?: boolean;
+    qualification_changed?: boolean;
+    canonical_leading_signals_changed?: boolean;
+    ai_generated?: boolean;
+  };
+};
+
 export type InvestorSafeSignalResponse = {
   ok: boolean;
   startup_id: string;
@@ -981,6 +1064,8 @@ export type InvestorSafeSignalResponse = {
   } | null;
 
   signal: InvestorSafeConversionSignal | null;
+
+  decision_intelligence?: InvestorDecisionIntelligence | null;
 
   privacy: {
     founder_private_workspace_exposed: false;
