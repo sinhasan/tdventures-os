@@ -328,37 +328,40 @@ function ConversionReviewProgressModal({
   );
 }
 
-const EmailCaptureBanner = () => {
-  const [dismissed, setDismissed] = useState(false);
+const TdvConversionBackdrop = () => (
+  <>
+    <div className="absolute inset-0 bg-[#070708]" />
+    <div
+      className="absolute inset-0 opacity-70"
+      style={{
+        backgroundImage:
+          'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
+        backgroundSize: '48px 48px'
+      }}
+    />
+    <div className="absolute -left-24 -top-28 h-[520px] w-[520px] rounded-full bg-[#D4FF00]/10 blur-[160px]" />
+    <div className="absolute -bottom-32 -right-20 h-[520px] w-[520px] rounded-full bg-cyan-400/[0.07] blur-[170px]" />
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,rgba(255,255,255,0.035),transparent_38%),linear-gradient(to_bottom,transparent_55%,rgba(0,0,0,0.48))]" />
+  </>
+);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('emailBannerDismissed');
-    if (saved) setDismissed(true);
-  }, []);
-
-  const handleDismiss = () => {
-    localStorage.setItem('emailBannerDismissed', 'true');
-    setDismissed(true);
-  };
-
-  if (dismissed) return null;
-
-  return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:bottom-4 md:max-w-sm z-50 bg-[#1A1A2E] border border-[#D4FF00] rounded-xl shadow-2xl p-4">
-      <button onClick={handleDismiss} className="absolute top-2 right-2 text-gray-400 hover:text-white">✕</button>
-      <p className="text-white text-sm font-medium">📊 Get your detailed investor report</p>
-      <p className="text-gray-300 text-xs mt-1">Enter your email to receive a full breakdown of your pitch deck score and investor match suggestions.</p>
-      <a
-        href="https://docs.google.com/forms/d/e/1FAIpQLSfWdpDDyRP1F66yrDOppZR-Z4QfJehq64mEtQkgtYm2d3Z06w/viewform"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-3 inline-block w-full text-center bg-[#D4FF00] text-black font-bold py-2 rounded-lg text-sm hover:bg-[#E6FF66] transition"
-      >
-        Claim my report →
-      </a>
+const TdvConversionTerminalStrip = ({ label = 'SECURE ACCESS' }: { label?: string }) => (
+  <div className="overflow-hidden rounded-xl border border-white/10 bg-black/70 shadow-[0_0_36px_rgba(212,255,0,0.06)] backdrop-blur">
+    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10">
+      <div className="bg-[#D4FF00] px-4 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-black">TDVENTURE TERMINAL</div>
+      <div className="flex items-center gap-3 px-4 py-2 font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">
+        <span>Conversion</span><span className="text-white/20">/</span><span>{label}</span>
+        <span className="inline-flex items-center gap-1.5 text-[#D4FF00]"><span className="h-1.5 w-1.5 rounded-full bg-[#D4FF00] shadow-[0_0_10px_rgba(212,255,0,0.75)]" />Online</span>
+      </div>
     </div>
-  );
-};
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 font-mono text-[9px] uppercase tracking-[0.16em]">
+      <a href="https://staging.tdventure.vc/app" className="!text-slate-500 transition hover:!text-white">Private Marketplace</a>
+      <span className="text-white/20">→</span><span className="font-black text-[#D4FF00]">Conversion</span><span className="text-white/20">→</span>
+      <a href="https://crm.tdventure.vc/login" className="!text-slate-500 transition hover:!text-white">Deal Desk</a>
+      <span className="ml-auto hidden text-slate-600 sm:inline">Discover · Convert · Execute</span>
+    </div>
+  </div>
+);
 
 
 type ConversionEntryGateProps = {
@@ -439,180 +442,52 @@ const ConversionEntryGate = ({
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#020205] text-white">
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(212,255,0,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(212,255,0,0.035)_1px,transparent_1px)] bg-[size:28px_28px]" />
-      <div className="absolute left-[-10%] top-[-15%] h-[520px] w-[520px] rounded-full bg-purple-700/20 blur-[150px]" />
-      <div className="absolute bottom-[-20%] right-[-10%] h-[560px] w-[560px] rounded-full bg-[#D4FF00]/10 blur-[170px]" />
-
-      <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-10">
-        <div className="grid w-full max-w-6xl gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
-
-          <section className="hidden lg:block">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#D4FF00]/60 bg-black/70 px-5 py-2 text-xs font-black uppercase tracking-[0.32em] text-[#D4FF00] shadow-[0_0_26px_rgba(212,255,0,0.16)]">
-              <ShieldCheck className="h-4 w-4" />
-              TD Venture Conversion
-            </div>
-
-            <h1 className="mt-7 max-w-3xl text-5xl font-black leading-[1.04] tracking-tight">
-              <span className="block text-white">
-                Convert founder
-              </span>
-
-              <span className="block text-[#D4FF00]">
-                evidence into
-              </span>
-
-              <span className="block text-slate-400">
-                investor-ready action.
-              </span>
-            </h1>
-
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-slate-400 xl:text-lg">
-              Strengthen pitch proof, fundraise readiness,
-              narrative clarity and investor fit before moving
-              an opportunity into Deal Desk.
-            </p>
-
-            <div className="mt-8 grid max-w-3xl grid-cols-3 gap-4">
-              {[
-                ['01', 'Founder evidence'],
-                ['02', 'Conversion signals'],
-                ['03', 'Deal Desk handoff'],
-              ].map(([number, label]) => (
-                <div
-                  key={number}
-                  className="rounded-2xl border border-slate-800 bg-[#080D1A]/90 p-5"
-                >
-                  <div className="text-xs font-black tracking-[0.3em] text-[#D4FF00]">
-                    {number}
+    <div className="tdv-entry-shell relative min-h-screen overflow-hidden text-white">
+      <TdvConversionBackdrop />
+      <div className="relative z-10 min-h-screen px-5 py-5 sm:px-8 sm:py-8">
+        <div className="mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-6xl flex-col sm:min-h-[calc(100vh-4rem)]">
+          <TdvConversionTerminalStrip />
+          <div className="grid flex-1 gap-8 py-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:py-10">
+            <section>
+              <div className="font-mono text-[10px] font-black uppercase tracking-[0.28em] text-[#D4FF00]">TD VENTURE / CONVERSION</div>
+              <h1 className="mt-5 max-w-3xl text-4xl leading-[1.02] tracking-tight text-white sm:text-5xl lg:text-6xl">Become<span className="block text-[#D4FF00]">investor-ready.</span></h1>
+              <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">Turn verified founder evidence into clearer readiness, stronger investor fit and an execution-ready handoff to Deal Desk.</p>
+              <div className="mt-7 grid max-w-3xl gap-3 sm:grid-cols-3">
+                {[['01','EVIDENCE','Founder record'],['02','CONVERT','AI + readiness'],['03','HANDOFF','Deal Desk signal']].map(([number,label,detail]) => (
+                  <div key={number} className="rounded-xl border border-white/10 bg-white/[0.025] p-4 backdrop-blur">
+                    <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] text-slate-600"><span>{number}</span><span className="text-cyan-300/80">{label}</span></div>
+                    <div className="mt-4 text-sm font-bold text-white">{detail}</div>
                   </div>
-
-                  <div className="mt-3 text-sm font-bold text-white">
-                    {label}
+                ))}
+              </div>
+              <div className="mt-6 inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/35 px-3 py-2 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-500"><ShieldCheck className="h-3.5 w-3.5 text-[#D4FF00]" />One verified identity · one source of truth</div>
+            </section>
+            <section className="mx-auto w-full max-w-md">
+              <div className="rounded-2xl border border-white/10 bg-[#0b0d0d]/92 p-6 shadow-[0_28px_90px_rgba(0,0,0,0.52)] backdrop-blur-xl sm:p-7">
+                <div className="flex items-start justify-between gap-4">
+                  <div><div className="font-mono text-[9px] font-black uppercase tracking-[0.24em] text-cyan-300">CONVERSION / SECURE ACCESS</div><h2 className="mt-3 text-3xl text-white">Sign in</h2></div>
+                  <div className="rounded-lg border border-[#D4FF00]/25 bg-[#D4FF00]/[0.06] px-2.5 py-1.5 font-mono text-[8px] uppercase tracking-[0.18em] text-[#D4FF00]">Verified</div>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-slate-500">Use your TD Venture account to enter the Conversion workspace.</p>
+                {error && <div className="mt-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm leading-relaxed text-red-200">{error}</div>}
+                <form onSubmit={handleLogin} className="mt-6">
+                  <label className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-slate-500">Email</label>
+                  <input type="email" required autoComplete="email" placeholder="you@example.com" value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 mb-4 w-full rounded-lg border border-white/10 bg-black/55 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-700 focus:border-[#D4FF00]/60 focus:shadow-[0_0_0_3px_rgba(212,255,0,0.08)]" />
+                  <label className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-slate-500">Password</label>
+                  <input type="password" required autoComplete="current-password" placeholder="••••••••" value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 mb-5 w-full rounded-lg border border-white/10 bg-black/55 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-700 focus:border-[#D4FF00]/60 focus:shadow-[0_0_0_3px_rgba(212,255,0,0.08)]" />
+                  <button type="submit" disabled={loading} className="w-full rounded-lg bg-[#D4FF00] py-3.5 text-sm font-black uppercase tracking-[0.12em] !text-black transition hover:bg-[#E7FF66] disabled:cursor-wait disabled:opacity-60">{loading ? 'Signing in…' : 'Enter Conversion'}</button>
+                </form>
+                <div className="mt-6 border-t border-white/10 pt-5">
+                  <div className="text-center font-mono text-[9px] uppercase tracking-[0.22em] text-slate-600">New to TD Venture</div>
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    <a href="https://staging.tdventure.vc/signup/startup" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#D4FF00]/30 bg-[#D4FF00]/[0.05] px-3 text-center text-xs font-bold !text-[#D4FF00] transition hover:bg-[#D4FF00] hover:!text-black">Startup signup</a>
+                    <a href="https://staging.tdventure.vc/signup/investor" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-cyan-300/25 bg-cyan-300/[0.04] px-3 text-center text-xs font-bold !text-cyan-200 transition hover:bg-cyan-300 hover:!text-black">Investor signup</a>
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="mx-auto w-full max-w-md">
-            <div className="rounded-3xl border border-[#D4FF00]/55 bg-[#070A0F]/95 p-7 shadow-[0_0_70px_rgba(212,255,0,0.18)] backdrop-blur-xl">
-
-              <div className="mb-6">
-                <div className="text-xs font-black uppercase tracking-[0.3em] text-[#D4FF00]">
-                  Secure Conversion Terminal
-                </div>
-
-                <h2 className="mt-3 text-3xl font-black text-white">
-                  Sign in
-                </h2>
-
-                <p className="mt-2 text-sm leading-relaxed text-slate-400">
-                  Access is available to registered Startup and
-                  Investor accounts. Global administrators retain
-                  system access.
-                </p>
+                <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4 font-mono text-[8px] uppercase tracking-[0.16em] text-slate-700"><span>CONVERSION.TDVENTURE.VC</span><span className="text-[#D4FF00]/70">SECURE TERMINAL ONLINE</span></div>
               </div>
-
-                <div className="mb-5 grid grid-cols-2 gap-3">
-                  <a
-                    href="https://staging.tdventure.vc/app"
-                    target="_blank"
-                    rel="noreferrer"
-                    title="Open Private Marketplace"
-                    className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex min-h-11 items-center justify-center rounded-md border border-cyan-300/70 bg-cyan-400/10 px-3 text-center text-xs font-bold text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.24)] transition hover:bg-cyan-300 hover:!text-black"
-                  >
-                    ← Private Marketplace
-                  </a>
-
-                  <a
-                    href="https://crm.tdventure.vc/login"
-                    target="_blank"
-                    rel="noreferrer"
-                    title="Open Deal Desk"
-                    className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex min-h-11 items-center justify-center rounded-md border border-[#D4FF00]/70 bg-[#D4FF00]/10 px-3 text-center text-xs font-bold text-[#D4FF00] shadow-[0_0_22px_rgba(212,255,0,0.24)] transition hover:bg-[#D4FF00] hover:!text-black"
-                  >
-                    Deal Desk →
-                  </a>
-                </div>
-              {error && (
-                <div className="mb-5 rounded-xl border border-red-500/35 bg-red-500/10 px-4 py-3 text-sm leading-relaxed text-red-200">
-                  {error}
-                </div>
-              )}
-
-              <form
-                onSubmit={handleLogin}
-              >
-                <label className="mb-2 block text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
-                  Email
-                </label>
-
-                <input
-                  type="email"
-                  required
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(event) =>
-                    setEmail(event.target.value)
-                  }
-                  className="mb-4 w-full rounded-xl border border-slate-700 bg-black/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-700 focus:border-[#D4FF00] focus:shadow-[0_0_20px_rgba(212,255,0,0.18)]"
-                />
-
-                <label className="mb-2 block text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
-                  Password
-                </label>
-
-                <input
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(event) =>
-                    setPassword(event.target.value)
-                  }
-                  className="mb-5 w-full rounded-xl border border-slate-700 bg-black/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-700 focus:border-[#D4FF00] focus:shadow-[0_0_20px_rgba(212,255,0,0.18)]"
-                />
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-xl bg-[#D4FF00] py-3.5 text-sm font-black uppercase tracking-[0.12em] !text-black shadow-[0_0_28px_rgba(212,255,0,0.36)] transition hover:bg-[#E7FF66] disabled:cursor-wait disabled:opacity-60"
-                >
-                  {loading
-                    ? 'Signing in…'
-                    : 'Enter Conversion'}
-                </button>
-              </form>
-
-              <div className="my-6 flex items-center gap-3">
-                <div className="h-px flex-1 bg-slate-800" />
-                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-600">
-                  New to TD Venture
-                </span>
-                <div className="h-px flex-1 bg-slate-800" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <a
-                  href="https://staging.tdventure.vc/signup/startup"
-                  className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#D4FF00]/60 bg-[#D4FF00]/10 px-3 text-center text-xs font-black text-[#D4FF00] transition hover:bg-[#D4FF00] hover:!text-black"
-                >
-                  Apply as Startup
-                </a>
-
-                <a
-                  href="https://staging.tdventure.vc/signup/investor"
-                  className="inline-flex min-h-12 items-center justify-center rounded-xl border border-purple-400/60 bg-purple-500/10 px-3 text-center text-xs font-black text-purple-200 transition hover:bg-purple-500 hover:text-white"
-                >
-                  Apply as Investor
-                </a>
-              </div>
-
-            </div>
-          </section>
+            </section>
+          </div>
         </div>
       </div>
     </div>
@@ -621,6 +496,7 @@ const ConversionEntryGate = ({
 
 type ConversionPassPaywallProps = {
   mode: 'entry' | 'analysis';
+  accountType?: 'startup' | 'investor';
   error: string;
   checkoutStarting: boolean;
   onActivate: () => void;
@@ -629,70 +505,55 @@ type ConversionPassPaywallProps = {
 
 const ConversionPassPaywall = ({
   mode,
+  accountType = 'startup',
   error,
   checkoutStarting,
   onActivate,
   onContinue
 }: ConversionPassPaywallProps) => (
-  <div className="fixed inset-0 z-[140] flex items-center justify-center overflow-y-auto bg-[#020205]/95 px-6 py-10 text-white backdrop-blur-xl">
-    <div className="w-full max-w-2xl rounded-3xl border border-[#D4FF00]/45 bg-[#070A0F] p-8 shadow-[0_0_70px_rgba(212,255,0,0.16)]">
-      <div className="text-xs font-black uppercase tracking-[0.28em] text-[#D4FF00]">
-        TD Venture Conversion
-      </div>
-      <h1 className="mt-3 text-3xl font-black text-white">
-        {mode === 'entry'
-          ? 'Your 3 free Conversion entries are complete.'
-          : 'Continue with the Conversion Founder Pass.'}
-      </h1>
-      <p className="mt-3 text-sm leading-relaxed text-slate-400">
-        {mode === 'entry'
-          ? 'Activate Conversion to continue working on founder evidence, readiness and investor fit.'
-          : 'Your guarded preview remains separate from workspace entry. Activate the paid pass for continued AI analysis and reruns.'}
-      </p>
-
-      <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div className="text-sm font-bold text-slate-300">Conversion Founder Pass</div>
-            <div className="mt-1 text-4xl font-black text-[#D4FF00]">
-              ₹4,999 <span className="text-base text-slate-400">+ GST</span>
+  <div className="tdv-entry-shell fixed inset-0 z-[140] overflow-y-auto text-white">
+    <TdvConversionBackdrop />
+    <div className="relative z-10 min-h-screen px-5 py-5 sm:px-8 sm:py-8">
+      <div className="mx-auto w-full max-w-5xl">
+        <TdvConversionTerminalStrip label="PASS / CHECKOUT" />
+        <div className="mx-auto mt-8 w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0b0d0d]/94 p-6 shadow-[0_28px_90px_rgba(0,0,0,0.54)] backdrop-blur-xl sm:p-8">
+          <div className="font-mono text-[9px] font-black uppercase tracking-[0.24em] text-cyan-300">TD VENTURE / CONVERSION</div>
+          <h1 className="mt-3 text-3xl text-white sm:text-4xl">
+            {mode === 'entry'
+              ? accountType === 'investor'
+                ? 'Your 3 free Investor Conversion entries are complete.'
+                : 'Your 3 free Conversion entries are complete.'
+              : 'Continue with the Conversion Founder Pass.'}
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-slate-400">
+            {mode === 'entry'
+              ? accountType === 'investor'
+                ? 'Investor Conversion is limited to three free workspace entries for V1. Paid Investor Conversion access is not enabled yet.'
+                : 'Activate Conversion to continue working on founder evidence, readiness and investor fit.'
+              : 'Your guarded preview remains separate from workspace entry. Activate the paid pass for continued AI analysis and reruns.'}
+          </p>
+          {accountType === 'startup' && (
+            <>
+              <div className="mt-6 grid gap-4 rounded-xl border border-white/10 bg-black/40 p-5 sm:grid-cols-[1fr_auto] sm:items-end">
+                <div><div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">Founder Pass</div><div className="mt-2 text-4xl font-black text-[#D4FF00]">₹4,999 <span className="text-base text-slate-500">+ GST</span></div></div>
+                <div className="sm:text-right"><div className="text-sm font-bold text-white">90 days</div><div className="mt-1 text-xs text-slate-500">120 successful analyses</div></div>
+              </div>
+              <div className="mt-4 grid gap-2 sm:grid-cols-3">{['Founder evidence','Conversion intelligence','Deal Desk handoff'].map((item) => <div key={item} className="rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2.5 font-mono text-[9px] uppercase tracking-[0.12em] text-slate-500">{item}</div>)}</div>
+            </>
+          )}
+          {accountType === 'investor' && mode === 'entry' && (
+            <div className="mt-6 rounded-xl border border-cyan-300/20 bg-cyan-300/[0.04] p-5">
+              <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-200">Investor V1 access</div>
+              <p className="mt-2 text-sm leading-6 text-slate-400">The three-entry allowance is now enforced for Investor accounts without attaching the Founder Pass or its checkout to an Investor identity.</p>
             </div>
-          </div>
-          <div className="text-right text-sm text-slate-300">
-            <div className="font-bold text-white">90 days</div>
-            <div>120 successful analyses</div>
-          </div>
+          )}
+          {error && <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>}
+          {accountType === 'startup' && (
+            <button type="button" onClick={onActivate} disabled={checkoutStarting} className="mt-6 w-full rounded-lg bg-[#D4FF00] px-5 py-3.5 text-sm font-black uppercase tracking-[0.1em] text-black transition hover:bg-[#E7FF66] disabled:cursor-wait disabled:opacity-60">{checkoutStarting ? 'Opening secure checkout…' : 'Activate Conversion'}</button>
+          )}
+          {mode === 'analysis' && onContinue && <button type="button" onClick={onContinue} className="mt-3 w-full rounded-lg border border-white/10 bg-white/[0.02] px-5 py-3 text-sm font-bold text-slate-300 transition hover:border-white/20 hover:text-white">Continue without another AI analysis</button>}
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 border-t border-white/10 pt-4 font-mono text-[9px] uppercase tracking-[0.15em]"><a href="https://staging.tdventure.vc/app" className="!text-slate-500 hover:!text-white">Private Marketplace</a><span className="text-white/20">·</span><span className="text-[#D4FF00]">Conversion</span><span className="text-white/20">·</span><a href="https://crm.tdventure.vc/login" className="!text-slate-500 hover:!text-white">Deal Desk</a></div>
         </div>
-      </div>
-
-      {error && (
-        <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-          {error}
-        </div>
-      )}
-
-      <button
-        type="button"
-        onClick={onActivate}
-        disabled={checkoutStarting}
-        className="mt-6 w-full rounded-xl bg-[#D4FF00] px-5 py-3.5 text-sm font-black text-black transition hover:bg-[#E7FF66] disabled:cursor-wait disabled:opacity-60"
-      >
-        {checkoutStarting ? 'Opening secure checkout…' : 'Activate Conversion'}
-      </button>
-
-      {mode === 'analysis' && onContinue && (
-        <button
-          type="button"
-          onClick={onContinue}
-          className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-900/50 px-5 py-3 text-sm font-bold text-slate-300 transition hover:border-slate-500 hover:text-white"
-        >
-          Continue without another AI analysis
-        </button>
-      )}
-
-      <div className="mt-5 flex flex-wrap justify-center gap-4 text-xs font-semibold">
-        <a href="https://staging.tdventure.vc/app" className="text-slate-500 hover:text-white">Private Marketplace</a>
-        <a href="https://crm.tdventure.vc/login" className="text-slate-500 hover:text-white">Deal Desk</a>
       </div>
     </div>
   </div>
@@ -1035,10 +896,14 @@ export default function App() {
           setProfilePlaneResolution(profilePlane);
         }
 
-        // Conversion Founder Pass is a founder/startup product. Investor and
-        // global-admin workspace views remain operational and are not metered
-        // against a founder's three free entries.
-        if (profilePlane.profile_type !== 'startup') {
+        // Meter both Startup and Investor Conversion workspace entry.
+        // Admin/other non-profile workspace views remain operational and are
+        // not charged against the three-entry allowance.
+        const meteredWorkspaceProfile =
+          profilePlane.profile_type === 'startup' ||
+          profilePlane.profile_type === 'investor';
+
+        if (!meteredWorkspaceProfile) {
           setWorkspaceEntryDetail(null);
           setWorkspaceEntryState('allowed');
           return;
@@ -1969,8 +1834,9 @@ export default function App() {
 
   if (!tdventureSessionChecked) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#020205] text-[#D4FF00]">
-        <div className="text-center">
+      <div className="tdv-entry-shell relative flex min-h-screen items-center justify-center overflow-hidden px-6 text-[#D4FF00]">
+        <TdvConversionBackdrop />
+        <div className="relative z-10 text-center">
           <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[#D4FF00]/20 border-t-[#D4FF00]" />
           <div className="text-xs font-black uppercase tracking-[0.3em]">
             Checking TD Venture session
@@ -2000,8 +1866,9 @@ export default function App() {
 
   if (workspaceEntryState === 'idle' || workspaceEntryState === 'checking') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#020205] text-[#D4FF00]">
-        <div className="text-center">
+      <div className="tdv-entry-shell relative flex min-h-screen items-center justify-center overflow-hidden px-6 text-[#D4FF00]">
+        <TdvConversionBackdrop />
+        <div className="relative z-10 text-center">
           <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[#D4FF00]/20 border-t-[#D4FF00]" />
           <div className="text-xs font-black uppercase tracking-[0.3em]">
             Checking Conversion access
@@ -2013,8 +1880,9 @@ export default function App() {
 
   if (workspaceEntryState === 'error') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#020205] px-6 text-white">
-        <div className="w-full max-w-lg rounded-3xl border border-red-500/30 bg-[#070A0F] p-8 text-center">
+      <div className="tdv-entry-shell relative flex min-h-screen items-center justify-center overflow-hidden px-6 text-white">
+        <TdvConversionBackdrop />
+        <div className="relative z-10 w-full max-w-lg rounded-2xl border border-red-500/30 bg-[#0b0d0d]/94 p-8 text-center shadow-[0_28px_90px_rgba(0,0,0,0.5)]">
           <div className="text-xs font-black uppercase tracking-[0.28em] text-red-300">Conversion access check</div>
           <h1 className="mt-3 text-2xl font-black">We could not verify workspace access</h1>
           <p className="mt-3 text-sm text-slate-400">{workspaceEntryError}</p>
@@ -2034,6 +1902,11 @@ export default function App() {
     return (
       <ConversionPassPaywall
         mode="entry"
+        accountType={
+          profilePlaneResolution?.profile_type === 'investor'
+            ? 'investor'
+            : 'startup'
+        }
         error={workspaceEntryError}
         checkoutStarting={conversionCheckoutStarting}
         onActivate={() => void startConversionCheckout()}
@@ -2051,18 +1924,16 @@ export default function App() {
   const activeThemeObj = PREMIUM_THEMES.find(t => t.id === selectedTheme) || PREMIUM_THEMES[0];
 
   return (
-    <div className={`fixed inset-0 h-[100dvh] w-screen font-sans overflow-hidden overscroll-none selection:bg-[#D4FF00]/30 pb-14 md:pb-0 transition-colors duration-300 ${
+    <div className={`tdv-conversion-shell fixed inset-0 h-[100dvh] w-screen font-sans overflow-hidden overscroll-none selection:bg-[#D4FF00]/30 pb-14 md:pb-0 transition-colors duration-300 ${
       themeMode === 'light' 
         ? 'light-theme bg-[#F8FAFC] text-[#0F172A]' 
         : 'dark-theme bg-[#020205] text-slate-200'
     }`} id="application_root">
       
-      {/* Dynamic Background backlights */}
-      <div 
-        className="fixed top-0 left-1/3 w-[650px] h-[650px] rounded-full blur-[180px] pointer-events-none transition-all duration-1000 opacity-20"
-        style={{ backgroundColor: activeThemeObj.accent }}
-      />
-      <div className="fixed bottom-0 right-10 w-[450px] h-[450px] bg-blue-950/15 rounded-full blur-[140px] pointer-events-none" />
+      {/* TD Venture operating-terminal backlights */}
+      <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.018)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:48px_48px]" />
+      <div className="fixed -top-40 left-1/4 h-[650px] w-[650px] rounded-full bg-[#D4FF00]/[0.055] blur-[180px] pointer-events-none" />
+      <div className="fixed -bottom-28 right-0 h-[500px] w-[500px] rounded-full bg-cyan-400/[0.045] blur-[160px] pointer-events-none" />
 
       {/* Floating alert warnings */}
       {feedbackMsg.text && (
@@ -2201,16 +2072,6 @@ export default function App() {
             </nav>
           </div>
 
-          {/* Sourcing footer widget */}
-          <div className="p-4 border-t border-slate-800/60 bg-slate-950/40">
-            <button
-              type="button"
-              onClick={openCanonicalPricing}
-              className="w-full rounded-xl bg-[#D4FF00] px-3 py-2 text-center text-[11px] font-black text-slate-950 shadow-[0_0_22px_rgba(212,255,0,0.2)] transition hover:brightness-110"
-            >
-              View Pricing Plans
-            </button>
-          </div>
         </aside>
 
         {/* Core workspace container */}
@@ -2453,13 +2314,6 @@ export default function App() {
                         className="px-4 py-2 bg-[#D4FF00] hover:bg-[#c2ec00] text-slate-950 font-black text-xs rounded-xl shadow-md transition-all active:scale-[0.98]"
                       >
                         Run Conversion Review
-                      </button>
-                      <button
-                        type="button"
-                        onClick={openCanonicalPricing}
-                        className="inline-block rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-2 text-xs font-bold text-slate-200 hover:border-[#D4FF00]/60 hover:text-[#D4FF00]"
-                      >
-                        View Pricing Plans
                       </button>
                     </div>
                   </div>
@@ -3329,7 +3183,6 @@ export default function App() {
           }
         />
       )}
-      <EmailCaptureBanner />
 
     </div>
   );
