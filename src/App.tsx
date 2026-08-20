@@ -745,16 +745,44 @@ export default function App() {
               );
             } else {
               setRole('founder');
-              setActiveTab((current) =>
-                current === 'docs_hub' ||
-                current === 'pitch_analyzer' ||
-                current === 'dashboard' ||
-                current === 'improvement_plan' ||
-                current === 'claim_review' ||
-                current === 'deal_desk_handoff'
-                  ? current
-                  : 'dashboard'
-              );
+
+              let gate0Launch = false;
+
+              if (session.exchanged && typeof window !== 'undefined') {
+                try {
+                  const rawLaunchContext =
+                    window.sessionStorage.getItem(
+                      'tdventure_conversion_launch_context'
+                    );
+
+                  if (rawLaunchContext) {
+                    const launchContext =
+                      JSON.parse(rawLaunchContext);
+
+                    gate0Launch =
+                      launchContext?.source === 'deal_desk' &&
+                      launchContext?.purpose === 'gate0_document_pack' &&
+                      Boolean(launchContext?.opportunity_id);
+                  }
+                } catch {
+                  gate0Launch = false;
+                }
+              }
+
+              if (gate0Launch) {
+                setActiveTab('deal_desk_handoff');
+              } else {
+                setActiveTab((current) =>
+                  current === 'docs_hub' ||
+                  current === 'pitch_analyzer' ||
+                  current === 'dashboard' ||
+                  current === 'improvement_plan' ||
+                  current === 'claim_review' ||
+                  current === 'deal_desk_handoff'
+                    ? current
+                    : 'dashboard'
+                );
+              }
             }
 
             const profile = profilePlane.profile;
