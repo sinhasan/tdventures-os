@@ -3099,17 +3099,9 @@ export default function App() {
 
           </div>
 
-          <footer className="h-14 shrink-0 border-t border-slate-800/60 bg-[#020205] flex items-center justify-between px-6 text-[11px] text-slate-500 relative z-20">
-		           <span>TD Conversion OS · Collect → Apply AI Intelligence → Present → Improve → Verify → Deal Desk</span>
-            <a
-             href="https://tdventure.vc/contribute.html"
-             target="_blank"
-            rel="noopener noreferrer"
-            className="font-bold text-[#D4FF00] hover:text-[#E6FF66] transition-colors"
-           >
-            💚 Contribute
-          </a>
-        </footer>
+          <footer className="h-14 shrink-0 border-t border-slate-800/60 bg-[#020205] flex items-center px-6 text-[11px] text-slate-500 relative z-20">
+            <span>TD Conversion OS · Collect → Apply AI Intelligence → Present → Improve → Verify → Deal Desk</span>
+          </footer>
 
         </main>
       </div>
