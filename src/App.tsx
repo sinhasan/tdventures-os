@@ -2109,18 +2109,18 @@ export default function App() {
           <div
             className="tdv-awaiting-ticker"
             role="status"
-            aria-label="Complete APPLY to strengthen your leading signals"
+            aria-label="Sign up or update your profile to strengthen your leading signals"
           >
             <div className="tdv-awaiting-ticker-track">
               <span className="tdv-awaiting-ticker-item">
-                Change Leading Signals that are <strong className="tdv-awaiting-pulse">“Awaiting”</strong> your input — complete the APPLY form on the TD Venture homepage.
+                New to TD Venture? Sign up and complete your startup profile. Already registered? Sign in and keep your profile updated to strengthen your Leading Signals.
               </span>
 
               <span
                 className="tdv-awaiting-ticker-item"
                 aria-hidden="true"
               >
-                Change Leading Signals that are <strong className="tdv-awaiting-pulse">“Awaiting”</strong> your input — complete the APPLY form on the TD Venture homepage.
+                New to TD Venture? Sign up and complete your startup profile. Already registered? Sign in and keep your profile updated to strengthen your Leading Signals.
               </span>
             </div>
           </div>
