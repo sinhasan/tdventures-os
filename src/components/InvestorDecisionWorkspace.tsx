@@ -47,10 +47,10 @@ type InvestorDecisionWorkspaceProps = {
 };
 
 const MARKETPLACE_URL =
-  'https://staging.tdventure.vc/app';
+  'https://tdventure.vc/app';
 
 const INVESTOR_APPLY_URL =
-  'https://staging.tdventure.vc/signup/investor';
+  'https://tdventure.vc/signup/investor';
 
 type MandateSignalKey =
   | 'investment_thesis'

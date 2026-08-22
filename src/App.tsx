@@ -355,7 +355,7 @@ const TdvConversionTerminalStrip = ({ label = 'SECURE ACCESS' }: { label?: strin
       </div>
     </div>
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 font-mono text-[9px] uppercase tracking-[0.16em]">
-      <a href="https://staging.tdventure.vc/app" className="!text-slate-500 transition hover:!text-white">Private Marketplace</a>
+      <a href="https://tdventure.vc/app" className="!text-slate-500 transition hover:!text-white">Private Marketplace</a>
       <span className="text-white/20">→</span><span className="font-black text-[#D4FF00]">Conversion</span><span className="text-white/20">→</span>
       <a href="https://crm.tdventure.vc/login" className="!text-slate-500 transition hover:!text-white">Deal Desk</a>
       <span className="ml-auto hidden text-slate-600 sm:inline">Discover · Convert · Execute</span>
@@ -480,8 +480,8 @@ const ConversionEntryGate = ({
                 <div className="mt-6 border-t border-white/10 pt-5">
                   <div className="text-center font-mono text-[9px] uppercase tracking-[0.22em] text-slate-600">New to TD Venture</div>
                   <div className="mt-3 grid grid-cols-2 gap-3">
-                    <a href="https://staging.tdventure.vc/signup/startup" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#D4FF00]/30 bg-[#D4FF00]/[0.05] px-3 text-center text-xs font-bold !text-[#D4FF00] transition hover:bg-[#D4FF00] hover:!text-black">Startup signup</a>
-                    <a href="https://staging.tdventure.vc/signup/investor" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-cyan-300/25 bg-cyan-300/[0.04] px-3 text-center text-xs font-bold !text-cyan-200 transition hover:bg-cyan-300 hover:!text-black">Investor signup</a>
+                    <a href="https://tdventure.vc/signup/startup" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#D4FF00]/30 bg-[#D4FF00]/[0.05] px-3 text-center text-xs font-bold !text-[#D4FF00] transition hover:bg-[#D4FF00] hover:!text-black">Startup signup</a>
+                    <a href="https://tdventure.vc/signup/investor" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-cyan-300/25 bg-cyan-300/[0.04] px-3 text-center text-xs font-bold !text-cyan-200 transition hover:bg-cyan-300 hover:!text-black">Investor signup</a>
                   </div>
                 </div>
                 <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4 font-mono text-[8px] uppercase tracking-[0.16em] text-slate-700"><span>CONVERSION.TDVENTURE.VC</span><span className="text-[#D4FF00]/70">SECURE TERMINAL ONLINE</span></div>
@@ -552,7 +552,7 @@ const ConversionPassPaywall = ({
             <button type="button" onClick={onActivate} disabled={checkoutStarting} className="mt-6 w-full rounded-lg bg-[#D4FF00] px-5 py-3.5 text-sm font-black uppercase tracking-[0.1em] text-black transition hover:bg-[#E7FF66] disabled:cursor-wait disabled:opacity-60">{checkoutStarting ? 'Opening secure checkout…' : 'Activate Conversion'}</button>
           )}
           {mode === 'analysis' && onContinue && <button type="button" onClick={onContinue} className="mt-3 w-full rounded-lg border border-white/10 bg-white/[0.02] px-5 py-3 text-sm font-bold text-slate-300 transition hover:border-white/20 hover:text-white">Continue without another AI analysis</button>}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 border-t border-white/10 pt-4 font-mono text-[9px] uppercase tracking-[0.15em]"><a href="https://staging.tdventure.vc/app" className="!text-slate-500 hover:!text-white">Private Marketplace</a><span className="text-white/20">·</span><span className="text-[#D4FF00]">Conversion</span><span className="text-white/20">·</span><a href="https://crm.tdventure.vc/login" className="!text-slate-500 hover:!text-white">Deal Desk</a></div>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 border-t border-white/10 pt-4 font-mono text-[9px] uppercase tracking-[0.15em]"><a href="https://tdventure.vc/app" className="!text-slate-500 hover:!text-white">Private Marketplace</a><span className="text-white/20">·</span><span className="text-[#D4FF00]">Conversion</span><span className="text-white/20">·</span><a href="https://crm.tdventure.vc/login" className="!text-slate-500 hover:!text-white">Deal Desk</a></div>
         </div>
       </div>
     </div>
@@ -2201,7 +2201,7 @@ export default function App() {
                 {/* Cross-workspace product journey */}
                 <div className="flex items-center gap-2">
                   <a
-                    href="https://staging.tdventure.vc/app"
+                    href="https://tdventure.vc/app"
                     target="_blank"
                     rel="noreferrer"
                     title="Open Private Marketplace"

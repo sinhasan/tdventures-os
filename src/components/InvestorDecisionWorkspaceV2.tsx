@@ -103,7 +103,7 @@ type BucketDefinition = {
 
 
 const INVESTOR_APPLY_URL =
-  'https://staging.tdventure.vc/signup/investor';
+  'https://tdventure.vc/signup/investor';
 
 
 const QUESTIONS: QuestionDefinition[] = [
