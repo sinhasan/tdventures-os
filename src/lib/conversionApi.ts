@@ -607,6 +607,7 @@ export type TdventureSessionInitialization = {
 };
 
 let launchExchangePromise: Promise<string> | null = null;
+let resolvedLaunchToken: string | null = null;
 
 export function getStoredTdventureToken(): string | null {
   if (typeof window === 'undefined') {
@@ -685,6 +686,13 @@ export async function initializeTdventureSessionFromLaunch():
     };
   }
 
+  if (resolvedLaunchToken) {
+    return {
+      token: resolvedLaunchToken,
+      exchanged: true
+    };
+  }
+
   if (launchExchangePromise) {
     return {
       token: await launchExchangePromise,
@@ -721,6 +729,7 @@ export async function initializeTdventureSessionFromLaunch():
 
   try {
     const token = await launchExchangePromise;
+    resolvedLaunchToken = token;
     return {
       token,
       exchanged: true
