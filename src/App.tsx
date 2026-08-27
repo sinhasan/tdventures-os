@@ -868,7 +868,11 @@ export default function App() {
     const pathname =
       window.location.pathname;
 
-    if (tdventureUser) {
+    const hasStoredToken =
+      typeof window !== 'undefined' &&
+      Boolean(window.localStorage.getItem('tdventure_token'));
+
+    if (tdventureUser || hasStoredToken) {
       if (pathname === '/login') {
         window.history.replaceState(
           {},
