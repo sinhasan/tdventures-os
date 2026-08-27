@@ -702,6 +702,10 @@ export default function App() {
         if (session.token) {
           const accountUser = await getTdventureCurrentUser();
 
+          if (!cancelled) {
+            setTdventureUser(accountUser);
+          }
+
           const access =
             await getConversionWorkspaceAccess();
 
@@ -715,7 +719,6 @@ export default function App() {
             await getCurrentProfilePlane();
 
           if (!cancelled) {
-            setTdventureUser(accountUser);
             setProfilePlaneResolution(profilePlane);
             setTdventureSessionError('');
 
