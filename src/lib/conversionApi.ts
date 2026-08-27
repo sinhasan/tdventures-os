@@ -726,7 +726,9 @@ export async function initializeTdventureSessionFromLaunch():
       exchanged: true
     };
   } catch (error) {
-    window.localStorage.removeItem('tdventure_token');
+    // Preserve the canonical staging session. A failed one-time launch
+    // exchange must not erase a valid tdventure_token; the caller will
+    // surface the error and a later launch can retry cleanly.
     throw error;
   } finally {
     launchExchangePromise = null;

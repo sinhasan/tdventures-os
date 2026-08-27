@@ -839,16 +839,9 @@ export default function App() {
       .catch((error: unknown) => {
         if (cancelled) return;
 
-        setTdventureUser(null);
-
-        try {
-          localStorage.removeItem(
-            'tdventure_token'
-          );
-        } catch {
-          // Browser storage may be unavailable.
-        }
-
+        // Preserve the canonical TD Venture token on transient/bootstrap
+        // failures. A secondary API failure must not turn a valid SSO
+        // session into a logged-out state.
         const message =
           error instanceof Error
             ? error.message
