@@ -657,6 +657,9 @@ export default function App() {
   const [profilePlaneResolution, setProfilePlaneResolution] =
     useState<ProfilePlaneResolution | null>(null);
 
+  const [advisoryAcknowledged, setAdvisoryAcknowledged] =
+    useState(false);
+
   const tdventureAccountName =
     tdventureUser?.full_name?.trim() ||
     tdventureUser?.email?.split('@')[0] ||
@@ -2078,6 +2081,29 @@ export default function App() {
                       : 'Admin'}
                 </div>
               )}
+
+              <button
+                type="button"
+                onClick={() => setAdvisoryAcknowledged(true)}
+                aria-label="TD Venture profile access advisory"
+                className={`mt-3 w-full rounded-xl border border-amber-400/50 bg-amber-400/[0.06] px-3 py-2.5 text-left transition ${
+                  advisoryAcknowledged
+                    ? "shadow-[0_0_12px_rgba(251,191,36,0.08)]"
+                    : "motion-safe:animate-[pulse_4s_ease-in-out_infinite] shadow-[0_0_18px_rgba(251,191,36,0.12)]"
+                }`}
+              >
+                <span className="block text-[9px] font-mono font-black tracking-[0.18em] text-amber-300">
+                  ADVISORY
+                </span>
+                <span className="mt-1 block text-[9px] leading-relaxed font-medium text-amber-100/80">
+                  Investors &amp; Founders will see their respective terminals
+                  even if they unintentionally or intentionally click on their
+                  compatriot profiles.
+                </span>
+                <span className="mt-1.5 block text-[8px] font-semibold text-amber-300/70">
+                  Your account type determines your terminal and profile access.
+                </span>
+              </button>
             </div>
 
             {/* Dynamic tabs list */}
