@@ -348,7 +348,13 @@ const TdvConversionBackdrop = () => (
 const TdvConversionTerminalStrip = ({ label = 'SECURE ACCESS' }: { label?: string }) => (
   <div className="overflow-hidden rounded-xl border border-white/10 bg-black/70 shadow-[0_0_36px_rgba(212,255,0,0.06)] backdrop-blur">
     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10">
-      <div className="bg-[#D4FF00] px-4 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-black">TDVENTURE TERMINAL</div>
+      <a
+  href="https://tdventure.vc/"
+  aria-label="TD Venture Home"
+  className="bg-[#D4FF00] px-4 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-black transition hover:bg-[#E7FF66]"
+>
+  TDVENTURE TERMINAL
+</a>
       <div className="flex items-center gap-3 px-4 py-2 font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">
         <span>Conversion</span><span className="text-white/20">/</span><span>{label}</span>
         <span className="inline-flex items-center gap-1.5 text-[#D4FF00]"><span className="h-1.5 w-1.5 rounded-full bg-[#D4FF00] shadow-[0_0_10px_rgba(212,255,0,0.75)]" />Online</span>
