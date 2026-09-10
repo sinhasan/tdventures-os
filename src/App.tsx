@@ -2011,7 +2011,7 @@ export default function App() {
                 </div>
                 <div>
                   <span className="font-extrabold text-lg tracking-tight text-white block">
-                    TD | Ventures
+                    TD | <span className="text-[#D4FF00]">V</span>entures
                   </span>
                   <span className="text-[10px] text-slate-500 block">
                     Conversion Workspace
