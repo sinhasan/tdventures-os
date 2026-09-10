@@ -2000,7 +2000,11 @@ export default function App() {
           <div>
             {/* Branding Header matching screenshot style */}
             <div className="h-20 flex items-center px-6 border-b border-slate-800/50 justify-between">
-              <div className="flex items-center gap-3">
+              <a
+                href="https://tdventure.vc/"
+                aria-label="TD Venture Home"
+                className="flex items-center gap-3"
+              >
                 <div className="relative flex items-center justify-center w-10 h-10 rounded-xl border border-[#D4FF00]/35 bg-[#111821] shadow-[0_0_20px_rgba(212,255,0,0.10)]">
                   <span className="text-[#D4AF37] text-xl">🎯</span>
                   <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22C55E] rounded-full border border-black animate-pulse" />
@@ -2013,7 +2017,7 @@ export default function App() {
                     Conversion Workspace
                   </span>
                 </div>
-              </div>
+              </a>
             </div>
 
               {/* Shared TD Venture account identity */}
