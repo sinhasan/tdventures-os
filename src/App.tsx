@@ -339,8 +339,8 @@ const TdvConversionBackdrop = () => (
         backgroundSize: '48px 48px'
       }}
     />
-    <div className="absolute -left-24 -top-28 h-[520px] w-[520px] rounded-full bg-[#D4FF00]/10 blur-[160px]" />
-    <div className="absolute -bottom-32 -right-20 h-[520px] w-[520px] rounded-full bg-cyan-400/[0.07] blur-[170px]" />
+    <div className="absolute -left-24 -top-28 h-[520px] w-[520px] rounded-full bg-[#D4FF00]/[0.035] blur-[160px]" />
+    <div className="absolute -bottom-32 -right-20 h-[520px] w-[520px] rounded-full bg-cyan-400/[0.025] blur-[170px]" />
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,rgba(255,255,255,0.035),transparent_38%),linear-gradient(to_bottom,transparent_55%,rgba(0,0,0,0.48))]" />
   </>
 );
