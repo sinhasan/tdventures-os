@@ -1969,8 +1969,6 @@ export default function App() {
       
       {/* TD Venture operating-terminal backlights */}
       <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.018)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:48px_48px]" />
-      <div className="fixed -top-40 left-1/4 h-[650px] w-[650px] rounded-full bg-[#D4FF00]/[0.055] blur-[180px] pointer-events-none" />
-      <div className="fixed -bottom-28 right-0 h-[500px] w-[500px] rounded-full bg-cyan-400/[0.045] blur-[160px] pointer-events-none" />
 
       {/* Floating alert warnings */}
       {feedbackMsg.text && (
