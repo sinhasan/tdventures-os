@@ -351,7 +351,7 @@ const TdvConversionTerminalStrip = ({ label = 'SECURE ACCESS' }: { label?: strin
       <a
   href="https://tdventure.vc/"
   aria-label="TD Venture Home"
-  className="bg-[#D4FF00] px-4 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-black transition hover:bg-[#E7FF66]"
+  className="bg-[#D4FF00] px-4 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] !text-black transition hover:bg-[#E7FF66]"
 >
   TDVENTURE TERMINAL
 </a>
