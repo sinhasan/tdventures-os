@@ -2155,6 +2155,10 @@ export default function App() {
 
                 <a
                   href="https://crm.tdventure.vc"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    void launchDealDesk(event);
+                  }}
                   className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-900/50 border border-transparent transition-all"
                 >
                   <span className="w-2 h-2 rounded-full bg-cyan-400" />
