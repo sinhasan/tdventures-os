@@ -361,7 +361,7 @@ const TdvConversionTerminalStrip = ({ label = 'SECURE ACCESS' }: { label?: strin
       </div>
     </div>
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 font-mono text-[9px] uppercase tracking-[0.16em]">
-      <a href="https://tdventure.vc/app" className="!text-slate-500 transition hover:!text-white">Private Marketplace</a>
+      <a href="https://tdventure.vc/app" className="!text-slate-500 transition hover:!text-white">Visibility</a>
       <span className="text-white/20">→</span><span className="font-black text-[#D4FF00]">Conversion</span><span className="text-white/20">→</span>
       <a href="https://crm.tdventure.vc/login" className="!text-slate-500 transition hover:!text-white">Deal Desk</a>
       <span className="ml-auto hidden text-slate-600 sm:inline">Discover · Convert · Execute</span>
