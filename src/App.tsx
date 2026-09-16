@@ -2268,10 +2268,10 @@ export default function App() {
                     href="https://tdventure.vc/app"
                     target="_blank"
                     rel="noreferrer"
-                    title="Open Private Marketplace"
+                    title="Open Visibility"
                     className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex h-10 w-[170px] shrink-0 items-center justify-center rounded-md border border-cyan-300/70 bg-cyan-400/10 px-3 text-[10px] font-black text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.24)] transition hover:bg-cyan-300 hover:!text-black"
                   >
-                    ← Private Marketplace
+                    ← Visibility
                   </a>
 
                   <div
