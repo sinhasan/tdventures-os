@@ -574,6 +574,69 @@ const PREMIUM_THEMES = [
 const INITIAL_DEAL_FLOW: DealFlowItem[] = [];
 
 export default function App() {
+  const launchDealDesk = async (
+    event: React.MouseEvent<HTMLAnchorElement>,
+  ) => {
+    event.preventDefault();
+
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("tdventure_token")
+        : null;
+
+    if (!token) {
+      window.location.assign("/login");
+      return;
+    }
+
+    const popup = window.open("about:blank", "_blank");
+
+    try {
+      const response = await fetch(
+        "https://staging.tdventure.vc/api/deal-desk/launch?destination=dashboard",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const body = await response.json().catch(() => ({}));
+
+      if (!response.ok || !body?.launch_url) {
+        throw new Error(
+          body?.detail ||
+            body?.message ||
+            "Could not open Deal Desk right now.",
+        );
+      }
+
+      const target = String(body.launch_url).trim();
+
+      if (!target) {
+        throw new Error("Deal Desk returned an empty launch URL.");
+      }
+
+      if (popup) {
+        popup.opener = null;
+        popup.location.replace(target);
+      } else {
+        window.location.assign(target);
+      }
+    } catch (error) {
+      popup?.close();
+
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "Could not open Deal Desk right now.",
+      );
+    }
+  };
+
   const [themeMode] = useState<'light' | 'dark'>('dark');
   const [role, setRole] = useState<'founder' | 'investor' | 'admin'>(() => {
     try {
