@@ -2132,6 +2132,36 @@ export default function App() {
                 );
               })}
             </nav>
+
+            {/* TD Venture workspace switcher */}
+            <div className="mx-4 mt-3 border-t border-slate-800/60 pt-3 pb-4">
+              <div className="px-1 mb-2 text-[9px] font-mono font-black uppercase tracking-[0.2em] text-slate-600">
+                TD Venture Workspaces
+              </div>
+
+              <div className="space-y-1">
+                <a
+                  href="https://staging.tdventure.vc/app"
+                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-900/50 border border-transparent transition-all"
+                >
+                  <span className="w-2 h-2 rounded-full bg-slate-500" />
+                  <span className="font-semibold text-xs">Visibility</span>
+                </a>
+
+                <div className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-purple-500/30 bg-purple-900/10 text-white">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  <span className="font-semibold text-xs">Engagement</span>
+                </div>
+
+                <a
+                  href="https://crm.tdventure.vc"
+                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-900/50 border border-transparent transition-all"
+                >
+                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                  <span className="font-semibold text-xs">Deal Desk</span>
+                </a>
+              </div>
+            </div>
           </div>
 
         </aside>
