@@ -361,7 +361,7 @@ const TdvConversionTerminalStrip = ({ label = 'SECURE ACCESS' }: { label?: strin
       </div>
     </div>
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 font-mono text-[9px] uppercase tracking-[0.16em]">
-      <a href="https://tdventure.vc/app" className="!text-slate-500 transition hover:!text-white">Visibility</a>
+      <a href="https://tdventure.vc/app" className="!text-slate-500 transition hover:!text-white">Discover</a>
       <span className="text-white/20">→</span><span className="font-black text-[#D4FF00]">Conversion</span><span className="text-white/20">→</span>
       <a href="https://crm.tdventure.vc/login" className="!text-slate-500 transition hover:!text-white">Deal Desk</a>
       <span className="ml-auto hidden text-slate-600 sm:inline">Discover · Convert · Execute</span>
@@ -2208,7 +2208,7 @@ export default function App() {
                   className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-900/50 border border-transparent transition-all"
                 >
                   <span className="w-2 h-2 rounded-full bg-slate-500" />
-                  <span className="font-semibold text-xs">Visibility</span>
+                  <span className="font-semibold text-xs">Discover</span>
                 </a>
 
                 <div className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-purple-500/30 bg-purple-900/10 text-white">
@@ -2335,10 +2335,10 @@ export default function App() {
                     href="https://tdventure.vc/app"
                     target="_blank"
                     rel="noreferrer"
-                    title="Open Visibility"
+                    title="Open Discover"
                     className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex h-10 w-[170px] shrink-0 items-center justify-center rounded-md border border-cyan-300/70 bg-cyan-400/10 px-3 text-[10px] font-black text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.24)] transition hover:bg-cyan-300 hover:!text-black"
                   >
-                    ← Visibility
+                    ← Discover
                   </a>
 
                   <div
