@@ -2346,16 +2346,6 @@ export default function App() {
                     </a>
 
                     <a
-                      href="https://tdventure.vc/app"
-                      target="_blank"
-                      rel="noreferrer"
-                      title="Discover"
-                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
-                    >
-                      Discover
-                    </a>
-
-                    <a
                       href="https://tdventure.vc/app/intelligence"
                       target="_blank"
                       rel="noreferrer"
@@ -2366,13 +2356,13 @@ export default function App() {
                     </a>
 
                     <a
-                      href="https://staging.tdventure.vc/signup/service-provider"
+                      href="https://tdventure.vc/app"
                       target="_blank"
                       rel="noreferrer"
-                      title="Service Provider"
+                      title="Discover"
                       className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
-                      Service Provider
+                      Discover
                     </a>
 
                     <span
@@ -2391,6 +2381,16 @@ export default function App() {
                     >
                       Deal Desk
                     </button>
+
+                    <a
+                      href="https://staging.tdventure.vc/signup/service-provider"
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Service Provider"
+                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                    >
+                      Service Provider
+                    </a>
 
                     <a
                       href="https://tdventure.vc/#pricing"
