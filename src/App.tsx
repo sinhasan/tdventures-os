@@ -2330,16 +2330,78 @@ export default function App() {
               </div>
 
                 {/* Cross-workspace product journey */}
-                <div className="flex items-center gap-2">
-                  <a
-                    href="https://tdventure.vc/app"
-                    target="_blank"
-                    rel="noreferrer"
-                    title="Open Discover"
-                    className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex h-10 w-[170px] shrink-0 items-center justify-center rounded-md border border-cyan-300/70 bg-cyan-400/10 px-3 text-[10px] font-black text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.24)] transition hover:bg-cyan-300 hover:!text-black"
+                <div className="flex items-center gap-3">
+                  <nav
+                    aria-label="TD Venture workspace navigation"
+                    className="hidden xl:flex items-center gap-1"
                   >
-                    ← Discover
-                  </a>
+                    <a
+                      href="https://tdventure.vc/"
+                      target="_blank"
+                      rel="noreferrer"
+                      title="TD Venture Home"
+                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                    >
+                      Home
+                    </a>
+
+                    <a
+                      href="https://tdventure.vc/app"
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Discover"
+                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                    >
+                      Discover
+                    </a>
+
+                    <a
+                      href="https://tdventure.vc/app/intelligence"
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Intelligence"
+                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                    >
+                      Intelligence
+                    </a>
+
+                    <a
+                      href="https://tdventure.vc/app/service-providers"
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Service Provider"
+                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                    >
+                      Service Provider
+                    </a>
+
+                    <span
+                      aria-current="page"
+                      title="Current workspace"
+                      className="inline-flex h-8 items-center rounded-md border border-[#D4FF00]/30 bg-[#D4FF00]/10 px-2 text-[9px] font-black text-[#D4FF00]"
+                    >
+                      Engagement
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={() => void openDealDeskWorkspace()}
+                      title="Continue securely to Deal Desk"
+                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                    >
+                      Deal Desk
+                    </button>
+
+                    <a
+                      href="https://tdventure.vc/pricing"
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Pricing"
+                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                    >
+                      Pricing
+                    </a>
+                  </nav>
 
                   <div
                     title={tdventureAccountEmail}
@@ -2359,15 +2421,6 @@ export default function App() {
                       </span>
                     </div>
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() => void openDealDeskWorkspace()}
-                    title="Continue securely to Deal Desk"
-                    className="motion-safe:animate-[pulse_3s_ease-in-out_infinite] inline-flex h-10 w-[150px] shrink-0 items-center justify-center rounded-md border border-[#D4FF00]/70 bg-[#D4FF00]/10 px-3 text-[10px] font-black text-[#D4FF00] shadow-[0_0_22px_rgba(212,255,0,0.24)] transition hover:bg-[#D4FF00] hover:!text-black"
-                  >
-                    Deal Desk →
-                  </button>
                 </div>
             </div>
           </header>
