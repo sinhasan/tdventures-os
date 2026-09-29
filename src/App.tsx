@@ -2366,7 +2366,7 @@ export default function App() {
                     </a>
 
                     <a
-                      href="https://tdventure.vc/app/service-providers"
+                      href="https://staging.tdventure.vc/signup/service-provider"
                       target="_blank"
                       rel="noreferrer"
                       title="Service Provider"
@@ -2393,7 +2393,7 @@ export default function App() {
                     </button>
 
                     <a
-                      href="https://tdventure.vc/pricing"
+                      href="https://tdventure.vc/#pricing"
                       target="_blank"
                       rel="noreferrer"
                       title="Pricing"
