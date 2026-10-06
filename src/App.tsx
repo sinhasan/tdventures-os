@@ -593,7 +593,7 @@ export default function App() {
 
     try {
       const response = await fetch(
-        "https://staging.tdventure.vc/api/deal-desk/launch?destination=dashboard",
+        `${(import.meta.env.VITE_TDVENTURE_API_BASE || "https://staging.tdventure.vc/api").replace(/\/+$/, "")}/deal-desk/launch?destination=dashboard`,
         {
           method: "POST",
           headers: {
