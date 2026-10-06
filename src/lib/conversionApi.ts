@@ -1430,7 +1430,9 @@ export async function claimConversionWorkspaceEntry(): Promise<ConversionWorkspa
   );
 }
 
-function createPaymentIdempotencyKey(): string {
+function createPaymentIdempotencyKey(
+  purpose = 'conversion-founder'
+): string {
   const randomPart = (
     typeof window !== 'undefined'
     && window.crypto
@@ -1439,7 +1441,7 @@ function createPaymentIdempotencyKey(): string {
     ? window.crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-  return `conversion-founder-${randomPart}`;
+  return `${purpose}-${randomPart}`;
 }
 
 function validateCheckoutUrl(checkoutUrl: string): string {
@@ -1508,6 +1510,57 @@ export async function startConversionFounderCheckout(): Promise<void> {
         plan_code: 'conversion_founder_4999',
         subject_id: startupId,
         idempotency_key: createPaymentIdempotencyKey(),
+        return_url: workspaceReturnUrl
+      })
+    }
+  );
+
+  const checkoutUrl = validateCheckoutUrl(
+    String(paymentIntent.checkout_url || '').trim()
+  );
+
+  window.location.assign(checkoutUrl);
+}
+
+export async function startConversionInvestorCheckout(): Promise<void> {
+  if (typeof window === 'undefined') {
+    throw new Error('Secure checkout is available only in the browser.');
+  }
+
+  const account = await tdventureRequest<{
+    id?: string;
+    role?: string;
+  }>('/auth/me', { method: 'GET' });
+
+  if (String(account.role || '').trim().toLowerCase() !== 'investor') {
+    throw new Error('The Conversion Investor Pass is available to investor accounts only.');
+  }
+
+  const userId = String(account.id || '').trim();
+  if (!userId) {
+    throw new Error('Your authenticated TD Venture user ID could not be identified.');
+  }
+
+  let workspaceReturnUrl: string;
+
+  try {
+    const parsedWorkspaceUrl = new URL(TDVENTURE_WORKSPACE_URL);
+    if (parsedWorkspaceUrl.protocol !== 'https:') {
+      throw new Error();
+    }
+    workspaceReturnUrl = parsedWorkspaceUrl.toString();
+  } catch {
+    throw new Error('The Conversion workspace return URL is invalid.');
+  }
+
+  const paymentIntent = await tdventureRequest<PaymentIntentCreateResponse>(
+    '/payment-plane/intents',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        plan_code: 'conversion_investor_7999',
+        subject_id: userId,
+        idempotency_key: createPaymentIdempotencyKey('conversion-investor'),
         return_url: workspaceReturnUrl
       })
     }
