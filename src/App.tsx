@@ -534,7 +534,7 @@ const ConversionPassPaywall = ({
           <p className="mt-3 text-sm leading-6 text-slate-400">
             {mode === 'entry'
               ? accountType === 'investor'
-                ? 'Investor Conversion is limited to three free workspace entries for V1. Paid Investor Conversion access is not enabled yet.'
+                ? 'Your first three Investor Conversion workspace entries are free. The Investor Pass provides 90 days of continued workspace access.'
                 : 'Activate Conversion to continue working on founder evidence, readiness and investor fit.'
               : 'Your guarded preview remains separate from workspace entry. Activate the paid pass for continued AI analysis and reruns.'}
           </p>
@@ -548,14 +548,20 @@ const ConversionPassPaywall = ({
             </>
           )}
           {accountType === 'investor' && mode === 'entry' && (
-            <div className="mt-6 rounded-xl border border-cyan-300/20 bg-cyan-300/[0.04] p-5">
-              <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-200">Investor V1 access</div>
-              <p className="mt-2 text-sm leading-6 text-slate-400">The three-entry allowance is now enforced for Investor accounts without attaching the Founder Pass or its checkout to an Investor identity.</p>
-            </div>
+            <>
+              <div className="mt-6 grid gap-4 rounded-xl border border-white/10 bg-black/40 p-5 sm:grid-cols-[1fr_auto] sm:items-end">
+                <div><div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">Investor Pass</div><div className="mt-2 text-4xl font-black text-[#D4FF00]">₹7,999 <span className="text-base text-slate-500">+ GST</span></div></div>
+                <div className="sm:text-right"><div className="text-sm font-bold text-white">90 days</div><div className="mt-1 text-xs text-slate-500">Investor Conversion workspace access</div></div>
+              </div>
+              <div className="mt-4 rounded-xl border border-cyan-300/20 bg-cyan-300/[0.04] p-5">
+                <div className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-200">Investor access</div>
+                <p className="mt-2 text-sm leading-6 text-slate-400">The Investor Pass is separate from the Founder Pass and grants workspace access for 90 days after successful payment.</p>
+              </div>
+            </>
           )}
           {error && <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>}
-          {accountType === 'startup' && (
-            <button type="button" onClick={onActivate} disabled={checkoutStarting} className="mt-6 w-full rounded-lg bg-[#D4FF00] px-5 py-3.5 text-sm font-black uppercase tracking-[0.1em] text-black transition hover:bg-[#E7FF66] disabled:cursor-wait disabled:opacity-60">{checkoutStarting ? 'Opening secure checkout…' : 'Activate Conversion'}</button>
+          {(accountType === 'startup' || (accountType === 'investor' && mode === 'entry')) && (
+            <button type="button" onClick={onActivate} disabled={checkoutStarting} className="mt-6 w-full rounded-lg bg-[#D4FF00] px-5 py-3.5 text-sm font-black uppercase tracking-[0.1em] text-black transition hover:bg-[#E7FF66] disabled:cursor-wait disabled:opacity-60">{checkoutStarting ? 'Opening secure checkout…' : (accountType === 'investor' ? 'Activate Investor Conversion Pass' : 'Activate Conversion')}</button>
           )}
           {mode === 'analysis' && onContinue && <button type="button" onClick={onContinue} className="mt-3 w-full rounded-lg border border-white/10 bg-white/[0.02] px-5 py-3 text-sm font-bold text-slate-300 transition hover:border-white/20 hover:text-white">Continue without another AI analysis</button>}
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3 border-t border-white/10 pt-4 font-mono text-[9px] uppercase tracking-[0.15em]"><a href="https://tdventure.vc/app" className="!text-slate-500 hover:!text-white">Private Marketplace</a><span className="text-white/20">·</span><span className="text-[#D4FF00]">Conversion</span><span className="text-white/20">·</span><a href="https://crm.tdventure.vc/login" className="!text-slate-500 hover:!text-white">Deal Desk</a></div>
@@ -1619,9 +1625,16 @@ export default function App() {
     setWorkspaceEntryError('');
 
     try {
-      const { startConversionFounderCheckout } =
-        await import('./lib/conversionApi');
-      await startConversionFounderCheckout();
+      const {
+        startConversionFounderCheckout,
+        startConversionInvestorCheckout
+      } = await import('./lib/conversionApi');
+
+      if (profilePlaneResolution?.profile_type === 'investor') {
+        await startConversionInvestorCheckout();
+      } else {
+        await startConversionFounderCheckout();
+      }
     } catch (error) {
       setWorkspaceEntryError(
         error instanceof Error
