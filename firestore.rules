@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Security Net (Default Deny Catch-all)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitive Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // UserProfile Entity Validation Blueprint
+    function isValidUserProfile(data) {
+      return data.uid is string && data.uid.size() <= 128 && 
+             data.email is string && data.email.size() <= 200 &&
+             data.role is string && (
+               data.role == "founder" || 
+               data.role == "investor" || 
+               data.role == "smb" || 
+               data.role == "admin"
+             );
+    }
+
+    // Secure Users collection rules
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUserProfile(request.resource.data);
+      allow update: if isOwner(userId) && isValidUserProfile(request.resource.data) && 
+                      request.resource.data.uid == resource.data.uid;
+      allow delete: if false; // Restrict data loss and preserve audit history
+    }
+  }
+}

@@ -1,0 +1,19 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Local patch backup files
+*.bak-*
+.vercel
+
+# Historical application backups / local snapshots
+backups/
+*.before-*
+*.bak
+*.bak-*
+*.dealdsk-*
