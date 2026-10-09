@@ -1648,9 +1648,10 @@ export async function createDealDeskWorkspaceLaunch(
 
   if (
     !data.launch_url ||
-    !data.launch_url.startsWith(
-      'https://crm.tdventure.vc/'
-    )
+    ![
+      'https://crm.tdventure.vc/',
+      'https://staging.crm.tdventure.vc/',
+    ].some((prefix) => data.launch_url.startsWith(prefix))
   ) {
     throw new Error(
       'Deal Desk returned an invalid secure launch URL.'

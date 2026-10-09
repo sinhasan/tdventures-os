@@ -361,7 +361,7 @@ const TdvConversionTerminalStrip = ({ label = 'SECURE ACCESS' }: { label?: strin
       </div>
     </div>
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 font-mono text-[9px] uppercase tracking-[0.16em]">
-      <a href="https://tdventure.vc/app" className="!text-slate-500 transition hover:!text-white">Discover</a>
+      <a href="https://staging.tdventure.vc/app" className="!text-slate-500 transition hover:!text-white">Discover</a>
       <span className="text-white/20">→</span><span className="font-black text-[#D4FF00]">Conversion</span><span className="text-white/20">→</span>
       <a href="https://crm.tdventure.vc/login" className="!text-slate-500 transition hover:!text-white">Deal Desk</a>
       <span className="ml-auto hidden text-slate-600 sm:inline">Discover · Convert · Execute</span>
@@ -564,7 +564,7 @@ const ConversionPassPaywall = ({
             <button type="button" onClick={onActivate} disabled={checkoutStarting} className="mt-6 w-full rounded-lg bg-[#D4FF00] px-5 py-3.5 text-sm font-black uppercase tracking-[0.1em] text-black transition hover:bg-[#E7FF66] disabled:cursor-wait disabled:opacity-60">{checkoutStarting ? 'Opening secure checkout…' : (accountType === 'investor' ? 'Activate Investor Conversion Pass' : 'Activate Conversion')}</button>
           )}
           {mode === 'analysis' && onContinue && <button type="button" onClick={onContinue} className="mt-3 w-full rounded-lg border border-white/10 bg-white/[0.02] px-5 py-3 text-sm font-bold text-slate-300 transition hover:border-white/20 hover:text-white">Continue without another AI analysis</button>}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 border-t border-white/10 pt-4 font-mono text-[9px] uppercase tracking-[0.15em]"><a href="https://tdventure.vc/app" className="!text-slate-500 hover:!text-white">Private Marketplace</a><span className="text-white/20">·</span><span className="text-[#D4FF00]">Conversion</span><span className="text-white/20">·</span><a href="https://crm.tdventure.vc/login" className="!text-slate-500 hover:!text-white">Deal Desk</a></div>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 border-t border-white/10 pt-4 font-mono text-[9px] uppercase tracking-[0.15em]"><a href="https://staging.tdventure.vc/app" className="!text-slate-500 hover:!text-white">Private Marketplace</a><span className="text-white/20">·</span><span className="text-[#D4FF00]">Conversion</span><span className="text-white/20">·</span><a href="https://crm.tdventure.vc/login" className="!text-slate-500 hover:!text-white">Deal Desk</a></div>
         </div>
       </div>
     </div>
@@ -2369,7 +2369,7 @@ export default function App() {
                     </a>
 
                     <a
-                      href="https://tdventure.vc/app"
+                      href="https://staging.tdventure.vc/app"
                       target="_blank"
                       rel="noreferrer"
                       title="Discover"
