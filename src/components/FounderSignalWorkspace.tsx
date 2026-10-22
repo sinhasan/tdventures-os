@@ -458,12 +458,16 @@ export function FounderEvidenceRecord({
           </p>
         </div>
         <div className="flex gap-2">
-          <span className="rounded-lg border border-[#D4FF00]/35 bg-[#D4FF00]/8 px-3 py-2 text-xs font-black text-[#D4FF00]">
-            {evidence.founder_claim_score}/100
-          </span>
-          <span className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-black text-white">
-            {evidence.completion_count}/20 complete
-          </span>
+          {evidence.founder_claim_score != null && (
+            <span className="rounded-lg border border-[#D4FF00]/35 bg-[#D4FF00]/8 px-3 py-2 text-xs font-black text-[#D4FF00]">
+              {evidence.founder_claim_score}/100
+            </span>
+          )}
+          {evidence.completion_count != null && (
+            <span className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-black text-white">
+              {evidence.completion_count}/20 complete
+            </span>
+          )}
         </div>
       </div>
 
@@ -474,7 +478,9 @@ export function FounderEvidenceRecord({
             : 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
         }`}
       >
-        {claims.map((claim, index) => (
+        {claims
+          .filter((claim) => claim.rating != null || Boolean(claim.evidence?.trim()))
+          .map((claim, index) => (
           <div
             key={claim.key}
             className="rounded-xl border border-slate-800 bg-slate-950/65 p-3"
@@ -488,37 +494,43 @@ export function FounderEvidenceRecord({
                   {claim.label}
                 </p>
               </div>
-              <span
-                className={`shrink-0 text-sm font-black ${
-                  claim.rating >= 4
-                    ? 'text-[#D4FF00]'
-                    : claim.rating === 3
-                      ? 'text-amber-300'
-                      : 'text-red-300'
-                }`}
-              >
-                {claim.rating}/5
-              </span>
+              {claim.rating != null && (
+                <span
+                  className={`shrink-0 text-sm font-black ${
+                    claim.rating >= 4
+                      ? 'text-[#D4FF00]'
+                      : claim.rating === 3
+                        ? 'text-amber-300'
+                        : 'text-red-300'
+                  }`}
+                >
+                  {claim.rating}/5
+                </span>
+              )}
             </div>
-            <ProgressBar
-              value={claim.rating * 20}
-              tone={
-                claim.rating >= 4
-                  ? 'neon'
-                  : claim.rating === 3
-                    ? 'amber'
-                    : 'red'
-              }
-            />
-            {!compact && (
+            {claim.rating != null && (
+              <ProgressBar
+                value={claim.rating * 20}
+                tone={
+                  claim.rating >= 4
+                    ? 'neon'
+                    : claim.rating === 3
+                      ? 'amber'
+                      : 'red'
+                }
+              />
+            )}
+            {!compact && Boolean(claim.evidence?.trim()) && (
               <p className="mt-2 line-clamp-2 text-[10px] leading-4 text-slate-500">
-                {claim.evidence || 'Rating supplied without supporting text.'}
+                {claim.evidence.trim()}
               </p>
             )}
-            <p className="mt-2 inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-slate-600">
-              <FileText className="h-3 w-3" />
-              {claim.evidence ? 'Evidence supplied' : 'Claim only'}
-            </p>
+            {Boolean(claim.evidence?.trim()) && (
+              <p className="mt-2 inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-slate-600">
+                <FileText className="h-3 w-3" />
+                Evidence supplied
+              </p>
+            )}
           </div>
         ))}
       </div>

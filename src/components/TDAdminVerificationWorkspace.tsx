@@ -152,16 +152,24 @@ export function ParallelAssessmentRecord({
                           <p className="text-[10px] font-mono text-slate-600">{groupIndex * 5 + index + 1}/20 · FOUNDER</p>
                           <h4 className="mt-1 text-sm font-black text-slate-300">{founder?.label || key.replace(/_/g, ' ')}</h4>
                         </div>
-                        <span className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-lg font-black text-slate-300">
-                          {founder?.rating ?? '—'}<span className="text-xs text-slate-600">/5</span>
-                        </span>
+                        {founder?.rating != null && (
+                          <span className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-lg font-black text-slate-300">
+                            {founder.rating}<span className="text-xs text-slate-600">/5</span>
+                          </span>
+                        )}
                       </div>
-                      <p className="mt-3 min-h-[44px] text-xs leading-5 text-slate-500">
-                        {founder?.evidence || 'Founder supplied a rating without supporting text.'}
-                      </p>
-                      <div className="mt-3 rounded-lg border border-cyan-950/80 bg-cyan-950/10 px-3 py-2 text-[10px] text-cyan-300/75">
-                        OpenAI: {ai?.ai_rating ?? '—'}/5 · {ai?.evidence_status || 'Awaiting analysis'}
-                      </div>
+                      {Boolean(founder?.evidence?.trim()) && (
+                        <p className="mt-3 text-xs leading-5 text-slate-500">
+                          {founder.evidence.trim()}
+                        </p>
+                      )}
+                      {(ai?.ai_rating != null || Boolean(ai?.evidence_status)) && (
+                        <div className="mt-3 rounded-lg border border-cyan-950/80 bg-cyan-950/10 px-3 py-2 text-[10px] text-cyan-300/75">
+                          {ai?.ai_rating != null && <>OpenAI: {ai.ai_rating}/5</>}
+                          {ai?.ai_rating != null && Boolean(ai?.evidence_status) && ' · '}
+                          {ai?.evidence_status || ''}
+                        </div>
+                      )}
                     </div>
 
                     <div className="p-5">
