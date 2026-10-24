@@ -2280,66 +2280,6 @@ export default function App() {
               </div>
               
 
-              {/* Quick Model Orchestrator switch */}
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 hidden lg:flex">
-                <span className="text-[9px] font-mono text-slate-400 uppercase">AI Engine:</span>
-                <select 
-                  value={selectedModel}
-                  onChange={(e) => {
-                    setSelectedModel(e.target.value as any);
-                    addLog('Orchestrator', `Manually routed conversion signal engine to:${e.target.value}`);
-                    triggerToast(`AI Engine routed to ${e.target.value.toUpperCase()}`, 'info');
-                  }}
-                  className="bg-transparent border-none text-[10px] font-mono text-purple-400 font-bold focus:outline-none focus:ring-0 cursor-pointer"
-                >
-                  <option value="owl">Local Preview</option>
-                  <option value="qwen">Qwen 2.5</option>
-                  <option value="openai">GPT-4o Mini</option>
-                  <option value="gemini">Gemini Flash</option>
-                  <option value="deepseek">DeepSeek Chat</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              {/* Dark mode locked for Bloomberg-style Conversion workspace */}
-              <div className='p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hidden xl:flex items-center gap-1.5 shadow-sm' title='Dark mode locked'>
-                <Moon className='w-4 h-4 text-[#D4FF00]' />
-                <span className='text-[10px] font-bold hidden sm:inline'>Dark Command Mode</span>
-              </div>
-
-              {/* Notification smart dropdown */}
-              <div className="relative">
-                <button 
-                  onClick={() => setShowAlertsDropdown(!showAlertsDropdown)}
-                  className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white relative"
-                >
-                  <Bell className="w-4 h-4" />
-                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#EF4444] rounded-full" />
-                </button>
-
-                {showAlertsDropdown && (
-                  <div className="absolute right-0 mt-2 w-80 bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-2xl z-50 space-y-3">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                      <span className="text-xs font-bold text-white uppercase tracking-wider">Real-Time Smart Alerts</span>
-                      <button onClick={() => setActiveAlerts([])} className="text-[10px] text-slate-500 hover:text-slate-300">Clear</button>
-                    </div>
-                    <div className="space-y-2.5 max-h-60 overflow-y-auto">
-                      {activeAlerts.length === 0 ? (
-                        <p className="text-[10px] text-slate-500 italic text-center py-4">No active warning signals</p>
-                      ) : (
-                        activeAlerts.map(al => (
-                          <div key={al.id} className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] leading-relaxed">
-                            <p className="text-slate-300 font-medium">{al.text}</p>
-                            <span className="text-[9px] text-slate-500 block text-right mt-1 font-mono">{al.time}</span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
                 {/* Cross-workspace product journey */}
                 <div className="flex items-center gap-3">
                   <nav
