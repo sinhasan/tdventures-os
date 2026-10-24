@@ -2291,7 +2291,7 @@ export default function App() {
                       target="_blank"
                       rel="noreferrer"
                       title="TD Venture Home"
-                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
                       Home
                     </a>
@@ -2301,7 +2301,7 @@ export default function App() {
                       target="_blank"
                       rel="noreferrer"
                       title="Intelligence"
-                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
                       Intelligence
                     </a>
@@ -2311,7 +2311,7 @@ export default function App() {
                       target="_blank"
                       rel="noreferrer"
                       title="Discover"
-                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
                       Discover
                     </a>
@@ -2319,7 +2319,7 @@ export default function App() {
                     <span
                       aria-current="page"
                       title="Current workspace"
-                      className="inline-flex h-8 items-center rounded-md border border-[#D4FF00]/30 bg-[#D4FF00]/10 px-2 text-[9px] font-black text-[#D4FF00]"
+                      className="inline-flex h-8 items-center justify-start rounded-md border border-[#D4FF00]/30 bg-[#D4FF00]/10 px-2 text-left text-[9px] font-bold font-sans text-[#D4FF00]"
                     >
                       Engagement
                     </span>
@@ -2328,7 +2328,7 @@ export default function App() {
                       type="button"
                       onClick={() => void openDealDeskWorkspace()}
                       title="Continue securely to Deal Desk"
-                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
                       Deal Desk
                     </button>
@@ -2338,7 +2338,7 @@ export default function App() {
                       target="_blank"
                       rel="noreferrer"
                       title="Service Provider"
-                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
                       Service Provider
                     </a>
@@ -2348,7 +2348,7 @@ export default function App() {
                       target="_blank"
                       rel="noreferrer"
                       title="Pricing"
-                      className="inline-flex h-8 items-center rounded-md px-2 text-[9px] font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
                       Pricing
                     </a>
