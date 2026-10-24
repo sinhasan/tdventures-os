@@ -2278,7 +2278,7 @@ export default function App() {
                   CONVERSION SIGNALS
                 </h2>
               </div>
-              <span className="text-[10px] text-slate-500 font-mono hidden sm:inline">
+              <span className="text-[10px] text-slate-500 font-mono hidden sm:inline hidden 2xl:block">
                 | Collect → Apply AI Intelligence → Present → Improve → Verify → Deal Desk
               </span>
 
