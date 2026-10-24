@@ -2278,9 +2278,7 @@ export default function App() {
                   CONVERSION SIGNALS
                 </h2>
               </div>
-              <span className="text-[10px] text-slate-500 font-mono hidden">
-                | Collect → Apply AI Intelligence → Present → Improve → Verify → Deal Desk
-              </span>
+              
 
               {/* Quick Model Orchestrator switch */}
               <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 hidden lg:flex">
