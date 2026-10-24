@@ -1,31 +1,37 @@
 import { DealDeskGate0Pack } from './components/DealDeskGate0Pack';
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Activity, 
-  BarChart3, 
-  ChevronRight, 
+import {
+  Activity,
+  BarChart3,
+  Home,
+  Compass,
+  BrainCircuit,
+  Briefcase,
+  Building2,
+  Tag,
+  ChevronRight,
   ArrowLeft,
-  Globe2, 
-  Layers, 
-  Mic, 
-  Play, 
-  ShieldAlert, 
-  UploadCloud, 
-  Zap, 
-  Search, 
-  Copy, 
-  Check, 
-  RotateCcw, 
-  Download, 
-  Maximize2, 
-  Settings, 
-  AlertTriangle, 
-  Anchor, 
-  HelpCircle, 
-  ListFilter, 
-  Target, 
-  Flame, 
-  Cpu, 
+  Globe2,
+  Layers,
+  Mic,
+  Play,
+  ShieldAlert,
+  UploadCloud,
+  Zap,
+  Search,
+  Copy,
+  Check,
+  RotateCcw,
+  Download,
+  Maximize2,
+  Settings,
+  AlertTriangle,
+  Anchor,
+  HelpCircle,
+  ListFilter,
+  Target,
+  Flame,
+  Cpu,
   Workflow,
   Sparkles,
   Send,
@@ -70,33 +76,33 @@ import {
   type InvestorDecisionView
 } from './components/InvestorDecisionWorkspaceV2';
 
-import { 
-  FundraisingIntelTab, 
-  StartupValidationTab, 
-  InvestorMatchmakingTab, 
-  DocumentsHubTab, 
-  FinancialForecastingTab 
+import {
+  FundraisingIntelTab,
+  StartupValidationTab,
+  InvestorMatchmakingTab,
+  DocumentsHubTab,
+  FinancialForecastingTab
 } from './components/FounderTabs';
 
-import { 
-  DealFlowTab, 
-  ForensicAITab, 
-  PrescriptiveAITab, 
-  MaritimeIntelTab, 
-  PortfolioAnalyticsTab 
+import {
+  DealFlowTab,
+  ForensicAITab,
+  PrescriptiveAITab,
+  MaritimeIntelTab,
+  PortfolioAnalyticsTab
 } from './components/InvestorTabs';
 
-import { 
-  UserManagementTab, 
-  AIMonitoringTab, 
-  SecurityCenterTab, 
-  RolePermissionsTab 
+import {
+  UserManagementTab,
+  AIMonitoringTab,
+  SecurityCenterTab,
+  RolePermissionsTab
 } from './components/AdminTabs';
 
-import { 
-  AIChatAssistantWidget, 
-  AIVoiceCommandWidget, 
-  AdSeoCreatorPanel 
+import {
+  AIChatAssistantWidget,
+  AIVoiceCommandWidget,
+  AdSeoCreatorPanel
 } from './components/AIChatVoiceBanner';
 
 import { SEOOptimizedSuite, DueDiligenceReport, DealFlowItem } from './types';
@@ -109,7 +115,7 @@ import type {
   TdventureCurrentUser,
   ProfilePlaneResolution
 } from './lib/conversionApi';
-import { 
+import {
   COMPONENT_ROLES
 } from './data';
 
@@ -1819,7 +1825,7 @@ export default function App() {
     } else {
       setActiveTab('dashboard');
     }
-    
+
     addLog('Orchestrator', `Re-routed portal layout workspace block directly matching role: ${selectedVal.toUpperCase()}`);
     triggerToast(`Switched workspace configuration to ${selectedVal}`, 'info');
   };
@@ -1853,7 +1859,7 @@ export default function App() {
     e.preventDefault();
     setGeneratingAds(true);
     addLog('Orchestrator', `Querying OpenRouter node (${selectedModel}) for campaign generation...`);
-    
+
     try {
       const activeThemeObj = PREMIUM_THEMES.find(t => t.id === selectedTheme) || PREMIUM_THEMES[0];
       const payload = {
@@ -2038,11 +2044,11 @@ export default function App() {
 
   return (
     <div className={`tdv-conversion-shell fixed inset-0 h-[100dvh] w-screen font-sans overflow-hidden overscroll-none selection:bg-[#D4FF00]/30 pb-14 md:pb-0 transition-colors duration-300 ${
-      themeMode === 'light' 
-        ? 'light-theme bg-[#F8FAFC] text-[#0F172A]' 
+      themeMode === 'light'
+        ? 'light-theme bg-[#F8FAFC] text-[#0F172A]'
         : 'dark-theme bg-[#020205] text-slate-200'
     }`} id="application_root">
-      
+
       {/* TD Venture operating-terminal backlights */}
       <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.018)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:48px_48px]" />
 
@@ -2071,7 +2077,7 @@ export default function App() {
       )}
 
       <div className="relative z-10 flex h-full overflow-hidden">
-        
+
         {/* Dynamic Sidebar navigation */}
         <aside ref={sidebarScrollRef} className="hidden min-h-0 w-72 flex-col justify-between overflow-y-auto overscroll-contain border-r border-slate-800/80 bg-[#0F172A]/90 backdrop-blur-3xl md:flex">
           <div>
@@ -2186,7 +2192,7 @@ export default function App() {
                 const Icon = tab.icon;
                 const isSelected = activeTab === tab.id;
                 return (
-                  <button 
+                  <button
                     key={tab.id}
                     onClick={() => {
                       setActiveTab(tab.id);
@@ -2248,7 +2254,7 @@ export default function App() {
 
         {/* Core workspace container */}
         <main className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-[#030308]/60">
-          
+
           {/* TDV CONVERSION AWAITING SIGNAL NUDGE */}
           <div
             className="tdv-awaiting-ticker"
@@ -2278,7 +2284,7 @@ export default function App() {
                   CONVERSION SIGNALS
                 </h2>
               </div>
-              
+
 
                 {/* Cross-workspace product journey */}
                 <div className="flex items-center gap-3">
@@ -2293,6 +2299,7 @@ export default function App() {
                       title="TD Venture Home"
                       className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
+                      <Home className="mr-1 h-3 w-3" />
                       Home
                     </a>
 
@@ -2303,6 +2310,7 @@ export default function App() {
                       title="Intelligence"
                       className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
+                      <BrainCircuit className="mr-1 h-3 w-3" />
                       Intelligence
                     </a>
 
@@ -2313,6 +2321,7 @@ export default function App() {
                       title="Discover"
                       className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
+                      <Compass className="mr-1 h-3 w-3" />
                       Discover
                     </a>
 
@@ -2321,6 +2330,7 @@ export default function App() {
                       title="Current workspace"
                       className="inline-flex h-8 items-center justify-start rounded-md border border-[#D4FF00]/30 bg-[#D4FF00]/10 px-2 text-left text-[9px] font-bold font-sans text-[#D4FF00]"
                     >
+                      <BarChart3 className="mr-1 h-3 w-3" />
                       Engagement
                     </span>
 
@@ -2330,6 +2340,7 @@ export default function App() {
                       title="Continue securely to Deal Desk"
                       className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
+                      <Briefcase className="mr-1 h-3 w-3" />
                       Deal Desk
                     </button>
 
@@ -2340,6 +2351,7 @@ export default function App() {
                       title="Service Provider"
                       className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
+                      <Building2 className="mr-1 h-3 w-3" />
                       Service Provider
                     </a>
 
@@ -2350,6 +2362,7 @@ export default function App() {
                       title="Pricing"
                       className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
                     >
+                      <Tag className="mr-1 h-3 w-3" />
                       Pricing
                     </a>
                   </nav>
@@ -2378,7 +2391,7 @@ export default function App() {
 
           {/* Dynamic Scrollable Main Panel Workspace viewport */}
           <div ref={workspaceScrollRef} className="min-h-0 flex-1 overflow-y-auto p-5 space-y-5">
-            
+
             {/* 1. ROLE BOUNDARIES CONDITIONAL RENDERING */}
             {activeTab === 'dashboard' && role === 'founder' && (
               <FounderSignalDashboard
@@ -2437,7 +2450,7 @@ export default function App() {
                 <div className="p-6 rounded-3xl border border-white/10 bg-gradient-to-br from-[#111821] via-[#0B1118] to-[#070A0E] relative overflow-hidden group shadow-2xl">
                   <div className="absolute inset-0 bg-[linear-gradient(rgba(212,255,0,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(212,255,0,0.025)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
                   <div className="absolute -right-24 -top-24 w-80 h-80 bg-[#D4FF00]/[0.06] rounded-full blur-[90px] pointer-events-none" />
-                  
+
                   <div className="relative z-10 space-y-3">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#070A0E]/80 border border-[#D4FF00]/35 text-[#D4FF00] text-[10px] font-mono leading-none">
                       <Sparkles className="w-3 h-3 animate-pulse" /> TD Venture Conversion Terminal
@@ -2472,7 +2485,7 @@ export default function App() {
                     </div>
 
                     <div className="pt-1 flex flex-wrap gap-3">
-                      <button 
+                      <button
                         onClick={() => setActiveTab('pitch_analyzer')}
                         className="px-4 py-2 bg-[#D4FF00] hover:bg-[#c2ec00] text-slate-950 font-black text-xs rounded-xl shadow-md transition-all active:scale-[0.98]"
                       >
@@ -3155,7 +3168,7 @@ export default function App() {
                 <form onSubmit={handleAnalyzeDD} className="space-y-4 max-w-xl">
                   <div>
                     <span className="text-[10px] uppercase font-mono block text-slate-400 font-bold">Target Company Name:</span>
-                    <input 
+                    <input
                       type="text"
                       value={ddCompanyName}
                       onChange={(e) => setDdCompanyName(e.target.value)}
@@ -3164,14 +3177,14 @@ export default function App() {
                   </div>
                   <div>
                     <span className="text-[10px] uppercase font-mono block text-slate-400 font-bold">Enter unstructured pitch notes or text:</span>
-                    <textarea 
+                    <textarea
                       value={ddPitchText}
                       onChange={(e) => setDdPitchText(e.target.value)}
                       className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-white leading-relaxed"
                       rows={4}
                     />
                   </div>
-                  <button 
+                  <button
                     disabled={analyzingDD}
                     className="px-4 py-2 bg-purple-600 text-white hover:bg-purple-500 font-extrabold text-xs rounded-lg transition-colors flex items-center gap-1.5"
                   >
@@ -3195,10 +3208,10 @@ export default function App() {
             {activeTab === 'ai_monitoring' && <AIMonitoringTab selectedModel={selectedModel} />}
             {activeTab === 'security' && <SecurityCenterTab />}
             {activeTab === 'role_permissions' && <RolePermissionsTab />}
-            
+
             {/* Standard preloaded original campaign and supplyChain tabs */}
             {activeTab === 'campaign' && (
-              <AdSeoCreatorPanel 
+              <AdSeoCreatorPanel
                 adSuite={adSuite}
                 setAdSuite={setAdSuite}
                 handleGenerateAds={handleGenerateAds}
@@ -3271,14 +3284,14 @@ export default function App() {
 
       {/* Dynamic bottom tabs for mobile screens */}
       <div className="fixed bottom-0 inset-x-0 h-14 bg-slate-950 border-t border-slate-800/80 z-50 flex items-center justify-around md:hidden px-2">
-        <button 
+        <button
           onClick={() => { setActiveTab('dashboard'); triggerToast('Switched to mobile Dashboard', 'info'); }}
           className={`flex flex-col items-center gap-1 text-[10px] ${activeTab === 'dashboard' ? 'text-purple-400' : 'text-slate-400'}`}
         >
           <LayoutDashboard className="w-4.5 h-4.5" />
           <span>Terminal</span>
         </button>
-        <button 
+        <button
           onClick={() => { setActiveTab('pitch_analyzer'); triggerToast('Switched to Conversion Review', 'info'); }}
           className={`flex flex-col items-center gap-1 text-[10px] ${activeTab === 'pitch_analyzer' ? 'text-purple-400' : 'text-slate-400'}`}
         >
@@ -3313,7 +3326,7 @@ export default function App() {
       {activePitchModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in text-left">
           <div className="w-full max-w-xl bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl relative space-y-5">
-            <button 
+            <button
               onClick={() => setActivePitchModal(null)}
               className="absolute top-5 right-5 p-2 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors"
             >
@@ -3388,13 +3401,13 @@ function DownloadReportModal({ addLog, triggerToast, onClose }: { addLog: Functi
       </div>
 
       <div className="pt-4 flex gap-2 justify-end">
-        <button 
+        <button
           onClick={onClose}
           className="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white rounded-lg text-xs"
         >
           Cancel
         </button>
-        <button 
+        <button
           disabled={progress < 100}
           onClick={() => {
             triggerToast('Analytical PDF saved successfully!', 'success');
@@ -3436,13 +3449,13 @@ function ShareAnalysisModal({ addLog, triggerToast, onClose }: { addLog: Functio
         <div>
           <span className="text-[10px] uppercase font-mono text-slate-505 block font-bold mb-1">Generated Public URL</span>
           <div className="flex gap-2">
-            <input 
-              type="text" 
-              readOnly 
+            <input
+              type="text"
+              readOnly
               value={shareUrl}
               className="flex-1 bg-slate-900 border border-slate-800 rounded-lg p-2 font-mono text-xs text-purple-300 select-all"
             />
-            <button 
+            <button
               onClick={handleCopy}
               className="px-4 py-2 bg-purple-600 hover:bg-purple-500 font-bold rounded-lg text-white"
             >
@@ -3454,8 +3467,8 @@ function ShareAnalysisModal({ addLog, triggerToast, onClose }: { addLog: Functio
         <div className="grid grid-cols-2 gap-3 pt-1">
           <div>
             <span className="text-[10px] uppercase font-mono text-slate-500 block font-bold mb-1">Expiration Timeline</span>
-            <select 
-              value={ttl} 
+            <select
+              value={ttl}
               onChange={(e) => setTtl(e.target.value)}
               className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2"
             >
@@ -3468,8 +3481,8 @@ function ShareAnalysisModal({ addLog, triggerToast, onClose }: { addLog: Functio
           <div className="flex flex-col justify-center">
             <span className="text-[10px] uppercase font-mono text-slate-500 block font-bold mb-1">Double Authentication Check</span>
             <label className="flex items-center gap-2 cursor-pointer pt-1">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 checked={requireKey}
                 onChange={(e) => setRequireKey(e.target.checked)}
                 className="w-4 h-4 text-purple-600 focus:ring-purple-500 border-slate-800 rounded bg-slate-900"
@@ -3481,7 +3494,7 @@ function ShareAnalysisModal({ addLog, triggerToast, onClose }: { addLog: Functio
       </div>
 
       <div className="pt-4 flex justify-end">
-        <button 
+        <button
           onClick={onClose}
           className="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 font-bold rounded-lg text-xs text-white"
         >
@@ -3523,12 +3536,12 @@ function ScheduleMeetingModal({ addLog, triggerToast, onClose }: { addLog: Funct
       <div className="space-y-3 pt-2 text-xs">
         <div className="grid grid-cols-2 gap-2 text-xs">
           {slots.map(s => (
-            <div 
+            <div
               key={s}
               onClick={() => setSelectedSlot(s)}
               className={`p-3 rounded-lg border cursor-pointer text-center font-mono font-bold transition-all ${
-                selectedSlot === s 
-                  ? 'bg-purple-950/20 border-purple-500 text-purple-300' 
+                selectedSlot === s
+                  ? 'bg-purple-950/20 border-purple-500 text-purple-300'
                   : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
               }`}
             >
@@ -3539,7 +3552,7 @@ function ScheduleMeetingModal({ addLog, triggerToast, onClose }: { addLog: Funct
 
         <div>
           <span className="text-[10px] uppercase font-mono text-slate-500 block font-bold mb-1">Brief Pitch Agenda Overview</span>
-          <textarea 
+          <textarea
             placeholder="Introduce core hardware architecture and clinical pipeline indicators..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -3550,13 +3563,13 @@ function ScheduleMeetingModal({ addLog, triggerToast, onClose }: { addLog: Funct
       </div>
 
       <div className="pt-4 flex gap-2 justify-end">
-        <button 
+        <button
           onClick={onClose}
           className="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white rounded-lg text-xs"
         >
           Close
         </button>
-        <button 
+        <button
           onClick={handleBook}
           className="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg text-xs transition-colors"
         >
@@ -3595,12 +3608,12 @@ function AGIOptimizationPlanModal({ addLog, triggerToast, onClose }: { addLog: F
 
       <div className="space-y-2 text-xs pt-1">
         {checklist.map(item => (
-          <div 
+          <div
             key={item.id}
             onClick={() => toggleCheck(item.id)}
             className={`p-3 rounded-xl border cursor-pointer flex items-center gap-3.5 transition-all ${
-              item.done 
-                ? 'bg-[#22C55E]/10 border-[#22C55E]/30 text-slate-300 line-through opacity-75' 
+              item.done
+                ? 'bg-[#22C55E]/10 border-[#22C55E]/30 text-slate-300 line-through opacity-75'
                 : 'bg-slate-900 border-slate-800 text-slate-350 hover:border-slate-700'
             }`}
           >
@@ -3615,7 +3628,7 @@ function AGIOptimizationPlanModal({ addLog, triggerToast, onClose }: { addLog: F
       </div>
 
       <div className="pt-4 flex justify-end">
-        <button 
+        <button
           onClick={onClose}
           className="px-5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-bold rounded-lg text-xs"
         >
