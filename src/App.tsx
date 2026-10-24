@@ -2278,9 +2278,7 @@ export default function App() {
                   CONVERSION SIGNALS
                 </h2>
               </div>
-              <span className="text-[10px] text-slate-500 font-mono hidden sm:inline">
-                | Collect → Apply AI Intelligence → Present → Improve → Verify → Deal Desk
-              </span>
+              
 
               {/* Quick Model Orchestrator switch */}
               <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 hidden lg:flex">
@@ -2959,7 +2957,7 @@ export default function App() {
                       </strong>{' '}
                       across{' '}
                       <strong className="text-white">
-                        {conversionV2Context?.evidence.completion_count ?? 0}/20
+                        {conversionV2Context?.evidence.completion_count ?? 0}/{conversionV2Context?.evidence.rubric_version === 'founder-evidence-v4' ? 12 : 20}
                       </strong>{' '}
                       dimensions. Applying AI Intelligence independently assesses
                       those claims and any supplied pitch deck before calculating
@@ -3150,7 +3148,7 @@ export default function App() {
                 <div className='p-5 rounded-2xl border border-slate-800 bg-[#0c1222]/90 shadow-2xl'>
                   <span className='text-[10px] font-mono uppercase tracking-[0.24em] text-[#D4FF00] font-bold'>01 · Collect</span>
                   <h2 className='text-2xl font-black text-white mt-1.5'>Application Evidence & Pitch Deck</h2>
-                  <p className='text-sm text-slate-400 mt-2 max-w-3xl'>Review the submitted 20-question record, add a pitch deck, and supplement only what has changed since the application.</p>
+                  <p className='text-sm text-slate-400 mt-2 max-w-3xl'>Review the submitted Founder Evidence record, add a pitch deck, and supplement only what has changed since the application.</p>
                 </div>
 
                 <FounderEvidenceRecord context={conversionV2Context} />
