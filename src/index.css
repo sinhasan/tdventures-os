@@ -40,19 +40,29 @@
   --color-danger-red: #EF4444;
 
   /* TD Ventures Lemon Green */
-  --color-td-green: #D4FF00;
+  --color-td-green: var(--tdv-neon); /* #D4FF00, defined once in the TDV tokens block */
   --color-td-green-dark: #B8E600;
-  --color-td-green-light: #E6FF66;
+  --color-td-green-light: var(--tdv-neon-hover);
 
   /* Core Tailwind color overrides */
-  --color-slate-900: #0F172A;
   --color-purple-600: #7C3AED;
   --color-purple-500: #9333EA;
-  --color-slate-50: #F8FAFC;
-  --color-slate-300: #CBD5E1;
   --color-green-500: #22C55E;
   --color-amber-500: #F59E0B;
   --color-red-500: #EF4444;
+
+  /* Slate ramp re-tinted to Discover's cool-neutral hue (same lightness as Tailwind slate => same contrast) */
+  --color-slate-50: oklch(0.984 0.004 250);
+  --color-slate-100: oklch(0.968 0.006 250);
+  --color-slate-200: oklch(0.929 0.008 250);
+  --color-slate-300: oklch(0.869 0.010 250);
+  --color-slate-400: oklch(0.704 0.014 250);
+  --color-slate-500: oklch(0.554 0.016 250);
+  --color-slate-600: oklch(0.446 0.016 250);
+  --color-slate-700: oklch(0.372 0.017 250);
+  --color-slate-800: oklch(0.279 0.017 250);
+  --color-slate-900: oklch(0.208 0.014 250);
+  --color-slate-950: oklch(0.129 0.012 250);
 
   /* Custom glow indicators */
   --glow-electric: rgba(124, 58, 237, 0.4);
@@ -65,7 +75,7 @@
 
 /* Apply TD Ventures Dark Background */
 body, .dark-theme {
-  background-color: #0A0A0A !important;
+  background-color: var(--tdv-ink) !important;
 }
 
 /* Lemon Green for Links and Highlights */
@@ -85,7 +95,7 @@ aside button[class*="bg-gradient-to-r"] {
 
 /* Lemon Green Active Tab */
 aside button[class*="bg-gradient-to-r from-purple-900/20"] {
-  background: rgba(212, 255, 0, 0.1) !important;
+  background: var(--tdv-neon-tint) !important;
 }
 
 /* Lemon Green Icons in Sidebar when active */
@@ -117,35 +127,35 @@ aside button[class*="bg-gradient-to-r"] .text-purple-400 {
 /* Lemon Green Outline Buttons */
 .border-purple-500\/20,
 .border-purple-500\/30 {
-  border-color: rgba(212, 255, 0, 0.3) !important;
+  border-color: var(--tdv-neon-line) !important;
 }
 
 /* Keep Pitch Analyzer Section Readable - FIX THE DARK ISSUE */
 #pitch_analyzer_tab,
 [class*="pitch_analyzer"],
 .pitch-analyzer-container {
-  background-color: #0F172A !important;
-  color: #E2E8F0 !important;
+  background-color: var(--tdv-surface) !important;
+  color: var(--tdv-ivory) !important;
 }
 
 /* Pitch Analyzer Cards - Light/Dark readable */
 .pitch-analyzer-container .bg-slate-950,
  .pitch-analyzer-container [class*="bg-[#0c1222]"],
  .pitch-analyzer-container [class*="bg-[#080d1a]"] {
-  background-color: #1E293B !important;
-  border-color: #334155 !important;
+  background-color: var(--tdv-surface-elevated) !important;
+  border-color: var(--tdv-border) !important;
 }
 
 /* Ensure text is readable in Pitch Analyzer */
 .pitch-analyzer-container .text-slate-300,
 .pitch-analyzer-container .text-slate-400,
 .pitch-analyzer-container .text-white {
-  color: #F1F5F9 !important;
+  color: var(--tdv-ivory) !important;
 }
 
 /* Dashboard cards remain readable */
 .grid .p-5.rounded-xl {
-  background-color: #1A1A2E !important;
+  background-color: var(--tdv-surface) !important;
 }
 
 /* Lemon Green for status indicators */
@@ -159,33 +169,29 @@ aside button[class*="bg-gradient-to-r"] .text-purple-400 {
   background: linear-gradient(135deg, var(--color-td-green) 0%, var(--color-td-green-light) 100%);
 }
 
-/* Light theme removed: Conversion workspace is locked to Dark Command Mode. */
-
-
-
 /* Pitch Analyzer Specific Fix - Keep it readable */
 .space-y-6.animate-fade-in {
   background-color: transparent !important;
 }
 
 .rounded-2xl.border.border-slate-800.bg-\[\#0F172A\]\/70 {
-  background-color: #0F172A !important;
-  border-color: #1E293B !important;
+  background-color: var(--tdv-surface) !important;
+  border-color: var(--tdv-border) !important;
 }
 
 /* Fix the dark cards inside Pitch Analyzer */
 [class*="bg-slate-950"],
 [class*="bg-\[\#0c1222\]"],
 [class*="bg-\[\#080d1a\]"] {
-  background-color: #1E293B !important;
-  border-color: #334155 !important;
+  background-color: var(--tdv-surface-elevated) !important;
+  border-color: var(--tdv-border) !important;
 }
 
 /* Ensure text is white/light for readability */
 [class*="text-slate-300"],
 [class*="text-slate-400"],
 [class*="text-white"] {
-  color: #F1F5F9 !important;
+  color: var(--tdv-ivory) !important;
 }
 /* ============================================
    SIDEBAR MENU LINK COLORS
@@ -194,13 +200,13 @@ aside button[class*="bg-gradient-to-r"] .text-purple-400 {
 /* Default state - off-white/slightly gray */
 aside nav button span,
 aside nav button .text-sm {
-  color: #A0AEC0 !important;
+  color: var(--tdv-muted) !important;
 }
 
 /* Hover state - pure white */
 aside nav button:hover span,
 aside nav button:hover .text-sm {
-  color: #FFFFFF !important;
+  color: var(--tdv-ivory) !important;
 }
 
 /* Active tab - lemon green (as before) */
@@ -211,11 +217,11 @@ aside nav button[class*="bg-gradient-to-r"] .text-sm {
 
 /* Icon colors matching */
 aside nav button svg {
-  color: #A0AEC0 !important;
+  color: var(--tdv-muted) !important;
 }
 
 aside nav button:hover svg {
-  color: #FFFFFF !important;
+  color: var(--tdv-ivory) !important;
 }
 
 aside nav button[class*="bg-gradient-to-r"] svg {
@@ -228,10 +234,10 @@ aside nav button[class*="bg-gradient-to-r"] svg {
 /* Dark theme selects */
 select,
 .dropdown-select {
-  background-color: #1E293B !important;
-  color: #E2E8F0 !important;
-  border-color: #334155 !important;
-  border-radius: 0.75rem !important;
+  background-color: var(--tdv-surface) !important;
+  color: var(--tdv-ivory) !important;
+  border-color: var(--tdv-input) !important;
+  border-radius: 0.375rem !important;
   padding: 0.5rem 2rem 0.5rem 1rem !important;
   font-size: 0.75rem !important;
   font-weight: 500 !important;
@@ -245,13 +251,13 @@ select,
 
 /* Dropdown options dark */
 select option {
-  background-color: #0F172A !important;
-  color: #E2E8F0 !important;
+  background-color: var(--tdv-surface) !important;
+  color: var(--tdv-ivory) !important;
 }
 
 /* Select on hover */
 select:hover {
-  background-color: #334155 !important;
+  background-color: var(--tdv-accent) !important;
   border-color: var(--color-td-green) !important;
 }
 
@@ -259,34 +265,28 @@ select:hover {
 select:focus {
   outline: none !important;
   border-color: var(--color-td-green) !important;
-  box-shadow: 0 0 0 2px rgba(212, 255, 0, 0.2) !important;
+  box-shadow: 0 0 0 1px var(--color-td-green) !important;
 }
 
 /* For the Gateway selector specifically */
 .flex.items-center.gap-1\.5.px-2.py-1.rounded-lg select {
-  background-color: #1E293B !important;
+  background-color: var(--tdv-surface) !important;
   color: var(--color-td-green) !important;
   font-weight: bold !important;
 }
 
-/* Dark theme for all dropdowns in header */
-header select,
-header .bg-slate-900 select {
-  background-color: #1E293B !important;
-  border-color: #334155 !important;
-}
 /* Fix Investor Matchmaking Cards - Force White Text */
 .bg-slate-950\/60,
 [class*="bg-[#0c1222]/70"],
 .border-slate-800 {
-  color: #FFFFFF !important;
+  color: var(--tdv-ivory) !important;
 }
 
 /* Card content text */
 .p-5.rounded-xl.border span,
 .p-5.rounded-xl.border p,
 .p-5.rounded-xl.border div {
-  color: #FFFFFF !important;
+  color: var(--tdv-ivory) !important;
 }
 
 /* Match percentage text */
@@ -297,7 +297,7 @@ header .bg-slate-900 select {
 /* Investor names and details */
 .flex.items-center.justify-between span,
 .flex.items-center.justify-between p {
-  color: #FFFFFF !important;
+  color: var(--tdv-ivory) !important;
 }
 
 /* Status indicators */
@@ -307,24 +307,27 @@ header .bg-slate-900 select {
   color: var(--color-td-green) !important;
 }
 
-/* Zero-Knowledge and Forward Pitch buttons */
-.bg-slate-900,
+/* Cards and Zero-Knowledge / Forward Pitch buttons: quiet borders (was solid neon) */
+.bg-slate-900 {
+  color: var(--tdv-ivory) !important;
+  border-color: var(--tdv-border) !important;
+}
 .border-purple-500\/20 {
-  color: #FFFFFF !important;
-  border-color: var(--color-td-green) !important;
+  color: var(--tdv-ivory) !important;
+  border-color: var(--tdv-neon-line) !important;
 }
 /* Fix SAFE Builder & Fundraising Section */
 .bg-slate-950,
 .border-slate-800,
 .rounded-xl.border {
-  color: #FFFFFF !important;
+  color: var(--tdv-ivory) !important;
 }
 
-/* Input fields - keep readable */
-input, textarea, select {
-  background-color: #1E293B !important;
-  color: #FFFFFF !important;
-  border-color: #334155 !important;
+/* Input fields - keep readable (select is styled in the dropdown block above) */
+input, textarea {
+  background-color: var(--tdv-surface) !important;
+  color: var(--tdv-ivory) !important;
+  border-color: var(--tdv-input) !important;
 }
 
 /* Labels and descriptions */
@@ -332,30 +335,25 @@ input, textarea, select {
 .text-slate-500,
 .text-xs,
 .text-sm {
-  color: #A0AEC0 !important;
-}
-
-/* Compile SAFE button */
-.bg-gradient-to-r.from-purple-600.to-indigo-600 {
-  background: linear-gradient(135deg, var(--color-td-green), var(--color-td-green-light)) !important;
-  color: #0A0A0A !important;
-}
-
-/* Valuation CAP value */
-.text-2xl.font-black {
-  color: var(--color-td-green) !important;
+  color: var(--tdv-muted) !important;
 }
 
 /* TDV PRIVATE MARKETPLACE VISUAL ALIGNMENT */
 :root,
 .dark-theme {
-  --tdv-ink: oklch(0.16 0.012 250);
+  --tdv-ink: oklch(0.16 0 0);
   --tdv-ivory: oklch(0.96 0.01 90);
-  --tdv-lime: oklch(0.88 0.22 125);
-  --tdv-surface: oklch(0.21 0.014 250);
-  --tdv-surface-elevated: oklch(0.25 0.016 250);
-  --tdv-muted: oklch(0.68 0.015 250);
+  --tdv-neon: #D4FF00;
+  --tdv-neon-hover: #E6FF66;
+  --tdv-neon-tint: color-mix(in oklab, var(--tdv-neon) 10%, transparent);
+  --tdv-neon-line: color-mix(in oklab, var(--tdv-neon) 30%, transparent);
+  --tdv-lime: var(--tdv-neon); /* legacy alias, kept in case TSX references it */
+  --tdv-surface: oklch(0.21 0.004 250);
+  --tdv-surface-elevated: oklch(0.25 0.004 250);
+  --tdv-muted: oklch(0.68 0.005 250);
   --tdv-border: oklch(0.96 0.01 90 / 0.10);
+  --tdv-accent: oklch(0.28 0.004 250);
+  --tdv-input: oklch(0.96 0.01 90 / 0.12);
 }
 
 html,
@@ -370,21 +368,36 @@ body,
   text-rendering: optimizeLegibility;
 }
 
+/* TIER 2: in @layer base so Tailwind utilities (font-medium, etc.) can override, as in Discover */
+@layer base {
 h1,
 h2,
 h3,
 .font-display,
 .font-serif {
   font-family: "Fraunces", Georgia, serif;
-  font-weight: 700;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+/* Page title = Discover interior: font-display text-3xl font-semibold tracking-tight */
+h1 {
+  font-weight: 600;
   letter-spacing: -0.025em;
+}
+
+/* Small label-style h3 stays sans, as in Discover */
+h3.text-xs,
+h3.text-sm {
+  font-family: "Inter", system-ui, sans-serif;
+  letter-spacing: normal;
 }
 
 h4,
 h5,
 h6 {
   font-family: "Inter", system-ui, sans-serif;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .font-sans {
@@ -409,11 +422,12 @@ textarea {
 
 button,
 [role="button"] {
-  font-weight: 700;
+  font-weight: 500; /* Discover Button = font-medium */
+}
 }
 
 ::selection {
-  background: var(--tdv-lime);
+  background: var(--tdv-neon);
   color: var(--tdv-ink);
 }
 
@@ -494,5 +508,32 @@ button,
   .tdv-awaiting-ticker-track,
   .tdv-awaiting-pulse {
     animation: none !important;
+  }
+}
+
+/* ============================================================================
+   TDV PHASE 2 - weight ceiling and minimum label size, matched to Discover.
+   Discover's heaviest regular weight is semibold (600); its smallest label is 10px.
+   Unlayered on purpose: these must win over Tailwind utility classes in TSX.
+   ============================================================================ */
+.font-bold,
+.font-extrabold,
+.font-black {
+  font-weight: 600;
+}
+
+.text-\[8px\],
+.text-\[9px\] {
+  font-size: 10px;
+}
+
+/* Header: controls never wrap into narrow columns. The "Collect -> Apply AI ..." path is hidden below 2xl
+   by adding the class tdv-hide-below-2xl (or Tailwind `hidden 2xl:block`) to it in TSX. */
+header :is(a, button, label) {
+  white-space: nowrap;
+}
+@media (max-width: 1535px) {
+  .tdv-hide-below-2xl {
+    display: none !important;
   }
 }

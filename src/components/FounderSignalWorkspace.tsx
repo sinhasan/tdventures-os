@@ -215,7 +215,7 @@ export function FounderSignalDashboard({
 
         <div className="mt-5 grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
           {[
-            ['01', 'Collect', completed === 20 ? 'Complete' : `${completed}/20`],
+            ['01', 'Collect', completed === 12 ? 'Complete' : `${completed}/12`],
             ['02', 'Apply AI Intelligence', analysis ? 'Complete' : 'Required next step'],
             ['03', 'Present', 'Current'],
             ['04', 'Improvement Plan', analysis ? 'Ready' : 'After analysis'],
@@ -238,13 +238,13 @@ export function FounderSignalDashboard({
         </div>
       </section>
 
-      {!analysis && completed === 20 && (
+      {!analysis && completed === 12 && (
         <section className="rounded-2xl border border-[#D4FF00]/45 bg-[#D4FF00]/[0.06] px-5 py-4">
           <p className="text-[10px] font-mono font-black uppercase tracking-[0.22em] text-[#D4FF00]">
             Graduation requirement
           </p>
           <h2 className="mt-1.5 text-base font-black text-white">
-            20/20 Founder Evidence Complete · Independent AI Review Required
+            12/12 Founder Evidence Complete · Independent AI Review Required
           </h2>
           <p className="mt-2 max-w-4xl text-xs leading-5 text-slate-400">
             Your founder evidence is self-declared. Complete one independent AI review
@@ -358,8 +358,8 @@ export function FounderSignalDashboard({
           <p className="mt-3 text-sm leading-5 text-slate-400">
             {analysis
               ? analysis.next_best_action
-              : completed === 20
-                ? 'Your 20/20 founder evidence is complete. Run the required independent AI review to create the Deal Desk Conversion Signal. A pitch deck is optional and strengthens the assessment when supplied.'
+              : completed === 12
+                ? 'Your 12/12 founder evidence is complete. Run the required independent AI review to create the Deal Desk Conversion Signal. A pitch deck is optional and strengthens the assessment when supplied.'
                 : 'Complete the Startup Apply evidence record before analysis.'}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -450,7 +450,9 @@ export function FounderEvidenceRecord({
             Collect · Application evidence
           </p>
           <h2 className="mt-1.5 text-xl font-black text-white">
-            20-question Founder Evidence Record
+            {evidence.rubric_version === 'founder-evidence-v4'
+              ? '12-question Founder Evidence Record'
+              : 'Legacy 20-question Founder Evidence Record'}
           </h2>
           <p className="mt-1 text-xs text-slate-500">
             Founder-declared data · revision {evidence.revision} · not an
@@ -465,7 +467,7 @@ export function FounderEvidenceRecord({
           )}
           {evidence.completion_count != null && (
             <span className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-black text-white">
-              {evidence.completion_count}/20 complete
+              {evidence.completion_count}/{evidence.rubric_version === 'founder-evidence-v4' ? 12 : 20} complete
             </span>
           )}
         </div>
