@@ -2079,8 +2079,8 @@ export default function App() {
       <div className="relative z-10 flex h-full overflow-hidden">
 
         {/* Dynamic Sidebar navigation */}
-        <aside ref={sidebarScrollRef} className="hidden min-h-0 w-72 flex-col justify-between overflow-y-auto overscroll-contain border-r border-slate-800/80 bg-[#0F172A]/90 backdrop-blur-3xl md:flex">
-          <div>
+        <aside className="hidden h-full min-h-0 w-72 shrink-0 flex-col overflow-hidden border-r border-slate-800/80 bg-[#0F172A]/90 backdrop-blur-3xl md:flex">
+          <div ref={sidebarScrollRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
             {/* Branding Header matching screenshot style */}
             <div className="h-20 flex items-center px-6 border-b border-slate-800/50 justify-between">
               <a
@@ -2188,7 +2188,7 @@ export default function App() {
 
             {/* Dynamic tabs list */}
             <nav className="p-4 space-y-1.5">
-              {ROLE_TABS[role].map(tab => {
+              {ROLE_TABS[role].filter(tab => tab.id !== 'gdocs_hub' && (tab.id !== 'gslides_hub' || role === 'founder')).map(tab => {
                 const Icon = tab.icon;
                 const isSelected = activeTab === tab.id;
                 return (
@@ -2215,42 +2215,26 @@ export default function App() {
               })}
             </nav>
 
-            {/* TD Venture workspace switcher */}
-            <div className="mx-4 mt-3 border-t border-slate-800/60 pt-3 pb-4">
-              <div className="px-1 mb-2 text-[9px] font-mono font-black uppercase tracking-[0.2em] text-slate-600">
-                TD Venture Workspaces
-              </div>
 
-              <div className="space-y-1">
-                <a
-                  href="https://staging.tdventure.vc/app"
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-900/50 border border-transparent transition-all"
-                >
-                  <span className="w-2 h-2 rounded-full bg-slate-500" />
-                  <span className="font-semibold text-xs">Discover</span>
-                </a>
-
-                <div className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-purple-500/30 bg-purple-900/10 text-white">
-                  <span className="w-2 h-2 rounded-full bg-purple-400" />
-                  <span className="font-semibold text-xs">Engagement</span>
-                </div>
-
-                <a
-                  href="https://crm.tdventure.vc"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    void launchDealDesk(event);
-                  }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-900/50 border border-transparent transition-all"
-                >
-                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                  <span className="font-semibold text-xs">Deal Desk</span>
-                </a>
-              </div>
-            </div>
           </div>
 
-        </aside>
+
+          <div className="shrink-0 border-t border-slate-800/80 bg-[#0F172A] p-4">
+            <button
+              type="button"
+              onClick={() => {
+                void import('./lib/conversionApi').then(({ clearStoredTdventureToken }) => {
+                  clearStoredTdventureToken();
+                  window.location.assign('/login');
+                });
+              }}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/5 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#B7EF09]"
+            >
+              <span aria-hidden="true">↪</span>
+              Logout
+            </button>
+          </div>
+</aside>
 
         {/* Core workspace container */}
         <main className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-[#030308]/60">
@@ -2288,84 +2272,20 @@ export default function App() {
 
                 {/* Cross-workspace product journey */}
                 <div className="flex items-center gap-3">
-                  <nav
-                    aria-label="TD Venture workspace navigation"
-                    className="hidden xl:flex items-center gap-1"
-                  >
-                    <a
-                      href="https://tdventure.vc/"
-                      target="_blank"
-                      rel="noreferrer"
-                      title="TD Venture Home"
-                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
-                    >
-                      <Home className="mr-1 h-3 w-3" />
-                      Home
-                    </a>
-
-                    <a
-                      href="https://tdventure.vc/app/intelligence"
-                      target="_blank"
-                      rel="noreferrer"
-                      title="Intelligence"
-                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
-                    >
-                      <BrainCircuit className="mr-1 h-3 w-3" />
-                      Intelligence
-                    </a>
-
-                    <a
-                      href="https://staging.tdventure.vc/app"
-                      target="_blank"
-                      rel="noreferrer"
-                      title="Discover"
-                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
-                    >
-                      <Compass className="mr-1 h-3 w-3" />
-                      Discover
-                    </a>
-
-                    <span
-                      aria-current="page"
-                      title="Current workspace"
-                      className="inline-flex h-8 items-center justify-start rounded-md border border-[#D4FF00]/30 bg-[#D4FF00]/10 px-2 text-left text-[9px] font-bold font-sans text-[#D4FF00]"
-                    >
-                      <BarChart3 className="mr-1 h-3 w-3" />
-                      Engagement
-                    </span>
-
-                    <button
-                      type="button"
-                      onClick={() => void openDealDeskWorkspace()}
-                      title="Continue securely to Deal Desk"
-                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
-                    >
-                      <Briefcase className="mr-1 h-3 w-3" />
-                      Deal Desk
-                    </button>
-
-                    <a
-                      href="https://staging.tdventure.vc/signup/service-provider"
-                      target="_blank"
-                      rel="noreferrer"
-                      title="Service Provider"
-                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
-                    >
-                      <Building2 className="mr-1 h-3 w-3" />
-                      Service Provider
-                    </a>
-
-                    <a
-                      href="https://tdventure.vc/#pricing"
-                      target="_blank"
-                      rel="noreferrer"
-                      title="Pricing"
-                      className="inline-flex h-8 items-center justify-start rounded-md px-2 text-left text-[9px] font-bold font-sans text-slate-400 transition hover:bg-slate-800 hover:text-white"
-                    >
-                      <Tag className="mr-1 h-3 w-3" />
-                      Pricing
-                    </a>
-                  </nav>
+                  <nav aria-label="TD Venture workspace navigation" className="hidden xl:flex items-center gap-5 text-sm">
+  <a href="https://staging.tdventure.vc/" className="text-slate-300 transition hover:text-white">Home</a>
+  <details className="relative">
+    <summary className="cursor-pointer list-none text-slate-300 transition hover:text-white">
+      My platform <span aria-hidden="true">▾</span>
+    </summary>
+    <div className="absolute left-0 top-full z-50 mt-3 min-w-44 rounded-lg border border-white/15 bg-[#0b0d0d] p-2 shadow-xl">
+      <a className="block rounded px-3 py-2 text-slate-300 hover:bg-white/5 hover:text-white" href="https://staging.tdventure.vc/app">Discover</a>
+      <a className="block rounded px-3 py-2 text-white hover:bg-white/5" href="https://staging.conversion.tdventure.vc/" aria-current="page">Engage</a>
+      <a className="block rounded px-3 py-2 text-slate-300 hover:bg-white/5 hover:text-white" href="https://staging.crm.tdventure.vc/">Deal Desk</a>
+    </div>
+  </details>
+  <a href="https://staging.tdventure.vc/#pricing" className="text-slate-300 transition hover:text-white">Pricing</a>
+</nav>
 
                   <div
                     title={tdventureAccountEmail}
