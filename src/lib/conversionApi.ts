@@ -1660,3 +1660,64 @@ export async function createDealDeskWorkspaceLaunch(
 
   return data;
 }
+
+
+export type InstitutionWorkspaceLaunchResponse = {
+  ok: boolean;
+  workspace: 'institution';
+  launch_url: string;
+  expires_in_seconds: number;
+  expires_at: string;
+};
+
+export async function createInstitutionWorkspaceLaunch():
+  Promise<InstitutionWorkspaceLaunchResponse> {
+  const token = getStoredTdventureToken();
+
+  if (!token) {
+    throw new Error('Your TD Venture session was not found. Please sign in again.');
+  }
+
+  const response = await fetch(
+    'https://staging.tdventure.vc/api/institution/launch',
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const raw = await response.text();
+    let message = raw.trim();
+
+    try {
+      const parsed = JSON.parse(raw);
+      message = parsed.detail || parsed.message || message;
+    } catch {
+      // Preserve the original response text.
+    }
+
+    throw new Error(message || 'Institution Workspace access could not be verified.');
+  }
+
+  const result = await response.json() as InstitutionWorkspaceLaunchResponse;
+
+  if (!result.ok || result.workspace !== 'institution' || !result.launch_url) {
+    throw new Error('The Institution Workspace returned an invalid launch response.');
+  }
+
+  const destination = new URL(result.launch_url);
+
+  if (
+    destination.origin !== 'https://staging.tdventure.vc' ||
+    destination.pathname !== '/institution/launch' ||
+    !destination.searchParams.has('launch')
+  ) {
+    throw new Error('The Institution Workspace returned an unapproved destination.');
+  }
+
+  return result;
+}

@@ -115,6 +115,8 @@ import type {
   TdventureCurrentUser,
   ProfilePlaneResolution
 } from './lib/conversionApi';
+
+import { createInstitutionWorkspaceLaunch } from './lib/conversionApi';
 import {
   COMPONENT_ROLES
 } from './data';
@@ -2099,8 +2101,34 @@ export default function App() {
                   <span className="text-[10px] text-slate-500 block">
                     Conversion Workspace
                   </span>
+
                 </div>
               </a>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const popup = window.open('about:blank', '_blank');
+                      if (!popup) {
+                        window.alert('Please allow pop-ups to open Institution Workspace.');
+                        return;
+                      }
+
+                      try {
+                        const result = await createInstitutionWorkspaceLaunch();
+                        popup.location.replace(result.launch_url);
+                      } catch (error) {
+                        popup.close();
+                        window.alert(
+                          error instanceof Error
+                            ? error.message
+                            : 'Institution Workspace could not be opened.'
+                        );
+                      }
+                    }}
+                    className="mt-1 block text-[10px] font-semibold text-[#B7EF09] hover:text-white transition"
+                  >
+                    ← Institution Workspace
+                  </button>
             </div>
 
               {/* Shared TD Venture account identity */}
