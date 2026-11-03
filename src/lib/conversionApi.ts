@@ -135,6 +135,11 @@ export type ProfilePlaneStartupProfile = {
   ask?: string | null;
   linkedin_profile?: string | null;
   social_media_handles?: string | null;
+  full_name?: string | null;
+  firm?: string | null;
+  ticket_min_usd?: number | null;
+  ticket_max_usd?: number | null;
+  investment_thesis?: string | null;
 };
 
 export type ProfilePlaneResolution = {
@@ -813,6 +818,7 @@ export async function getConversionWorkspaceAccess():
 type ProfilePlaneCurrentResponse = {
   ok: boolean;
   resolution: ProfilePlaneResolution;
+  professional_resolution?: ProfilePlaneResolution | null;
 };
 
 export async function getCurrentProfilePlane():
@@ -828,7 +834,9 @@ export async function getCurrentProfilePlane():
     );
   }
 
-  return response.resolution;
+  // Institution accounts use their selected professional identity
+  // inside Conversion, while retaining Institution identity in Common Auth.
+  return response.professional_resolution || response.resolution;
 }
 
 
