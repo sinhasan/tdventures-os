@@ -1092,12 +1092,14 @@ export default function App() {
   }, [themeMode]);
 
   useEffect(() => {
+    if (!tdventureSessionChecked) return;
+
     try {
       localStorage.setItem('venture_ai_role', role);
     } catch (e) {
       console.warn(e);
     }
-  }, [role]);
+  }, [role, tdventureSessionChecked]);
 
   useEffect(() => {
     try {
