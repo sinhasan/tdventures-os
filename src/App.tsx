@@ -2309,9 +2309,9 @@ export default function App() {
       My platform <span aria-hidden="true">▾</span>
     </summary>
     <div className="absolute left-0 top-full z-50 mt-3 min-w-44 rounded-lg border border-white/15 bg-[#0b0d0d] p-2 shadow-xl">
-      <a className="block rounded px-3 py-2 text-slate-300 hover:bg-white/5 hover:text-white" href="https://staging.tdventure.vc/app">Discover</a>
-      <a className="block rounded px-3 py-2 text-white hover:bg-white/5" href="https://staging.conversion.tdventure.vc/" aria-current="page">Engage</a>
-      <a className="block rounded px-3 py-2 text-slate-300 hover:bg-white/5 hover:text-white" href="https://staging.crm.tdventure.vc/">Deal Desk</a>
+      <a className="block rounded px-3 py-2 text-slate-300 hover:bg-white/5 hover:text-white" href="https://tdventure.vc/app">Discover</a>
+      <a className="block rounded px-3 py-2 text-white hover:bg-white/5" href="https://conversion.tdventure.vc/" aria-current="page">Engagement</a>
+      <a className="block rounded px-3 py-2 text-slate-300 hover:bg-white/5 hover:text-white" href="https://crm.tdventure.vc/">Deal Desk</a>
     </div>
   </details>
   <a href="https://staging.tdventure.vc/#pricing" className="text-slate-300 transition hover:text-white">Pricing</a>
