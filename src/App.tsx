@@ -116,6 +116,7 @@ import type {
   ProfilePlaneResolution
 } from './lib/conversionApi';
 
+import tdLogo from './assets/td-venture-logo.png';
 import { createInstitutionWorkspaceLaunch } from './lib/conversionApi';
 import {
   COMPONENT_ROLES
@@ -2092,14 +2093,8 @@ export default function App() {
                 aria-label="TD Venture Home"
                 className="flex items-center gap-3"
               >
-                <div className="relative flex items-center justify-center w-10 h-10 rounded-xl border border-[#D4FF00]/35 bg-[#111821] shadow-[0_0_20px_rgba(212,255,0,0.10)]">
-                  <span className="text-[#D4AF37] text-xl">🎯</span>
-                  <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#22C55E] rounded-full border border-black animate-pulse" />
-                </div>
                 <div>
-                  <span className="font-extrabold text-lg tracking-tight text-white block">
-                    <span className="text-slate-400">TD | </span><span className="!text-[#D4FF00]">V</span><span className="text-white">entures</span>
-                  </span>
+                  <img src={tdLogo} alt="TD Venture" className="h-16 w-auto block mix-blend-screen" />
                   <span className="text-[10px] text-slate-500 block">
                     Conversion Workspace
                   </span>
