@@ -2094,7 +2094,7 @@ export default function App() {
                 className="flex items-center gap-3"
               >
                 <div>
-                  <img src={tdLogo} alt="TD Venture" className="h-16 w-auto block mix-blend-screen" />
+                  <img src={tdLogo} alt="TD Venture" className="h-8 w-auto block rounded-sm" />
                   <span className="text-[10px] text-slate-500 block">
                     Conversion Workspace
                   </span>
